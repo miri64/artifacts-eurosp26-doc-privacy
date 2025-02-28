@@ -1,0 +1,9 @@
+cbor2
+git+https://github.com/netd-tud/cbor4dns
+dnspython
+hvplot
+jupyterlab
+matplotlib
+polars
+pyarrow
+sqlalchemy
