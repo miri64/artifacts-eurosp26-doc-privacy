@@ -1,4 +1,14 @@
 {
+    "coaps://coap-proxy/*": {
+        "dtls": {
+            "psk": {
+                "hex": "f28aa24f8cb8a7cc483cf336c0be70047f29"
+            },
+            "client-identity": {
+                "hex": "903bc6e8515eaf97d65fcd0792330a1a4188049688b7d645d7e8e4fab80b755b"
+            }
+        }
+    },
     "coaps://coap-server/*": {
         "dtls": {
             "psk": {

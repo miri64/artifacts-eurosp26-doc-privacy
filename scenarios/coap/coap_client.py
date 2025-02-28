@@ -16,6 +16,7 @@ import time
 import aiocoap
 import aiocoap.error
 import aiocoap.cli.client
+import aiocoap.proxy.client
 import aiocoap.tokenmanager
 
 from aiocoap.numbers.contentformat import ContentFormat
@@ -66,11 +67,15 @@ async def send_requests(context, args):
     else:
         scheme = "coap"
 
+    if args.proxy:
+        context = aiocoap.proxy.client.ProxyForwarder(
+            f"{scheme}://{args.proxy}", context
+        )
 
     with sqlite3.connect(args.sqlite3_file) as conn:
         cur = conn.cursor()
         cur.execute(
-            f"SELECT id, url, {query_column}, url_wo_query FROM objects;"
+            f"SELECT id, url, {query_column}, url_wo_query FROM objects LIMIT 20;"
         )
         for data_id, url, query, url_wo_query in cur.fetchall():
             start = time.time()
@@ -224,6 +229,11 @@ async def main():
         default=None,
         help="Block size in bytes (will be rounded down to next legal block size, "
         "capped at 16)",
+    )
+    parser.add_argument(
+        "--proxy",
+        "-p",
+        help="Proxy hostname to send requests over to the server(s)",
     )
     parser.add_argument(
         "--security",

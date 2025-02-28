@@ -1,0 +1,13 @@
+services:
+  coap-proxy-base:
+    extends:
+      file: coap.yaml
+      service: coap-base
+    volumes:
+      - ../../jsons:/jsons
+    environment:
+      PROXY_CREDENTIALS: "${PROXY_CREDENTIALS:-}"
+      DATABASE_FILE: "${DATABASE_FILE}"
+      AIOCOAP_DTLSSERVER_ENABLED: "yes"
+    command: |
+      /app/coap/coap_proxy.sh
