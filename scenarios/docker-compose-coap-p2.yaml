@@ -1,0 +1,73 @@
+include:
+  - networks/wpan_simulation.yaml
+  - networks/upstream.yaml
+
+name: coap-p2
+
+services:
+  coap-server:
+    extends:
+      file: coap/coap_server.yaml
+      service: coap-server-base
+    networks:
+      - upstream
+    environment:
+      BIND_PREFIX: "${UPSTREAM_PREFIX}"
+  dns-server:
+    extends:
+      file: coap/coap_server.yaml
+      service: coap-server-base
+    networks:
+      - upstream
+    environment:
+      BIND_PREFIX: "${UPSTREAM_PREFIX}"
+  coap-proxy:
+    extends:
+      file: coap/coap_proxy.yaml
+      service: coap-proxy-base
+    networks:
+      - upstream
+      - wpan_simulation
+    environment:
+      BIND_PREFIX: "${WPAN_SIMULATION_PREFIX}"
+    depends_on:
+      coap-server:
+        condition: service_started
+      dns-server:
+        condition: service_started
+  coap-client:
+    extends:
+      file: coap/coap_client.yaml
+      service: coap-client-base
+    depends_on:
+      sniffer-wpan:
+        condition: service_started
+    environment:
+      PROXY: "coap-proxy"
+      COAP_SERVER: "coap-server"
+      DNS_SERVER: "dns-server"
+      NETWORK_SCENARIO: "coap-p2"
+  sniffer-wpan:
+    extends:
+      file: sniffer/sniffer.yaml
+      service: sniffer-base
+    environment:
+      SNIFFER_IFACE: "${WPAN_SIMULATION_IFACE}"
+      SNIFFER_FILTER: "udp port 5683 or udp port 5684"
+      NETWORK_SCENARIO: "coap-p2"
+    depends_on:
+      coap-proxy:
+        condition: service_started
+  sniffer-upstream:
+    extends:
+      file: sniffer/sniffer.yaml
+      service: sniffer-base
+    environment:
+      SNIFFER_IFACE: "${UPSTREAM_IFACE}"
+      SNIFFER_FILTER: "udp port 5683 or udp port 5684"
+      NETWORK_SCENARIO: "coap-p2"
+    depends_on:
+      coap-server:
+        condition: service_started
+      dns-server:
+        condition: service_started
