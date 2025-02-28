@@ -1,0 +1,35 @@
+axes.titlepad : 3
+axes.titlesize : medium
+axes.labelpad : 0.25
+axes.labelsize : x-small
+figure.facecolor : none
+# @ textwidth, textheight
+figure.figsize : 5.40788, 1.39282
+figure.subplot.hspace : 0.005
+figure.subplot.wspace : 0.005
+# font.family : sans-serif
+# font.sans-serif : "OpenSans"
+font.size : 9.0
+grid.linestyle : solid
+grid.linewidth : 0.5
+grid.alpha : 0.6
+hatch.linewidth : 0.25
+legend.columnspacing : 0.6
+legend.fontsize : xx-small
+legend.handlelength : 1.0
+legend.handletextpad : 0.4
+legend.title_fontsize : small
+lines.linewidth : 0.5
+lines.markeredgewidth : 0.5
+lines.markersize : 3
+patch.linewidth : 0.5
+pgf.rcfonts : False
+pgf.texsystem : xelatex
+pgf.preamble : \usepackage{mathspec}\setallmainfonts(Digits,Latin){Open Sans}
+text.usetex : True
+xtick.labelsize : xx-small
+xtick.major.pad : 1
+xtick.minor.pad : 1
+ytick.labelsize : xx-small
+ytick.major.pad : 1
+ytick.minor.pad : 1
