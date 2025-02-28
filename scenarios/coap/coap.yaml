@@ -1,0 +1,9 @@
+services:
+  coap-base:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image:
+      pivot-eval/coap
+    volumes:
+      - ../:/app

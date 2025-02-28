@@ -1,0 +1,22 @@
+include:
+  - ../networks/wpan_simulation.yaml
+
+services:
+  coap-client-base:
+    extends:
+      file: coap.yaml
+      service: coap-base
+    networks:
+      - wpan_simulation
+    volumes:
+      - ../../jsons:/jsons
+      - ../../output_dataset:/dumps
+    environment:
+      BLOCK_SIZE: "${BLOCK_SIZE:-}"
+      SECURITY: "${SECURITY:-}"
+      CLIENT_CREDENTIALS: "${CLIENT_CREDENTIALS:-}"
+      DATA_FORMAT: "${DATA_FORMAT}"
+      DNS_FORMAT: "${DNS_FORMAT}"
+      DATABASE_FILE: "${DATABASE_FILE}"
+    command: |
+      /app/coap/coap_client.sh

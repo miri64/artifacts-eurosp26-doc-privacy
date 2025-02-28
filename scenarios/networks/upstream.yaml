@@ -1,0 +1,11 @@
+networks:
+  upstream:
+    enable_ipv4: false
+    enable_ipv6: true
+    driver: bridge
+    ipam:
+      config:
+        - subnet: ${UPSTREAM_PREFIX}/60
+          gateway: ${UPSTREAM_PREFIX}1
+    driver_opts:
+      com.docker.network.bridge.name: ${UPSTREAM_IFACE}

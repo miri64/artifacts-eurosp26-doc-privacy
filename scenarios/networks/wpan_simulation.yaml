@@ -1,0 +1,11 @@
+networks:
+  wpan_simulation:
+    enable_ipv4: false
+    enable_ipv6: true
+    driver: bridge
+    ipam:
+      config:
+        - subnet: ${WPAN_SIMULATION_PREFIX}/64
+          gateway: ${WPAN_SIMULATION_PREFIX}1
+    driver_opts:
+      com.docker.network.bridge.name: ${WPAN_SIMULATION_IFACE}

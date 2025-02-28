@@ -1,0 +1,20 @@
+services:
+  sniffer-base:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: pivot-eval/sniffer
+    volumes:
+      - ../../output_dataset:/dumps/
+      - ./:/app
+    network_mode: host
+    cap_add:
+      - NET_RAW
+      - NET_ADMIN
+    environment:
+      DATA_FORMAT: "${DATA_FORMAT}"
+      DNS_FORMAT: "${DNS_FORMAT}"
+      BLOCK_SIZE: "${BLOCK_SIZE:-}"
+      SECURITY: "${SECURITY:-}"
+    command: |
+      /app/sniffer.sh
