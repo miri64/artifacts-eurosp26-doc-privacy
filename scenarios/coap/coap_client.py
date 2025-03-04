@@ -75,7 +75,7 @@ async def send_requests(context, args):
     with sqlite3.connect(args.sqlite3_file) as conn:
         cur = conn.cursor()
         cur.execute(
-            f"SELECT id, url, {query_column}, url_wo_query FROM objects LIMIT 20;"
+            f"SELECT id, url, {query_column}, url_wo_query FROM objects;"
         )
         for data_id, url, query, url_wo_query in cur.fetchall():
             start = time.time()
