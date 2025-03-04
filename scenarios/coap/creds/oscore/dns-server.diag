@@ -1,0 +1,7 @@
+{
+  ":client": {
+    "oscore": {
+      "basedir": "/creds/oscore/dns-server/from-client/"
+    }
+  }
+}

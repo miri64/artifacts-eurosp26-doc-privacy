@@ -1,0 +1,12 @@
+{
+  "coap://coap-server/*": {
+    "oscore": {
+      "basedir": "/creds/oscore/client/for-data-server/"
+    }
+  },
+  "coap://dns-server/*": {
+    "oscore": {
+      "basedir": "/creds/oscore/client/for-dns-server/"
+    }
+  }
+}

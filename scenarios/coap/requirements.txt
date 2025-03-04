@@ -1,2 +1,2 @@
-aiocoap[all] @ git+https://codeberg.org/aiocoap/aiocoap.git@main
+aiocoap[all] @ git+https://github.com/miri64/aiocoap.git@oscore-patches
 psycopg2

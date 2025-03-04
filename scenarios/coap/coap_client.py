@@ -18,6 +18,7 @@ import aiocoap.error
 import aiocoap.cli.client
 import aiocoap.proxy.client
 import aiocoap.tokenmanager
+import aiocoap.transports.oscore
 import psycopg2 as db
 
 from aiocoap.numbers.contentformat import ContentFormat
@@ -165,7 +166,7 @@ async def send_requests(context, args):
                 {"dns_id": dns_id, "client_id": str(args.client_id)},
             )
             conn.commit()
-        assert response.payload, "Server did not provide a response"
+        assert response.payload, f"Server did not provide a response {response}"
         assert response.opt.content_format == coap_server.DNS_CONTENT_FORMATS[
             args.default_dns_type
         ], "Server did not respond with a DNS response"
@@ -312,6 +313,17 @@ async def main():
     )
     args = parser.parse_args()
 
+    orig_protect = aiocoap.oscore.CanProtect.protect
+
+    def protect(self, unprotected_message, request_id=None, *, kid_context=True):
+        protected_message, request_id = orig_protect(
+            self, unprotected_message, request_id=request_id, kid_context=kid_context
+        )
+        protected_message.opt.proxy_scheme = unprotected_message.opt.proxy_scheme
+        protected_message = protected_message
+        return protected_message, request_id
+
+    aiocoap.oscore.CanProtect.protect = protect
     context = await aiocoap.Context.create_client_context()
     try:
         if args.credentials:

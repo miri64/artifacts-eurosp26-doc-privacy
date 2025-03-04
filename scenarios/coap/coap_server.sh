@@ -17,10 +17,14 @@ fi
 
 if [ -n "${SERVER_CREDENTIALS}" ]; then
     SERVER_CREDENTIALS="--credentials ${SERVER_CREDENTIALS}"
+    cp -r "${SCRIPT_DIR}"/creds/oscore /creds/
+    chown -R root: /creds/oscore
 fi
 
 if [ "${SECURITY}" = "dtls" ]; then
     NETWORK_SCENARIO="$(echo "${NETWORK_SCENARIO}" | sed 's/coap/coaps/g')"
+elif [ "${SECURITY}" = "oscore" ]; then
+    NETWORK_SCENARIO="$(echo "${NETWORK_SCENARIO}" | sed 's/coap/oscore/g')"
 fi
 
 LOGFILE="/dumps/${NETWORK_SCENARIO}_${DATA_FORMAT_LOG}_${DNS_FORMAT_LOG}${BLOCK_SIZE}.server.log"

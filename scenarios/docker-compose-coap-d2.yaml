@@ -21,6 +21,7 @@ services:
           - coap-server
     environment:
       BIND_PREFIX: "${WPAN_SIMULATION_PREFIX}"
+      SERVER_CREDENTIALS: "${DATA_SERVER_CREDENTIALS:-}"
       NETWORK_SCENARIO: "coap-d2"
     depends_on:
       db:
@@ -37,6 +38,7 @@ services:
           - dns-server
     environment:
       BIND_PREFIX: "${WPAN_SIMULATION_PREFIX}"
+      SERVER_CREDENTIALS: "${DNS_SERVER_CREDENTIALS:-}"
       NETWORK_SCENARIO: "coap-d2"
     depends_on:
       db:

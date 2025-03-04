@@ -17,10 +17,14 @@ fi
 
 if [ -n "${PROXY_CREDENTIALS}" ]; then
     PROXY_CREDENTIALS="--credentials ${PROXY_CREDENTIALS}"
+    cp -r "${SCRIPT_DIR}"/creds/oscore /creds/
+    chown -R root: /creds/oscore
 fi
 
 if [ "${SECURITY}" = "dtls" ]; then
     NETWORK_SCENARIO="$(echo "${NETWORK_SCENARIO}" | sed 's/coap/coaps/g')"
+elif [ "${SECURITY}" = "oscore" ]; then
+    NETWORK_SCENARIO="$(echo "${NETWORK_SCENARIO}" | sed 's/coap/oscore/g')"
 fi
 
 LOGFILE="/dumps/${NETWORK_SCENARIO}_${DATA_FORMAT}_${DNS_FORMAT}${BLOCK_SIZE}.proxy.log"

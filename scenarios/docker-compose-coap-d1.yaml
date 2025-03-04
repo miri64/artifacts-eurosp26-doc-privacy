@@ -25,6 +25,7 @@ services:
         condition: service_healthy
     environment:
       BIND_PREFIX: "${WPAN_SIMULATION_PREFIX}"
+      SERVER_CREDENTIALS: "${DATA_SERVER_CREDENTIALS:-}"
       NETWORK_SCENARIO: "coap-d1"
   coap-client:
     extends:

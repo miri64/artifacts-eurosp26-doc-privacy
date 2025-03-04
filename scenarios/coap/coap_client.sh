@@ -33,6 +33,16 @@ if [ "${SECURITY}" = "dtls" ]; then
     NETWORK_SCENARIO="$(echo "${NETWORK_SCENARIO}" | sed 's/coap/coaps/g')"
     SECURITY="-s ${SECURITY}"
     CLIENT_CREDENTIALS="--credentials ${CLIENT_CREDENTIALS}"
+elif [ "${SECURITY}" = "oscore" ]; then
+    if [ -z "${CLIENT_CREDENTIALS}" ]; then
+        echo "OSCORE configured as security but no credentials provided" >&2
+        exit 1
+    fi
+    NETWORK_SCENARIO="$(echo "${NETWORK_SCENARIO}" | sed 's/coap/oscore/g')"
+    SECURITY="-s ${SECURITY}"
+    CLIENT_CREDENTIALS="--credentials ${CLIENT_CREDENTIALS}"
+    cp -r "${SCRIPT_DIR}"/creds/oscore /creds/
+    chown -R root: /creds/oscore
 fi
 
 LOGFILE="/dumps/${NETWORK_SCENARIO}_${DATA_FORMAT_LOG}_${DNS_FORMAT_LOG}${BLOCK_SIZE_LOG}.client.log"

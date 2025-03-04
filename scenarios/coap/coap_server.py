@@ -14,6 +14,7 @@ import aiocoap
 import aiocoap.cli.common
 import aiocoap.error
 import aiocoap.numbers.constants
+import aiocoap.oscore
 import aiocoap.resource
 import psycopg2 as db
 import psycopg2.errors as db_errors
@@ -160,4 +161,15 @@ async def main():
 
 
 if __name__ == "__main__":
+    # logging.basicConfig(level=logging.DEBUG)
+    orig_unprotect = aiocoap.oscore.CanUnprotect.unprotect
+
+    def unprotect(self, protected_message, request_id=None):
+        unprotected_message, request_id = orig_unprotect(
+            self, protected_message, request_id
+        )
+        unprotected_message.token = protected_message.token
+        return unprotected_message, request_id
+
+    aiocoap.oscore.CanUnprotect.unprotect = unprotect
     asyncio.run(main())

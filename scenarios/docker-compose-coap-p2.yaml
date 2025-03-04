@@ -22,6 +22,7 @@ services:
           - coap-server
     environment:
       BIND_PREFIX: "${UPSTREAM_PREFIX}"
+      SERVER_CREDENTIALS: "${DATA_SERVER_CREDENTIALS:-}"
       NETWORK_SCENARIO: "coap-p2"
     depends_on:
       db:
@@ -38,6 +39,7 @@ services:
           - dns-server
     environment:
       BIND_PREFIX: "${UPSTREAM_PREFIX}"
+      SERVER_CREDENTIALS: "${DNS_SERVER_CREDENTIALS:-}"
       NETWORK_SCENARIO: "coap-p2"
     depends_on:
       db:

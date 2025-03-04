@@ -8,5 +8,7 @@ services:
       dockerfile: Dockerfile
     image:
       pivot-eval/coap
+    tmpfs:
+      - /creds
     volumes:
       - ../:/app
