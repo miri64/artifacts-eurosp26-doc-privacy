@@ -137,6 +137,7 @@ def valid_filename(parser, arg):
 def ensure_database_views(database_file):
     with sqlite3.connect(database_file) as conn:
         cur = conn.cursor()
+        cur.execute("BEGIN IMMEDIATE;")
         cur.execute(
             """
             CREATE TABLE IF NOT EXISTS sync (

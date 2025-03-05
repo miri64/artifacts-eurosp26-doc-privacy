@@ -122,6 +122,7 @@ async def send_requests(context, args):
                 else:
                     _id = dns_id
                 inner_cur = conn.cursor()
+                inner_cur.execute("BEGIN IMMEDIATE;")
                 inner_cur.execute(
                     """
                     INSERT INTO sync (msg_id, data_id, data_type, client_id)
@@ -198,6 +199,7 @@ async def send_requests(context, args):
             request.opt.uri_host = args.coap_server
             request.remote.maximum_block_size_exp = block_exp
             response = await context.request(request).response
+            cur.execute("BEGIN IMMEDIATE;")
             cur.execute(
                 """
                 DELETE FROM sync

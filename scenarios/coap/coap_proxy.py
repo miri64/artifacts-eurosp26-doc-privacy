@@ -29,6 +29,7 @@ class Proxy(aiocoap.proxy.server.ForwardProxyWithPooledObservations):
             new_token = self.next_token(inner)
             with sqlite3.connect(self.database_file) as conn:
                 cur = conn.cursor()
+                cur.execute("BEGIN IMMEDIATE;")
                 cur.execute(
                     """
                     UPDATE sync
