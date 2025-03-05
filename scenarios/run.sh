@@ -61,10 +61,10 @@ for data_env in "${DATA_ENVS[@]}"; do
                     if [ "$prot" != "coap" -a "$sec" != "dtls" ]; then
                         continue
                     fi
-                    PREFIX_HINT_2=0
-                    unset DOCKER_COMPOSE_PIDS
-                    for setup in "${NETWORK_SETUPS[@]}"; do
-                        for block in "${BLOCKWISE}"; do
+                    for block in "${BLOCKWISE}"; do
+                        PREFIX_HINT_2=0
+                        unset DOCKER_COMPOSE_PIDS
+                        for setup in "${NETWORK_SETUPS[@]}"; do
                             setup_iface=$(echo "${setup}" | sed -E -e 's/([dp])1/\1i/g' -e 's/([dp])2/\1ii/g')
                             l2_iface=$(echo "${l2}" | sed -E -e 's/-//g' -e 's/schc/0/g')
                             export WPAN_SIMULATION_NAME="${prot}${l2}-${setup}-wpan-simulation"
@@ -91,11 +91,11 @@ for data_env in "${DATA_ENVS[@]}"; do
                             DOCKER_COMPOSE_PIDS+=("$!")
                             PREFIX_HINT_2=$(( PREFIX_HINT_2 + 1 ))
                         done
+                        for pid in ${DOCKER_COMPOSE_PIDS[@]}; do
+                            tail --pid="${pid}" -f /dev/null
+                        done
+                        PREFIX_HINT_1=$(( PREFIX_HINT_1 + 1 ))
                     done
-                    for pid in ${DOCKER_COMPOSE_PIDS[@]}; do
-                        tail --pid="${pid}" -f /dev/null
-                    done
-                    PREFIX_HINT_1=$(( PREFIX_HINT_1 + 1 ))
                 done
             done
         done
