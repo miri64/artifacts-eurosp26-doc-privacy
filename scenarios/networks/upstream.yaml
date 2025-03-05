@@ -3,6 +3,7 @@ networks:
     enable_ipv4: false
     enable_ipv6: true
     driver: bridge
+    name: pivot-upstream
     ipam:
       config:
         - subnet: ${UPSTREAM_PREFIX}/60

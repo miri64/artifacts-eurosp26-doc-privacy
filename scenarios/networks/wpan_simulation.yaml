@@ -3,6 +3,7 @@ networks:
     enable_ipv4: false
     enable_ipv6: true
     driver: bridge
+    name: pivot-wpan-simulation
     ipam:
       config:
         - subnet: ${WPAN_SIMULATION_PREFIX}/64

@@ -23,7 +23,7 @@ services:
         condition: service_started
     environment:
       COAP_SERVER: "coap-server"
-      DNS_SERVER: "dns-server"
+      DNS_SERVER: "coap-server"
       NETWORK_SCENARIO: "coap-d1"
   sniffer:
     extends:

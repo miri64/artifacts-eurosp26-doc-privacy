@@ -37,7 +37,7 @@ services:
     environment:
       PROXY: "coap-proxy"
       COAP_SERVER: "coap-server"
-      DNS_SERVER: "dns-server"
+      DNS_SERVER: "coap-server"
       NETWORK_SCENARIO: "coap-p1"
   sniffer-wpan:
     extends:
