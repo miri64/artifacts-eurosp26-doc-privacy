@@ -13,6 +13,6 @@ if [ -n "${SERVER_CREDENTIALS}" ]; then
 fi
 
 BIND_ADDRESS="$(ip addr | grep -oE "${BIND_PREFIX}[0-9:]+")"
-/app/coap/coap_server.py --bind "[${BIND_ADDRESS}]" ${SERVER_CREDENTIALS} \
+"${SCRIPT_DIR}"/coap_server.py --bind "[${BIND_ADDRESS}]" ${SERVER_CREDENTIALS} \
     "${DATABASE_FILE}" \
     "${DATA_FORMAT}"

@@ -13,5 +13,5 @@ if [ -n "${PROXY_CREDENTIALS}" ]; then
 fi
 
 BIND_ADDRESS="$(ip addr | grep -oE "${BIND_PREFIX}[0-9:]+")"
-/app/coap/coap_proxy.py --bind "[${BIND_ADDRESS}]" ${PROXY_CREDENTIALS} \
+"${SCRIPT_DIR}"/coap_proxy.py --bind "[${BIND_ADDRESS}]" ${PROXY_CREDENTIALS} \
     "${DATABASE_FILE}" \
