@@ -77,6 +77,17 @@ async def send_requests(context, args):
         cur.execute(
             f"SELECT id, url, {query_column}, url_wo_query FROM objects;"
         )
+        print(
+            "timestamp",
+            "type",
+            "query_name",
+            "query_type",
+            "url",
+            "media_type",
+            "response_code",
+            "response_payload",
+            sep="\t",
+        )
         for data_id, url, query, url_wo_query in cur.fetchall():
             start = time.time()
 
