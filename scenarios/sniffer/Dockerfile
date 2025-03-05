@@ -1,6 +1,8 @@
 FROM alpine:3.21
 
-RUN addgroup -S wireshark && adduser -Ds /bin/sh user -G wireshark
+ARG HOST_UID
+ARG HOST_GID
+RUN addgroup -S wireshark && adduser -Ds /bin/sh user -G wireshark -u "$HOST_UID" -g "$HOST_GID"
 
 RUN apk --update --no-cache add tshark libcap-setcap
 

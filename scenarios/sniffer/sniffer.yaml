@@ -1,6 +1,9 @@
 services:
   sniffer-base:
     build:
+      args:
+        HOST_GID: "${HOST_GID}"
+        HOST_UID: "${HOST_UID}"
       context: .
       dockerfile: Dockerfile
     image: pivot-eval/sniffer
