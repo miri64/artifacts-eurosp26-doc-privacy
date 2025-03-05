@@ -40,16 +40,40 @@ if id | grep -q "=0(root)" || id | grep -vq "docker"; then
     exit 1
 fi
 
+DOCKER_COMPOSE_PIDS=()
+
+kill_docker() {
+    for pid in ${DOCKER_COMPOSE_PIDS[@]}; do
+        kill -SIGTERM "${pid}"
+        tail --pid="${pid}" -f /dev/null
+    done
+    exit
+}
+
+trap kill_docker SIGHUP SIGTERM SIGINT SIGQUIT SIGABRT
+
 for data_env in "${DATA_ENVS[@]}"; do
     for dns_env in "${DNS_ENVS[@]}"; do
         for sec in "${SECURITIES[@]}"; do
             for l2 in "${LINK_LAYERS[@]}"; do
+                PREFIX_HINT_1=6
                 for prot in "${PROTOCOLS[@]}"; do
                     if [ "$prot" != "coap" -a "$sec" != "dtls" ]; then
                         continue
                     fi
+                    PREFIX_HINT_2=0
+                    unset DOCKER_COMPOSE_PIDS
                     for setup in "${NETWORK_SETUPS[@]}"; do
                         for block in "${BLOCKWISE}"; do
+                            setup_iface=$(echo "${setup}" | sed -E -e 's/([dp])1/\1i/g' -e 's/([dp])2/\1ii/g')
+                            l2_iface=$(echo "${l2}" | sed -E -e 's/-//g' -e 's/schc/0/g')
+                            export WPAN_SIMULATION_NAME="${prot}${l2}-${setup}-wpan-simulation"
+                            export WPAN_SIMULATION_IFACE="${prot}${l2_iface}${setup}_wpan"
+                            export WPAN_SIMULATION_PREFIX="fdd8:${PREFIX_HINT_1}b${PREFIX_HINT_2}6:eccc::"
+                            export UPSTREAM_NAME="${prot}${l2}-${setup}-upstream"
+                            export UPSTREAM_IFACE="${prot}${l2_iface}${setup}_upstream"
+                            export UPSTREAM_PREFIX="fdd8:${PREFIX_HINT_1}b${PREFIX_HINT_2}6:ecc0::"
+                            
                             if [ "$prot" != "coap" -a -n "$block" ]; then
                                 continue
                             fi
@@ -63,9 +87,15 @@ for data_env in "${DATA_ENVS[@]}"; do
                                 ${ADDITIONAL_OPTS} \
                                 --env-file "${data_env}" --env-file "${dns_env}" \
                                 -f "${SCRIPT_DIR}/docker-compose-${prot}${l2}-${setup}.yaml" up \
-                                    --abort-on-container-exit
+                                    --abort-on-container-exit &
+                            DOCKER_COMPOSE_PIDS+=("$!")
+                            PREFIX_HINT_2=$(( PREFIX_HINT_2 + 1 ))
                         done
                     done
+                    for pid in ${DOCKER_COMPOSE_PIDS[@]}; do
+                        tail --pid="${pid}" -f /dev/null
+                    done
+                    PREFIX_HINT_1=$(( PREFIX_HINT_1 + 1 ))
                 done
             done
         done

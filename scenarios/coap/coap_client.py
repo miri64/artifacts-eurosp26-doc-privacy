@@ -8,6 +8,7 @@
 import asyncio
 import argparse
 import math
+import os
 import pathlib
 import re
 import sqlite3
@@ -79,6 +80,8 @@ async def send_requests(context, args):
         )
         print(
             "timestamp",
+            "wpan_prefix",
+            "upstream_prefix",
             "type",
             "query_name",
             "query_type",
@@ -160,6 +163,8 @@ async def send_requests(context, args):
             ], "Server did not respond with a DNS response"
             print(
                 time.time(),
+                os.environ.get("WPAN_SIMULATION_PREFIX"),
+                os.environ.get("UPSTREAM_PREFIX"),
                 "dns",
                 dns_name,
                 dns_type,
@@ -203,6 +208,8 @@ async def send_requests(context, args):
             conn.commit()
             print(
                 time.time(),
+                os.environ.get("WPAN_SIMULATION_PREFIX"),
+                os.environ.get("UPSTREAM_PREFIX"),
                 "data",
                 "",
                 "",

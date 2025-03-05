@@ -18,5 +18,7 @@ services:
       DATA_FORMAT: "${DATA_FORMAT}"
       DNS_FORMAT: "${DNS_FORMAT}"
       DATABASE_FILE: "${DATABASE_FILE}"
+      UPSTREAM_PREFIX: "${UPSTREAM_PREFIX}"
+      WPAN_SIMULATION_PREFIX: "${WPAN_SIMULATION_PREFIX}"
     command: |
       /app/coap/coap_client.sh
