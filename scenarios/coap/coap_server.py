@@ -36,7 +36,7 @@ class Resource(aiocoap.resource.Resource, aiocoap.resource.PathCapable):
         )
 
     def _get_obj(self, request):
-        with sqlite3.connect(self.database_file) as conn:
+        with sqlite3.connect(self.database_file, isolation_level="IMMEDIATE", autocommit=True) as conn:
             if self.default_data_type == ContentFormat.JSON:
                 column = "json"
             elif self.default_data_type == ContentFormat.CBOR:
@@ -73,7 +73,7 @@ class Resource(aiocoap.resource.Resource, aiocoap.resource.PathCapable):
             column = "cbor_response"
         else:
             raise ValueError(f"Unexpected DNS format {resp_content_format}")
-        with sqlite3.connect(self.database_file) as conn:
+        with sqlite3.connect(self.database_file, isolation_level="IMMEDIATE", autocommit=True) as conn:
             cur = conn.cursor()
             cur.execute(
                 f"SELECT {column} FROM synced_dns WHERE msg_id = ?;", (request.token,),
@@ -135,9 +135,8 @@ def valid_filename(parser, arg):
 
 
 def ensure_database_views(database_file):
-    with sqlite3.connect(database_file) as conn:
+    with sqlite3.connect(database_file, isolation_level="IMMEDIATE", autocommit=True) as conn:
         cur = conn.cursor()
-        cur.execute("BEGIN IMMEDIATE;")
         cur.execute(
             """
             CREATE TABLE IF NOT EXISTS sync (
@@ -187,7 +186,6 @@ def ensure_database_views(database_file):
             FROM dns
             INNER JOIN sync ON dns.id = sync.data_id AND sync.data_type = 1;"""
         )
-        conn.commit()
 
 
 async def main():

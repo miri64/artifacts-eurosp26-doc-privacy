@@ -73,30 +73,32 @@ async def send_requests(context, args):
             f"{scheme}://{args.proxy}", context
         )
 
-    with sqlite3.connect(args.sqlite3_file) as conn:
+    with sqlite3.connect(args.sqlite3_file, isolation_level="IMMEDIATE", autocommit=True) as conn:
         cur = conn.cursor()
         cur.execute(
             f"SELECT id, url, {query_column}, url_wo_query FROM objects;"
         )
-        print(
-            "timestamp",
-            "wpan_prefix",
-            "upstream_prefix",
-            "type",
-            "query_name",
-            "query_type",
-            "url",
-            "media_type",
-            "response_code",
-            "response_payload",
-            sep="\t",
-        )
-        for data_id, url, query, url_wo_query in cur.fetchall():
-            start = time.time()
+        rows = cur.fetchall()
+    print(
+        "timestamp",
+        "wpan_prefix",
+        "upstream_prefix",
+        "type",
+        "query_name",
+        "query_type",
+        "url",
+        "media_type",
+        "response_code",
+        "response_payload",
+        sep="\t",
+    )
+    for data_id, url, query, url_wo_query in rows:
+        start = time.time()
 
-            data_type = 1
-            dns_cur = conn.cursor()
-            dns_cur.execute(
+        data_type = 1
+        with sqlite3.connect(args.sqlite3_file, isolation_level="IMMEDIATE", autocommit=True) as conn:
+            cur = conn.cursor()
+            cur.execute(
                 f"""
                 SELECT id, name, type, {dns_column}
                 FROM dns
@@ -110,47 +112,47 @@ async def send_requests(context, args):
                 """,
                 (data_id,),
             )
-            res = dns_cur.fetchone()
+            res = cur.fetchone()
             assert res, f"No DNS query found for {url} (id={data_id})"
             dns_id, dns_name, dns_type, dns_query = res
-            conn.commit()
 
-            def next_token(self):
-                token = tm_next_token(self)
-                if data_type == 0:
-                    _id = data_id
-                else:
-                    _id = dns_id
-                inner_cur = conn.cursor()
-                inner_cur.execute("BEGIN IMMEDIATE;")
-                inner_cur.execute(
+        def next_token(self):
+            token = tm_next_token(self)
+            if data_type == 0:
+                _id = data_id
+            else:
+                _id = dns_id
+            with sqlite3.connect(args.sqlite3_file, isolation_level="IMMEDIATE", autocommit=True) as conn:
+                cur = conn.cursor()
+                cur.execute(
                     """
                     INSERT INTO sync (msg_id, data_id, data_type, client_id)
                     VALUES (?, ?, ?, ?);
                     """,
                     (token, _id, data_type, args.client_id),
                 )
-                conn.commit()
-                return token
+            return token
 
-            aiocoap.tokenmanager.TokenManager.next_token = next_token
+        aiocoap.tokenmanager.TokenManager.next_token = next_token
 
-            code = aiocoap.FETCH
-            coap_url = f"{scheme}://{args.dns_server}"
-            request = aiocoap.Message(
-                code=code,
-                accept=(
-                    coap_server.DNS_CONTENT_FORMATS[args.default_dns_type]
-                    if ";packed=" in args.default_dns_type
-                    else None
-                ),
-                payload=dns_query,
-                uri=coap_url,
-                content_format=coap_server.DNS_CONTENT_FORMATS[dns_content_format],
-                block2=block2,
-            )
-            request.remote.maximum_block_size_exp = block_exp
-            response = await context.request(request).response
+        code = aiocoap.FETCH
+        coap_url = f"{scheme}://{args.dns_server}"
+        request = aiocoap.Message(
+            code=code,
+            accept=(
+                coap_server.DNS_CONTENT_FORMATS[args.default_dns_type]
+                if ";packed=" in args.default_dns_type
+                else None
+            ),
+            payload=dns_query,
+            uri=coap_url,
+            content_format=coap_server.DNS_CONTENT_FORMATS[dns_content_format],
+            block2=block2,
+        )
+        request.remote.maximum_block_size_exp = block_exp
+        response = await context.request(request).response
+        with sqlite3.connect(args.sqlite3_file, isolation_level="IMMEDIATE", autocommit=True) as conn:
+            cur = conn.cursor()
             cur.execute(
                 """
                 DELETE FROM sync
@@ -158,48 +160,49 @@ async def send_requests(context, args):
                 """,
                 (dns_id, args.client_id),
             )
-            assert response.payload, "Server did not provide a response"
-            assert response.opt.content_format == coap_server.DNS_CONTENT_FORMATS[
-                args.default_dns_type
-            ], "Server did not respond with a DNS response"
-            print(
-                time.time(),
-                os.environ.get("WPAN_SIMULATION_PREFIX"),
-                os.environ.get("UPSTREAM_PREFIX"),
-                "dns",
-                dns_name,
-                dns_type,
-                url,
-                args.default_dns_type,
-                response.code,
-                response.payload.hex(),
-                sep="\t",
-            )
+        assert response.payload, "Server did not provide a response"
+        assert response.opt.content_format == coap_server.DNS_CONTENT_FORMATS[
+            args.default_dns_type
+        ], "Server did not respond with a DNS response"
+        print(
+            time.time(),
+            os.environ.get("WPAN_SIMULATION_PREFIX"),
+            os.environ.get("UPSTREAM_PREFIX"),
+            "dns",
+            dns_name,
+            dns_type,
+            url,
+            args.default_dns_type,
+            response.code,
+            response.payload.hex(),
+            sep="\t",
+        )
 
-            data_type = 0
-            if query and (len(url) > 32):
-                code = aiocoap.FETCH
-                coap_url = re.sub(r"^https?://", f"{scheme}://", url_wo_query)
-            else:
-                code = aiocoap.GET
-                coap_url = re.sub(r"^https?://", f"{scheme}://", url)
-            if isinstance(query, str):
-                query = query.encode()
-            request = aiocoap.Message(
-                code=code,
-                payload=query or b"",
-                uri=coap_url,
-                content_format=ContentFormat.by_media_type(args.default_data_type),
-                block2=block2,
-            )
-            request.remote = aiocoap.message.UndecidedRemote(
-                scheme,
-                args.coap_server,
-            )
-            request.opt.uri_host = args.coap_server
-            request.remote.maximum_block_size_exp = block_exp
-            response = await context.request(request).response
-            cur.execute("BEGIN IMMEDIATE;")
+        data_type = 0
+        if query and (len(url) > 32):
+            code = aiocoap.FETCH
+            coap_url = re.sub(r"^https?://", f"{scheme}://", url_wo_query)
+        else:
+            code = aiocoap.GET
+            coap_url = re.sub(r"^https?://", f"{scheme}://", url)
+        if isinstance(query, str):
+            query = query.encode()
+        request = aiocoap.Message(
+            code=code,
+            payload=query or b"",
+            uri=coap_url,
+            content_format=ContentFormat.by_media_type(args.default_data_type),
+            block2=block2,
+        )
+        request.remote = aiocoap.message.UndecidedRemote(
+            scheme,
+            args.coap_server,
+        )
+        request.opt.uri_host = args.coap_server
+        request.remote.maximum_block_size_exp = block_exp
+        response = await context.request(request).response
+        with sqlite3.connect(args.sqlite3_file, isolation_level="IMMEDIATE", autocommit=True) as conn:
+            cur = conn.cursor()
             cur.execute(
                 """
                 DELETE FROM sync
@@ -207,23 +210,22 @@ async def send_requests(context, args):
                 """,
                 (data_id, args.client_id),
             )
-            conn.commit()
-            print(
-                time.time(),
-                os.environ.get("WPAN_SIMULATION_PREFIX"),
-                os.environ.get("UPSTREAM_PREFIX"),
-                "data",
-                "",
-                "",
-                url,
-                args.default_data_type,
-                response.code,
-                response.payload.hex(),
-                sep="\t",
-            )
-            stop = time.time()
-            if args.delay > 0 and (stop - start) < args.delay:
-                await asyncio.sleep(args.delay - (stop - start))
+        print(
+            time.time(),
+            os.environ.get("WPAN_SIMULATION_PREFIX"),
+            os.environ.get("UPSTREAM_PREFIX"),
+            "data",
+            "",
+            "",
+            url,
+            args.default_data_type,
+            response.code,
+            response.payload.hex(),
+            sep="\t",
+        )
+        stop = time.time()
+        if args.delay > 0 and (stop - start) < args.delay:
+            await asyncio.sleep(args.delay - (stop - start))
 
 
 async def main():
