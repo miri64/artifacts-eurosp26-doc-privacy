@@ -21,6 +21,7 @@ services:
           - coap-server
     environment:
       BIND_PREFIX: "${WPAN_SIMULATION_PREFIX}"
+      NETWORK_SCENARIO: "coap-d2"
     depends_on:
       db:
         condition: service_healthy
@@ -36,6 +37,7 @@ services:
           - dns-server
     environment:
       BIND_PREFIX: "${WPAN_SIMULATION_PREFIX}"
+      NETWORK_SCENARIO: "coap-d2"
     depends_on:
       db:
         condition: service_healthy

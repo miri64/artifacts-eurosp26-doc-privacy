@@ -23,6 +23,7 @@ services:
           - coap-server
     environment:
       BIND_PREFIX: "${UPSTREAM_PREFIX}"
+      NETWORK_SCENARIO: "coap-p1"
     depends_on:
       db:
         condition: service_healthy
@@ -39,6 +40,7 @@ services:
           - coap-proxy
     environment:
       BIND_PREFIX: "${WPAN_SIMULATION_PREFIX}"
+      NETWORK_SCENARIO: "coap-p1"
     depends_on:
       coap-server-global:
         condition: service_started

@@ -10,7 +10,10 @@ services:
       - database_backend
     volumes:
       - ../../jsons:/jsons
+      - ../../output_dataset:/dumps
     environment:
+      BLOCK_SIZE: "${BLOCK_SIZE:-}"
+      SECURITY: "${SECURITY:-}"
       SERVER_CREDENTIALS: "${SERVER_CREDENTIALS:-}"
       DATA_FORMAT: "${DATA_FORMAT}"
       DNS_FORMAT: "${DNS_FORMAT}"

@@ -10,9 +10,14 @@ services:
       - database_backend
     volumes:
       - ../../jsons:/jsons
+      - ../../output_dataset:/dumps
     environment:
+      BLOCK_SIZE: "${BLOCK_SIZE:-}"
+      SECURITY: "${SECURITY:-}"
       PROXY_CREDENTIALS: "${PROXY_CREDENTIALS:-}"
       DATABASE_FILE: "${DATABASE_FILE}"
+      DATA_FORMAT: "${DATA_FORMAT}"
+      DNS_FORMAT: "${DNS_FORMAT}"
       AIOCOAP_DTLSSERVER_ENABLED: "yes"
     command: |
       /app/coap/coap_proxy.sh

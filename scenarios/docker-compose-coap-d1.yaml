@@ -25,6 +25,7 @@ services:
         condition: service_healthy
     environment:
       BIND_PREFIX: "${WPAN_SIMULATION_PREFIX}"
+      NETWORK_SCENARIO: "coap-d1"
   coap-client:
     extends:
       file: coap/coap_client.yaml
