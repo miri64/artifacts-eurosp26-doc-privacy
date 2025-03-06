@@ -30,4 +30,6 @@ BIND_ADDRESS="$(ip addr | grep -oE "${BIND_PREFIX}[0-9:]+")"
     "${DATABASE_FILE}" \
     "${DATA_FORMAT}" \
     > "${LOGFILE}" 2> "${LOGFILE%.log}.stderr.log"
+ERROR="$?"
 chown user: "${LOGFILE}" "${LOGFILE%.log}.stderr.log"
+exit "${ERROR}"

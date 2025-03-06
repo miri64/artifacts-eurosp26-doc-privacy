@@ -44,4 +44,6 @@ LOGFILE="/dumps/${NETWORK_SCENARIO}_${DATA_FORMAT_LOG}_${DNS_FORMAT_LOG}${BLOCK_
     "${COAP_SERVER}" \
     "${DNS_SERVER}" \
     > "${LOGFILE}" 2> "${LOGFILE%.log}.stderr.log"
+ERROR="$?"
 chown user: "${LOGFILE}" "${LOGFILE%.log}.stderr.log"
+exit "${ERROR}"
