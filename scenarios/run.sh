@@ -67,6 +67,7 @@ for data_env in "${DATA_ENVS[@]}"; do
                         for setup in "${NETWORK_SETUPS[@]}"; do
                             setup_iface=$(echo "${setup}" | sed -E -e 's/([dp])1/\1i/g' -e 's/([dp])2/\1ii/g')
                             l2_iface=$(echo "${l2}" | sed -E -e 's/-//g' -e 's/schc/0/g')
+                            export DATABASE_BACKEND_PREFIX="fd00:${PREFIX_HINT_1}b${PREFIX_HINT_2}6::"
                             export WPAN_SIMULATION_NAME="${prot}${l2}-${setup}-wpan-simulation"
                             export WPAN_SIMULATION_IFACE="${prot}${l2_iface}${setup}_wpan"
                             export WPAN_SIMULATION_PREFIX="fdd8:${PREFIX_HINT_1}b${PREFIX_HINT_2}6:eccc::"

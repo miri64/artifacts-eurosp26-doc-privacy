@@ -11,7 +11,6 @@ import math
 import os
 import pathlib
 import re
-import sqlite3
 import time
 
 import aiocoap
@@ -19,6 +18,7 @@ import aiocoap.error
 import aiocoap.cli.client
 import aiocoap.proxy.client
 import aiocoap.tokenmanager
+import psycopg2 as db
 
 from aiocoap.numbers.contentformat import ContentFormat
 from aiocoap.optiontypes import BlockOption
@@ -73,7 +73,7 @@ async def send_requests(context, args):
             f"{scheme}://{args.proxy}", context
         )
 
-    with sqlite3.connect(args.sqlite3_file, isolation_level="IMMEDIATE", autocommit=True) as conn:
+    with db.connect(args.sqlite3_file) as conn:
         cur = conn.cursor()
         cur.execute(
             f"SELECT id, url, {query_column}, url_wo_query FROM objects;"
@@ -96,21 +96,18 @@ async def send_requests(context, args):
         start = time.time()
 
         data_type = 1
-        with sqlite3.connect(args.sqlite3_file, isolation_level="IMMEDIATE", autocommit=True) as conn:
+        with db.connect(args.sqlite3_file) as conn:
             cur = conn.cursor()
             cur.execute(
                 f"""
                 SELECT id, name, type, {dns_column}
                 FROM dns
-                WHERE obj_id = ?
-                ORDER BY CASE
-                   WHEN type = "HTTPS" THEN 1
-                   WHEN type = "AAAA" THEN 2
-                   WHEN type = "A" THEN 3
-                END ASC
+                WHERE obj_id = %(data_id)s
+                ORDER BY array_position(array['HTTPS', 'AAAA', 'A'], dns.type)
+                ASC
                 LIMIT 1;
                 """,
-                (data_id,),
+                {"data_id": data_id},
             )
             res = cur.fetchone()
             assert res, f"No DNS query found for {url} (id={data_id})"
@@ -122,15 +119,21 @@ async def send_requests(context, args):
                 _id = data_id
             else:
                 _id = dns_id
-            with sqlite3.connect(args.sqlite3_file, isolation_level="IMMEDIATE", autocommit=True) as conn:
+            with db.connect(args.sqlite3_file) as conn:
                 cur = conn.cursor()
                 cur.execute(
                     """
                     INSERT INTO sync (msg_id, data_id, data_type, client_id)
-                    VALUES (?, ?, ?, ?);
+                    VALUES (%(token)s, %(id)s, %(data_type)s, %(client_id)s);
                     """,
-                    (token, _id, data_type, args.client_id),
+                    {
+                        "token": token.hex(),
+                        "id": _id,
+                        "data_type": data_type,
+                        "client_id": str(args.client_id)
+                    },
                 )
+                conn.commit()
             return token
 
         aiocoap.tokenmanager.TokenManager.next_token = next_token
@@ -151,15 +154,17 @@ async def send_requests(context, args):
         )
         request.remote.maximum_block_size_exp = block_exp
         response = await context.request(request).response
-        with sqlite3.connect(args.sqlite3_file, isolation_level="IMMEDIATE", autocommit=True) as conn:
+        with db.connect(args.sqlite3_file) as conn:
             cur = conn.cursor()
             cur.execute(
                 """
                 DELETE FROM sync
-                WHERE data_id = ? AND data_type = 1 AND client_id = ?;
+                WHERE data_id = %(dns_id)s AND data_type = 1
+                    AND client_id = %(client_id)s;
                 """,
-                (dns_id, args.client_id),
+                {"dns_id": dns_id, "client_id": str(args.client_id)},
             )
+            conn.commit()
         assert response.payload, "Server did not provide a response"
         assert response.opt.content_format == coap_server.DNS_CONTENT_FORMATS[
             args.default_dns_type
@@ -201,15 +206,17 @@ async def send_requests(context, args):
         request.opt.uri_host = args.coap_server
         request.remote.maximum_block_size_exp = block_exp
         response = await context.request(request).response
-        with sqlite3.connect(args.sqlite3_file, isolation_level="IMMEDIATE", autocommit=True) as conn:
+        with db.connect(args.sqlite3_file) as conn:
             cur = conn.cursor()
             cur.execute(
                 """
                 DELETE FROM sync
-                WHERE data_id = ? AND data_type = 0 AND client_id = ?;
+                WHERE data_id = %(data_id)s AND data_type = 0
+                    AND client_id = %(client_id)s;
                 """,
-                (data_id, args.client_id),
+                {"data_id": data_id, "client_id": str(args.client_id)},
             )
+            conn.commit()
         print(
             time.time(),
             os.environ.get("WPAN_SIMULATION_PREFIX"),
@@ -270,7 +277,6 @@ async def main():
     )
     parser.add_argument(
         "sqlite3_file",
-        type=lambda arg: coap_server.valid_filename(parser, arg),
         help="The SQLite database containing objects and DNS messages.",
     )
     parser.add_argument(

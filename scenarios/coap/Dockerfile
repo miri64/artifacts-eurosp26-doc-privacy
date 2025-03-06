@@ -7,5 +7,5 @@ COPY requirements.txt ./
 ARG HOST_UID
 ARG HOST_GID
 RUN adduser -Ds /bin/bash user -u "$HOST_UID" -g "$HOST_GID"
-RUN apk --update --no-cache add autoconf automake cargo cython git pkgconf
+RUN apk --update --no-cache add autoconf automake cargo cython git pkgconf postgresql-dev postgresql-libs
 RUN pip --no-cache-dir install --upgrade -r requirements.txt

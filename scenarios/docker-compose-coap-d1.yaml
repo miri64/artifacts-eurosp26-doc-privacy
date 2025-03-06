@@ -1,10 +1,15 @@
 include:
+  - networks/database_backend.yaml
   - networks/wpan_simulation.yaml
 
 name: coap-d1
 
 services:
-  coap-server:
+  db:
+    extends:
+      file: database/database.yaml
+      service: db-base
+  coap-server-global:
     extends:
       file: coap/coap_server.yaml
       service: coap-server-base
@@ -12,6 +17,12 @@ services:
       wpan_simulation:
         aliases:
           - dns-server
+          # need to trick docker-compose to use the hostname over this network instead of
+          # database_backend
+          - coap-server
+    depends_on:
+      db:
+        condition: service_healthy
     environment:
       BIND_PREFIX: "${WPAN_SIMULATION_PREFIX}"
   coap-client:
@@ -34,5 +45,5 @@ services:
       SNIFFER_FILTER: "udp port 5683 or udp port 5684"
       NETWORK_SCENARIO: "coap-d1"
     depends_on:
-      coap-server:
+      coap-server-global:
         condition: service_started

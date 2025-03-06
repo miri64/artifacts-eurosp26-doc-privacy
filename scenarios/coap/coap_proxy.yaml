@@ -1,8 +1,13 @@
+include:
+  - ../networks/database_backend.yaml
+
 services:
   coap-proxy-base:
     extends:
       file: coap.yaml
       service: coap-base
+    networks:
+      - database_backend
     volumes:
       - ../../jsons:/jsons
     environment:

@@ -25,3 +25,10 @@ sudo apt-get update
 
 sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 ```
+
+`database/` and `../jsons/` folder needs read rights for everyone
+
+```sh
+sudo chmod -R o+r services/database/ jsons/
+sudo chmod o+x services/database/ jsons/
+```

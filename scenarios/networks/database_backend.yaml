@@ -1,0 +1,9 @@
+networks:
+  database_backend:
+    enable_ipv4: false
+    enable_ipv6: true
+    driver: bridge
+    ipam:
+      config:
+        - subnet: ${DATABASE_BACKEND_PREFIX}/64
+          gateway: ${DATABASE_BACKEND_PREFIX}1

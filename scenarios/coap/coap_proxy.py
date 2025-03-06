@@ -7,11 +7,11 @@
 
 import argparse
 import asyncio
-import sqlite3
 
 import aiocoap.cli.client
 import aiocoap.proxy.server
 import aiocoap.tokenmanager
+import psycopg2 as db
 
 import coap_server
 
@@ -27,15 +27,15 @@ class Proxy(aiocoap.proxy.server.ForwardProxyWithPooledObservations):
 
         def next_token(inner):
             new_token = self.next_token(inner)
-            with sqlite3.connect(self.database_file, isolation_level="IMMEDIATE", autocommit=True) as conn:
+            with db.connect(self.database_file) as conn:
                 cur = conn.cursor()
                 cur.execute(
                     """
                     UPDATE sync
-                    SET msg_id = ?
-                    WHERE msg_id = ?;
+                    SET msg_id = %(new_token)s
+                    WHERE msg_id = %(old_token)s;
                     """,
-                    (new_token, old_token),
+                    {"new_token": new_token.hex(), "old_token": old_token.hex()},
                 )
                 conn.commit()
             return new_token
@@ -51,7 +51,6 @@ async def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "sqlite3_file",
-        type=lambda arg: coap_server.valid_filename(parser, arg),
         help="The SQLite database containing objects and DNS messages.",
     )
     aiocoap.cli.common.add_server_arguments(parser)

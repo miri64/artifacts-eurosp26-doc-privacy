@@ -8,7 +8,6 @@
 import asyncio
 import argparse
 import pathlib
-import sqlite3
 import sys
 
 import aiocoap
@@ -16,6 +15,8 @@ import aiocoap.cli.common
 import aiocoap.error
 import aiocoap.numbers.constants
 import aiocoap.resource
+import psycopg2 as db
+import psycopg2.errors as db_errors
 
 from aiocoap.numbers import codes
 from aiocoap.numbers.contentformat import ContentFormat
@@ -36,7 +37,7 @@ class Resource(aiocoap.resource.Resource, aiocoap.resource.PathCapable):
         )
 
     def _get_obj(self, request):
-        with sqlite3.connect(self.database_file, isolation_level="IMMEDIATE", autocommit=True) as conn:
+        with db.connect(self.database_file) as conn:
             if self.default_data_type == ContentFormat.JSON:
                 column = "json"
             elif self.default_data_type == ContentFormat.CBOR:
@@ -47,8 +48,12 @@ class Resource(aiocoap.resource.Resource, aiocoap.resource.PathCapable):
                 )
             cur = conn.cursor()
             cur.execute(
-                f"SELECT {column}, http_status FROM synced_objects WHERE msg_id = ?;",
-                (request.token,),
+                f"""
+                SELECT {column}, http_status
+                FROM synced_objects
+                WHERE msg_id = %(id)s;
+                """,
+                {"id": request.token.hex()},
             )
             res = cur.fetchone()
             if res is None:
@@ -73,10 +78,15 @@ class Resource(aiocoap.resource.Resource, aiocoap.resource.PathCapable):
             column = "cbor_response"
         else:
             raise ValueError(f"Unexpected DNS format {resp_content_format}")
-        with sqlite3.connect(self.database_file, isolation_level="IMMEDIATE", autocommit=True) as conn:
+        with db.connect(self.database_file) as conn:
             cur = conn.cursor()
             cur.execute(
-                f"SELECT {column} FROM synced_dns WHERE msg_id = ?;", (request.token,),
+                f"""
+                SELECT {column}
+                FROM synced_dns
+                WHERE msg_id = %(id)s;
+                """,
+                {"id": request.token.hex()},
             )
             res = cur.fetchone()
             if res is None:
@@ -135,22 +145,29 @@ def valid_filename(parser, arg):
 
 
 def ensure_database_views(database_file):
-    with sqlite3.connect(database_file, isolation_level="IMMEDIATE", autocommit=True) as conn:
+    if db.__name__ == "psycopg2":
+        create_view_cmd = "CREATE OR REPLACE VIEW"
+    elif db.__name__ == "sqlite3":
+        create_view_cmd = "CREATE VIEW IF NOT EXISTS"
+    with db.connect(database_file) as conn:
         cur = conn.cursor()
-        cur.execute(
-            """
-            CREATE TABLE IF NOT EXISTS sync (
-                id INTEGER PRIMARY_KEY,
-                msg_id TEXT NOT NULL,
-                data_id INTEGER NOT NULL,
-                data_type INTEGER NOT NULL,
-                client_id TEXT NOT NULL
-            );"""
-        )
+        try:
+            cur.execute(
+                """
+                CREATE TABLE IF NOT EXISTS sync (
+                    id SERIAL PRIMARY KEY,
+                    msg_id TEXT NOT NULL,
+                    data_id INTEGER NOT NULL,
+                    data_type INTEGER NOT NULL,
+                    client_id TEXT NOT NULL
+                );"""
+            )
+        except db_errors.DuplicateTable:
+            pass
         cur.execute("CREATE INDEX IF NOT EXISTS sync_msg_id ON sync (msg_id);")
         cur.execute(
-            """
-            CREATE VIEW IF NOT EXISTS synced_objects AS
+            f"""
+            {create_view_cmd} synced_objects AS
             SELECT
                 objects.url AS url,
                 objects.id AS object_id,
@@ -166,8 +183,8 @@ def ensure_database_views(database_file):
             INNER JOIN sync ON objects.id = sync.data_id AND sync.data_type = 0;"""
         )
         cur.execute(
-            """
-            CREATE VIEW IF NOT EXISTS synced_dns AS
+            f"""
+            {create_view_cmd} synced_dns AS
             SELECT
                 dns.url AS url,
                 dns.id AS dns_id,
@@ -186,13 +203,13 @@ def ensure_database_views(database_file):
             FROM dns
             INNER JOIN sync ON dns.id = sync.data_id AND sync.data_type = 1;"""
         )
+        conn.commit()
 
 
 async def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "sqlite3_file",
-        type=lambda arg: valid_filename(parser, arg),
         help="The SQLite database containing objects and DNS messages.",
     )
     parser.add_argument(

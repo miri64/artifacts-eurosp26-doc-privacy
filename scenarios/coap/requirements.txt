@@ -1,1 +1,2 @@
 aiocoap[all] @ git+https://codeberg.org/aiocoap/aiocoap.git@main
+psycopg2

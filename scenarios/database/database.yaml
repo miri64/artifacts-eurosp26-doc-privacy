@@ -1,0 +1,25 @@
+include:
+  - ../networks/database_backend.yaml
+
+services:
+  db-base:
+    image: postgres:17.4-alpine3.21
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    shm_size: 128mb
+    environment:
+      POSTGRES_PASSWORD: "not_a_big_secret"
+    networks:
+      - database_backend
+    volumes:
+      - .:/docker-entrypoint-initdb.d/
+      - ../../jsons:/sqlite/
+    healthcheck:
+      test: ["CMD", "psql", "-v", "ON_ERROR_STOP=1", "--username", 'postgres', "--dbname", 'postgres', "SELECT COUNT(*) FROM objects;"]
+      interval: 10m
+      timeout: 10s
+      retries: 5
+      start_period: 2m
+      start_interval: 15s

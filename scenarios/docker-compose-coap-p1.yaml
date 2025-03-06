@@ -1,11 +1,16 @@
 include:
+  - networks/database_backend.yaml
   - networks/wpan_simulation.yaml
   - networks/upstream.yaml
 
 name: coap-p1
 
 services:
-  coap-server:
+  db:
+    extends:
+      file: database/database.yaml
+      service: db-base
+  coap-server-global:
     extends:
       file: coap/coap_server.yaml
       service: coap-server-base
@@ -13,19 +18,29 @@ services:
       upstream:
         aliases:
           - dns-server
+          # need to trick docker-compose to use the hostname over this network instead of
+          # database_backend
+          - coap-server
     environment:
       BIND_PREFIX: "${UPSTREAM_PREFIX}"
-  coap-proxy:
+    depends_on:
+      db:
+        condition: service_healthy
+  coap-proxy-global:
     extends:
       file: coap/coap_proxy.yaml
       service: coap-proxy-base
     networks:
-      - upstream
-      - wpan_simulation
+      upstream:
+      wpan_simulation:
+        aliases:
+          # need to trick docker-compose to use the hostname over this network instead of
+          # database_backend
+          - coap-proxy
     environment:
       BIND_PREFIX: "${WPAN_SIMULATION_PREFIX}"
     depends_on:
-      coap-server:
+      coap-server-global:
         condition: service_started
   coap-client:
     extends:
@@ -48,7 +63,7 @@ services:
       SNIFFER_FILTER: "udp port 5683 or udp port 5684"
       NETWORK_SCENARIO: "coap-p1"
     depends_on:
-      coap-proxy:
+      coap-proxy-global:
         condition: service_started
   sniffer-upstream:
     extends:
@@ -59,5 +74,5 @@ services:
       SNIFFER_FILTER: "udp port 5683 or udp port 5684"
       NETWORK_SCENARIO: "coap-p1"
     depends_on:
-      coap-server:
+      coap-server-global:
         condition: service_started
