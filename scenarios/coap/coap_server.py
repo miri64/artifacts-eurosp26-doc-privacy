@@ -135,82 +135,11 @@ class Resource(aiocoap.resource.Resource, aiocoap.resource.PathCapable):
         return self._render_response(request)
 
 
-def valid_filename(parser, arg):
-    path = pathlib.Path(arg)
-    if path.exists():
-        return path
-    parser.error(
-        f"The file “{arg}” does not ex39c9788e-77a9-44db-a92b-946e2483fd16ist!"
-    )
-
-
-def ensure_database_views(database_file):
-    if db.__name__ == "psycopg2":
-        create_view_cmd = "CREATE OR REPLACE VIEW"
-    elif db.__name__ == "sqlite3":
-        create_view_cmd = "CREATE VIEW IF NOT EXISTS"
-    with db.connect(database_file) as conn:
-        cur = conn.cursor()
-        try:
-            cur.execute(
-                """
-                CREATE TABLE IF NOT EXISTS sync (
-                    id SERIAL PRIMARY KEY,
-                    msg_id TEXT NOT NULL,
-                    data_id INTEGER NOT NULL,
-                    data_type INTEGER NOT NULL,
-                    client_id TEXT NOT NULL
-                );"""
-            )
-        except db_errors.DuplicateTable:
-            pass
-        cur.execute("CREATE INDEX IF NOT EXISTS sync_msg_id ON sync (msg_id);")
-        cur.execute(
-            f"""
-            {create_view_cmd} synced_objects AS
-            SELECT
-                objects.url AS url,
-                objects.id AS object_id,
-                sync.id AS sync_id,
-                msg_id,
-                http_status,
-                json,
-                cbor,
-                json_query,
-                url_wo_query,
-                cbor_query
-            FROM objects
-            INNER JOIN sync ON objects.id = sync.data_id AND sync.data_type = 0;"""
-        )
-        cur.execute(
-            f"""
-            {create_view_cmd} synced_dns AS
-            SELECT
-                dns.url AS url,
-                dns.id AS dns_id,
-                sync.id AS sync_id,
-                msg_id,
-                name
-                type,
-                query_add_names,
-                query_add_types,
-                classic_query,
-                cbor_query,
-                response_names,
-                response_types,
-                classic_response,
-                cbor_response
-            FROM dns
-            INNER JOIN sync ON dns.id = sync.data_id AND sync.data_type = 1;"""
-        )
-        conn.commit()
-
-
 async def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "sqlite3_file",
-        help="The SQLite database containing objects and DNS messages.",
+        "db_uri",
+        help="The URI to the database containing objects and DNS messages.",
     )
     parser.add_argument(
         "default_data_type",
@@ -220,9 +149,8 @@ async def main():
     aiocoap.cli.common.add_server_arguments(parser)
     args = parser.parse_args()
 
-    ensure_database_views(args.sqlite3_file)
     site = Resource(
-        args.sqlite3_file,
+        args.db_uri,
         args.default_data_type,
     )
     await aiocoap.cli.common.server_context_from_arguments(site, args)

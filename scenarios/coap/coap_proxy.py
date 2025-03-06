@@ -14,8 +14,6 @@ import aiocoap.proxy.server
 import aiocoap.tokenmanager
 import psycopg2 as db
 
-import coap_server
-
 
 class Proxy(aiocoap.proxy.server.ForwardProxyWithPooledObservations):
     def __init__(self, database_file, *args, **kwargs):
@@ -51,13 +49,12 @@ class Proxy(aiocoap.proxy.server.ForwardProxyWithPooledObservations):
 async def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "sqlite3_file",
-        help="The SQLite database containing objects and DNS messages.",
+        "db_uri",
+        help="The URI to the database containing objects and DNS messages.",
     )
     aiocoap.cli.common.add_server_arguments(parser)
     args = parser.parse_args()
 
-    coap_server.ensure_database_views(args.sqlite3_file)
     outgoing_context = await aiocoap.Context.create_client_context()
     try:
         if args.credentials:
@@ -66,7 +63,7 @@ async def main():
                 args.credentials,
                 parser.error,
             )
-        proxy = Proxy(args.sqlite3_file, outgoing_context)
+        proxy = Proxy(args.db_uri, outgoing_context)
         await aiocoap.cli.common.server_context_from_arguments(proxy, args)
         await asyncio.get_running_loop().create_future()
     finally:

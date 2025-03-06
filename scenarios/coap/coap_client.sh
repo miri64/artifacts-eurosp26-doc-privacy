@@ -38,7 +38,7 @@ fi
 LOGFILE="/dumps/${NETWORK_SCENARIO}_${DATA_FORMAT_LOG}_${DNS_FORMAT_LOG}${BLOCK_SIZE_LOG}.client.log"
 
 "${SCRIPT_DIR}"/coap_client.py ${BLOCK_SIZE} ${PROXY} ${SECURITY} ${CLIENT_CREDENTIALS} \
-    "${DATABASE_FILE}" \
+    "${DATABASE_URI}" \
     "${DATA_FORMAT}" \
     "${DNS_FORMAT}" \
     "${COAP_SERVER}" \

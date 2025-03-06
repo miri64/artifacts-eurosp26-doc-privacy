@@ -17,7 +17,7 @@ services:
       SERVER_CREDENTIALS: "${SERVER_CREDENTIALS:-}"
       DATA_FORMAT: "${DATA_FORMAT}"
       DNS_FORMAT: "${DNS_FORMAT}"
-      DATABASE_FILE: "${DATABASE_FILE}"
+      DATABASE_URI: "${DATABASE_URI}"
       AIOCOAP_DTLSSERVER_ENABLED: "yes"
     command: |
       /app/coap/coap_server.sh

@@ -73,10 +73,10 @@ async def send_requests(context, args):
             f"{scheme}://{args.proxy}", context
         )
 
-    with db.connect(args.sqlite3_file) as conn:
+    with db.connect(args.db_uri) as conn:
         cur = conn.cursor()
         cur.execute(
-            f"SELECT id, url, {query_column}, url_wo_query FROM objects;"
+            f"SELECT id, url, {query_column}, url_wo_query FROM objects LIMIT 10;"
         )
         rows = cur.fetchall()
     print(
@@ -96,7 +96,7 @@ async def send_requests(context, args):
         start = time.time()
 
         data_type = 1
-        with db.connect(args.sqlite3_file) as conn:
+        with db.connect(args.db_uri) as conn:
             cur = conn.cursor()
             cur.execute(
                 f"""
@@ -119,7 +119,7 @@ async def send_requests(context, args):
                 _id = data_id
             else:
                 _id = dns_id
-            with db.connect(args.sqlite3_file) as conn:
+            with db.connect(args.db_uri) as conn:
                 cur = conn.cursor()
                 cur.execute(
                     """
@@ -154,7 +154,7 @@ async def send_requests(context, args):
         )
         request.remote.maximum_block_size_exp = block_exp
         response = await context.request(request).response
-        with db.connect(args.sqlite3_file) as conn:
+        with db.connect(args.db_uri) as conn:
             cur = conn.cursor()
             cur.execute(
                 """
@@ -206,7 +206,7 @@ async def send_requests(context, args):
         request.opt.uri_host = args.coap_server
         request.remote.maximum_block_size_exp = block_exp
         response = await context.request(request).response
-        with db.connect(args.sqlite3_file) as conn:
+        with db.connect(args.db_uri) as conn:
             cur = conn.cursor()
             cur.execute(
                 """
@@ -233,6 +233,15 @@ async def send_requests(context, args):
         stop = time.time()
         if args.delay > 0 and (stop - start) < args.delay:
             await asyncio.sleep(args.delay - (stop - start))
+
+
+def valid_filename(parser, arg):
+    path = pathlib.Path(arg)
+    if path.exists():
+        return path
+    parser.error(
+        f"The file “{arg}” does not ex39c9788e-77a9-44db-a92b-946e2483fd16ist!"
+    )
 
 
 async def main():
@@ -273,11 +282,11 @@ async def main():
     parser.add_argument(
         "--credentials",
         help="Load credentials to use from a given file",
-        type=lambda arg: coap_server.valid_filename(parser, arg),
+        type=lambda arg: valid_filename(parser, arg),
     )
     parser.add_argument(
-        "sqlite3_file",
-        help="The SQLite database containing objects and DNS messages.",
+        "db_uri",
+        help="The URI to the database containing objects and DNS messages.",
     )
     parser.add_argument(
         "default_data_type",
@@ -302,8 +311,6 @@ async def main():
         "dns_server",
     )
     args = parser.parse_args()
-
-    coap_server.ensure_database_views(args.sqlite3_file)
 
     context = await aiocoap.Context.create_client_context()
     try:
