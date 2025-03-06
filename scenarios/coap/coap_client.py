@@ -76,7 +76,7 @@ async def send_requests(context, args):
     with db.connect(args.db_uri) as conn:
         cur = conn.cursor()
         cur.execute(
-            f"SELECT id, url, {query_column}, url_wo_query FROM objects LIMIT 10;"
+            f"SELECT id, url, {query_column}, url_wo_query FROM objects;"
         )
         rows = cur.fetchall()
     print(
