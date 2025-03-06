@@ -52,6 +52,39 @@ kill_docker() {
 
 trap kill_docker SIGHUP SIGTERM SIGINT SIGQUIT SIGABRT
 
+if [ "$1" = "--build" ]; then
+    docker system prune -f
+
+    for l2 in "${LINK_LAYERS[@]}"; do
+        PREFIX_HINT_1=6
+        for prot in "${PROTOCOLS[@]}"; do
+            if [ "$prot" != "coap" -a "$sec" != "dtls" ]; then
+                continue
+            fi
+            PREFIX_HINT_2=0
+            for setup in "${NETWORK_SETUPS[@]}"; do
+                setup_iface=$(echo "${setup}" | sed -E -e 's/([dp])1/\1i/g' -e 's/([dp])2/\1ii/g')
+                l2_iface=$(echo "${l2}" | sed -E -e 's/-//g' -e 's/schc/0/g')
+                export DATABASE_BACKEND_PREFIX="fd00:${PREFIX_HINT_1}b${PREFIX_HINT_2}6::"
+                export WPAN_SIMULATION_NAME="${prot}${l2}-${setup}-wpan-simulation"
+                export WPAN_SIMULATION_IFACE="${prot}${l2_iface}${setup}_wpan"
+                export WPAN_SIMULATION_PREFIX="fdd8:${PREFIX_HINT_1}b${PREFIX_HINT_2}6:eccc::"
+                export UPSTREAM_NAME="${prot}${l2}-${setup}-upstream"
+                export UPSTREAM_IFACE="${prot}${l2_iface}${setup}_upstream"
+                export UPSTREAM_PREFIX="fdd8:${PREFIX_HINT_1}b${PREFIX_HINT_2}6:ecc0::"
+                    COMPOSE_BAKE=true DATA_FORMAT=application/cbor DNS_FORMAT=application/dns+cbor \
+                    docker compose --env-file "${MAIN_ENV}" \
+                        ${ADDITIONAL_OPTS} \
+                        -f "${SCRIPT_DIR}/docker-compose-${prot}${l2}-${setup}.yaml" build
+                    PREFIX_HINT_2=$(( PREFIX_HINT_2 + 1 ))
+            done
+            PREFIX_HINT_1=$(( PREFIX_HINT_1 + 1 ))
+        done
+    done
+
+    docker image prune -f
+fi 
+
 for data_env in "${DATA_ENVS[@]}"; do
     for dns_env in "${DNS_ENVS[@]}"; do
         for sec in "${SECURITIES[@]}"; do
