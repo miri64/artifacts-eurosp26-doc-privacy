@@ -9,6 +9,7 @@ import argparse
 import asyncio
 
 import aiocoap.cli.client
+import aiocoap.cli.common
 import aiocoap.proxy.server
 import aiocoap.tokenmanager
 import psycopg2 as db
