@@ -8,8 +8,8 @@
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "$(realpath "$0")" )" &> /dev/null && pwd )
 
-export HOST_GID=$(id | sed -E 's/.*gid=([0-9]+).*$/\1/')
-export HOST_UID=$(id | sed -E 's/.*uid=([0-9]+).*$/\1/')
+export HOST_GID=$(id -g)
+export HOST_UID=$(id -u)
 
 MAIN_ENV="${SCRIPT_DIR}"/.env
 DATA_ENVS=(
