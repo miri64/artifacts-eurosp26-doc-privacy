@@ -11,6 +11,9 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "$(realpath "$0")" )" &> /dev/null && pwd )
 export HOST_GID=$(id -g)
 export HOST_UID=$(id -u)
 
+chmod -R o+r ${SCRIPT_DIR}/database/ ${SCRIPT_DIR}/../jsons/
+chmod o+x ${SCRIPT_DIR}/database/ ${SCRIPT_DIR}/../jsons/
+
 MAIN_ENV="${SCRIPT_DIR}"/.env
 DATA_ENVS=(
     "${SCRIPT_DIR}"/.json.env
@@ -47,6 +50,7 @@ kill_docker() {
         kill -SIGTERM "${pid}"
         tail --pid="${pid}" -f /dev/null
     done
+    reset
     exit
 }
 
