@@ -43,6 +43,7 @@ services:
       service: sniffer-base
     environment:
       SNIFFER_IFACE: "${WPAN_SIMULATION_IFACE}"
+      SNIFFER_LOGNAME: wpan
       SNIFFER_FILTER: "udp port 5683 or udp port 5684"
       NETWORK_SCENARIO: "coap-d1"
     depends_on:

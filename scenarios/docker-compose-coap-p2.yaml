@@ -79,6 +79,7 @@ services:
       service: sniffer-base
     environment:
       SNIFFER_IFACE: "${WPAN_SIMULATION_IFACE}"
+      SNIFFER_LOGNAME: wpan
       SNIFFER_FILTER: "udp port 5683 or udp port 5684"
       NETWORK_SCENARIO: "coap-p2"
     depends_on:
@@ -90,6 +91,7 @@ services:
       service: sniffer-base
     environment:
       SNIFFER_IFACE: "${UPSTREAM_IFACE}"
+      SNIFFER_LOGNAME: upstream
       SNIFFER_FILTER: "udp port 5683 or udp port 5684"
       NETWORK_SCENARIO: "coap-p2"
     depends_on:
