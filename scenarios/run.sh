@@ -1,6 +1,6 @@
 #! /bin/bash
 #
-# coap_server.sh
+# run.sh
 # Copyright (C) 2025 TU Dresden
 #
 # Distributed under terms of the MIT license.
