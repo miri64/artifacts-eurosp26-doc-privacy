@@ -25,10 +25,15 @@ fi
 
 LOGFILE="/dumps/${NETWORK_SCENARIO}_${DATA_FORMAT}_${DNS_FORMAT}${BLOCK_SIZE}.proxy.log"
 
+chown_logs() {
+    chown user: "${LOGFILE}" "${LOGFILE%.log}.stderr.log"
+}
+
+trap chown_logs SIGEXIT SIGHUP SIGTERM SIGINT SIGQUIT SIGABRT SIGKILL
+
 BIND_ADDRESS="$(ip addr | grep -oE "${BIND_PREFIX}[0-9:]+")"
 "${SCRIPT_DIR}"/coap_proxy.py --bind "[${BIND_ADDRESS}]" ${PROXY_CREDENTIALS} \
     "${DATABASE_URI}" \
     > "${LOGFILE}" 2> "${LOGFILE%.log}.stderr.log"
 ERROR="$?"
-chown user: "${LOGFILE}" "${LOGFILE%.log}.stderr.log"
 exit "${ERROR}"

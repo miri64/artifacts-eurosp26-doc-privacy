@@ -25,11 +25,16 @@ fi
 
 LOGFILE="/dumps/${NETWORK_SCENARIO}_${DATA_FORMAT_LOG}_${DNS_FORMAT_LOG}${BLOCK_SIZE}.server.log"
 
+chown_logs() {
+    chown user: "${LOGFILE}" "${LOGFILE%.log}.stderr.log"
+}
+
+trap chown_logs SIGEXIT SIGHUP SIGTERM SIGINT SIGQUIT SIGABRT SIGKILL
+
 BIND_ADDRESS="$(ip addr | grep -oE "${BIND_PREFIX}[0-9:]+")"
 "${SCRIPT_DIR}"/coap_server.py --bind "[${BIND_ADDRESS}]" ${SERVER_CREDENTIALS} \
     "${DATABASE_URI}" \
     "${DATA_FORMAT}" \
     > "${LOGFILE}" 2> "${LOGFILE%.log}.stderr.log"
 ERROR="$?"
-chown user: "${LOGFILE}" "${LOGFILE%.log}.stderr.log"
 exit "${ERROR}"

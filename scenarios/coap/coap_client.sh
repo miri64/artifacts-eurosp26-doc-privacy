@@ -37,6 +37,12 @@ fi
 
 LOGFILE="/dumps/${NETWORK_SCENARIO}_${DATA_FORMAT_LOG}_${DNS_FORMAT_LOG}${BLOCK_SIZE_LOG}.client.log"
 
+chown_logs() {
+    chown user: "${LOGFILE}" "${LOGFILE%.log}.stderr.log"
+}
+
+trap chown_logs SIGEXIT SIGHUP SIGTERM SIGINT SIGQUIT SIGABRT SIGKILL
+
 "${SCRIPT_DIR}"/coap_client.py ${BLOCK_SIZE} ${PROXY} ${SECURITY} ${CLIENT_CREDENTIALS} \
     "${DATABASE_URI}" \
     "${DATA_FORMAT}" \
@@ -45,5 +51,4 @@ LOGFILE="/dumps/${NETWORK_SCENARIO}_${DATA_FORMAT_LOG}_${DNS_FORMAT_LOG}${BLOCK_
     "${DNS_SERVER}" \
     > "${LOGFILE}" 2> "${LOGFILE%.log}.stderr.log"
 ERROR="$?"
-chown user: "${LOGFILE}" "${LOGFILE%.log}.stderr.log"
 exit "${ERROR}"
