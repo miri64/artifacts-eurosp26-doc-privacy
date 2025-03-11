@@ -23,7 +23,7 @@ DNS_ENVS=(
     "${SCRIPT_DIR}"/.dns-msg.env
     "${SCRIPT_DIR}"/.dns-cbor.env
 )
-SECURITIES=("dtls")
+SECURITIES=("transport", "object")
 LINK_LAYERS=(
     ""
     # "schc" 
@@ -62,9 +62,6 @@ if [ "$1" = "--build" ]; then
     for l2 in "${LINK_LAYERS[@]}"; do
         PREFIX_HINT_1=6
         for prot in "${PROTOCOLS[@]}"; do
-            if [ "$prot" != "coap" -a "$sec" != "dtls" ]; then
-                continue
-            fi
             PREFIX_HINT_2=0
             for setup in "${NETWORK_SETUPS[@]}"; do
                 setup_iface=$(echo "${setup}" | sed -E -e 's/([dp])1/\1i/g' -e 's/([dp])2/\1ii/g')
@@ -95,7 +92,7 @@ for data_env in "${DATA_ENVS[@]}"; do
             for l2 in "${LINK_LAYERS[@]}"; do
                 PREFIX_HINT_1=6
                 for prot in "${PROTOCOLS[@]}"; do
-                    if [ "$prot" != "coap" -a "$sec" != "dtls" ]; then
+                    if [ "$prot" != "coap" -a "$sec" != "transport" ]; then
                         continue
                     fi
                     for block in "${BLOCKWISE}"; do
@@ -115,8 +112,11 @@ for data_env in "${DATA_ENVS[@]}"; do
                             if [ "$prot" != "coap" -a -n "$block" ]; then
                                 continue
                             fi
-                            if [ "${sec}" = "dtls" ]; then
+                            if [ "${sec}" = "transport" ]; then
                                 ADDITIONAL_OPTS="${ADDITIONAL_OPTS} --env-file "${SCRIPT_DIR}"/.dtls.env"
+                            fi
+                            if [ "${sec}" = "object" ]; then
+                                ADDITIONAL_OPTS="${ADDITIONAL_OPTS} --env-file "${SCRIPT_DIR}"/.oscore.env"
                             fi
                             if [ "${block}" = "block" ]; then
                                 ADDITIONAL_OPTS="${ADDITIONAL_OPTS} --env-file "${SCRIPT_DIR}"/.block.env"
