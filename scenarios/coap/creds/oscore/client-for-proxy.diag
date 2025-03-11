@@ -1,0 +1,7 @@
+{
+  "coap://*": {
+    "oscore": {
+      "basedir": "/creds/oscore/client/for-proxy/"
+    }
+  }
+}

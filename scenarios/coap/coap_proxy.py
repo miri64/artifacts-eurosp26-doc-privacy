@@ -10,6 +10,7 @@ import asyncio
 
 import aiocoap.cli.client
 import aiocoap.cli.common
+import aiocoap.oscore
 import aiocoap.proxy.server
 import aiocoap.tokenmanager
 import psycopg2 as db
@@ -71,4 +72,14 @@ async def main():
 
 
 if __name__ == "__main__":
+    orig_unprotect = aiocoap.oscore.CanUnprotect.unprotect
+
+    def unprotect(self, protected_message, request_id=None):
+        unprotected_message, request_id = orig_unprotect(
+            self, protected_message, request_id
+        )
+        unprotected_message.token = protected_message.token
+        return unprotected_message, request_id
+
+    aiocoap.oscore.CanUnprotect.unprotect = unprotect
     asyncio.run(main())

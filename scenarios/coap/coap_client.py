@@ -28,6 +28,12 @@ from aiocoap.optiontypes import BlockOption
 import coap_server
 
 
+class OSCOREProxyForwarder(aiocoap.proxy.client.ProxyForwarder):
+    def request(self, message, **kwargs):
+        message.is_inner = False
+        return super().request(message, **kwargs)
+
+
 def block_exp_from_block_size(block_size):
     if block_size < 16:
         return 0
@@ -36,7 +42,7 @@ def block_exp_from_block_size(block_size):
     return int(math.log2(block_size // 16))
 
 
-async def send_requests(context, args):
+async def send_requests(context, args, parser):
     tm_next_token = aiocoap.tokenmanager.TokenManager.next_token
 
     if args.block_size is not None:
@@ -70,8 +76,40 @@ async def send_requests(context, args):
         scheme = "coap"
 
     if args.proxy:
-        context = aiocoap.proxy.client.ProxyForwarder(
-            f"{scheme}://{args.proxy}", context
+        if args.security == "oscore":
+            assert args.credentials and args.proxy_credentials
+            aiocoap.cli.client.apply_credentials(
+                context,
+                args.proxy_credentials,
+                parser.error,
+            )
+            proxy_context = OSCOREProxyForwarder(
+                f"{scheme}://{args.proxy}", context
+            )
+            context = await aiocoap.Context.create_client_context()
+            for ri in context.request_interfaces:
+                if isinstance(ri, aiocoap.transports.oscore.TransportOSCORE):
+                    ri._wire = proxy_context
+            aiocoap.cli.client.apply_credentials(
+                context,
+                args.credentials,
+                parser.error,
+            )
+        else:
+            if args.credentials:
+                aiocoap.cli.client.apply_credentials(
+                    context,
+                    args.credentials,
+                    parser.error,
+                )
+            context = aiocoap.proxy.client.ProxyForwarder(
+                f"{scheme}://{args.proxy}", context
+            )
+    elif args.credentials:
+        aiocoap.cli.client.apply_credentials(
+            context,
+            args.credentials,
+            parser.error,
         )
 
     with db.connect(args.db_uri) as conn:
@@ -153,6 +191,8 @@ async def send_requests(context, args):
             content_format=coap_server.DNS_CONTENT_FORMATS[dns_content_format],
             block2=block2,
         )
+        if args.security == "oscore":
+            request.is_inner = True
         request.remote.maximum_block_size_exp = block_exp
         response = await context.request(request).response
         with db.connect(args.db_uri) as conn:
@@ -204,6 +244,8 @@ async def send_requests(context, args):
             scheme,
             args.coap_server,
         )
+        if args.security == "oscore":
+            request.is_inner = True
         request.opt.uri_host = args.coap_server
         request.remote.maximum_block_size_exp = block_exp
         response = await context.request(request).response
@@ -286,6 +328,12 @@ async def main():
         type=lambda arg: valid_filename(parser, arg),
     )
     parser.add_argument(
+        "--proxy-credentials",
+        help="Load proxy credentials to use from a given file. "
+        "Only used when --proxy is set and --security is \"oscore\".",
+        type=lambda arg: valid_filename(parser, arg),
+    )
+    parser.add_argument(
         "db_uri",
         help="The URI to the database containing objects and DNS messages.",
     )
@@ -326,13 +374,7 @@ async def main():
     aiocoap.oscore.CanProtect.protect = protect
     context = await aiocoap.Context.create_client_context()
     try:
-        if args.credentials:
-            aiocoap.cli.client.apply_credentials(
-                context,
-                args.credentials,
-                parser.error,
-            )
-        await send_requests(context, args)
+        await send_requests(context, args, parser)
     finally:
         await context.shutdown()
 

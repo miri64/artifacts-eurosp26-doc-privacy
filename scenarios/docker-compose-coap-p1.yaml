@@ -53,6 +53,7 @@ services:
       sniffer-wpan:
         condition: service_started
     environment:
+      CLIENT_PROXY_CREDENTIALS: "${CLIENT_PROXY_CREDENTIALS:-}"
       PROXY: "coap-proxy"
       COAP_SERVER: "coap-server"
       DNS_SERVER: "coap-server"

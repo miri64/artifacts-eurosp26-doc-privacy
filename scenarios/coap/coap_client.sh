@@ -38,9 +38,16 @@ elif [ "${SECURITY}" = "oscore" ]; then
         echo "OSCORE configured as security but no credentials provided" >&2
         exit 1
     fi
+    if [ -n "${PROXY}" ] && [ -z "${CLIENT_PROXY_CREDENTIALS}" ]; then
+        echo "OSCORE-capable proxy configured as security but no proxy credentials provided" >&2
+        exit 1
+    fi
     NETWORK_SCENARIO="$(echo "${NETWORK_SCENARIO}" | sed 's/coap/oscore/g')"
     SECURITY="-s ${SECURITY}"
     CLIENT_CREDENTIALS="--credentials ${CLIENT_CREDENTIALS}"
+    if [ -n "${PROXY}" ] && [ -n "${CLIENT_PROXY_CREDENTIALS}" ]; then
+        CLIENT_PROXY_CREDENTIALS="--proxy-credentials ${CLIENT_PROXY_CREDENTIALS}"
+    fi
     cp -r "${SCRIPT_DIR}"/creds/oscore /creds/
     chown -R root: /creds/oscore
 fi
@@ -53,7 +60,8 @@ chown_logs() {
 
 trap chown_logs SIGEXIT SIGHUP SIGTERM SIGINT SIGQUIT SIGABRT SIGKILL
 
-"${SCRIPT_DIR}"/coap_client.py ${BLOCK_SIZE} ${PROXY} ${SECURITY} ${CLIENT_CREDENTIALS} \
+"${SCRIPT_DIR}"/coap_client.py ${BLOCK_SIZE} \
+    ${PROXY} ${SECURITY} ${CLIENT_CREDENTIALS} ${CLIENT_PROXY_CREDENTIALS} \
     "${DATABASE_URI}" \
     "${DATA_FORMAT}" \
     "${DNS_FORMAT}" \
