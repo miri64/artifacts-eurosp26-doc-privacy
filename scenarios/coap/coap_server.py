@@ -30,14 +30,14 @@ DNS_CONTENT_FORMATS = {
 
 
 class Resource(aiocoap.resource.Resource, aiocoap.resource.PathCapable):
-    def __init__(self, database_file, default_data_type):
-        self.database_file = database_file
+    def __init__(self, database_uri, default_data_type):
+        self.database_uri = database_uri
         self.default_data_type = (
             aiocoap.numbers.contentformat.ContentFormat.by_media_type(default_data_type)
         )
 
     def _get_obj(self, request):
-        with db.connect(self.database_file) as conn:
+        with db.connect(self.database_uri) as conn:
             if self.default_data_type == ContentFormat.JSON:
                 column = "json"
             elif self.default_data_type == ContentFormat.CBOR:
@@ -78,7 +78,7 @@ class Resource(aiocoap.resource.Resource, aiocoap.resource.PathCapable):
             column = "cbor_response"
         else:
             raise ValueError(f"Unexpected DNS format {resp_content_format}")
-        with db.connect(self.database_file) as conn:
+        with db.connect(self.database_uri) as conn:
             cur = conn.cursor()
             cur.execute(
                 f"""

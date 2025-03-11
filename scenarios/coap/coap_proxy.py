@@ -16,9 +16,9 @@ import psycopg2 as db
 
 
 class Proxy(aiocoap.proxy.server.ForwardProxyWithPooledObservations):
-    def __init__(self, database_file, *args, **kwargs):
+    def __init__(self, database_uri, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.database_file = database_file
+        self.database_uri = database_uri
         self.next_token = aiocoap.tokenmanager.TokenManager.next_token
 
     async def render(self, request):
@@ -26,7 +26,7 @@ class Proxy(aiocoap.proxy.server.ForwardProxyWithPooledObservations):
 
         def next_token(inner):
             new_token = self.next_token(inner)
-            with db.connect(self.database_file) as conn:
+            with db.connect(self.database_uri) as conn:
                 cur = conn.cursor()
                 cur.execute(
                     """
