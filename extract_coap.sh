@@ -13,4 +13,14 @@ fi
 
 PCAP="$1"
 
-tshark -Tfields -e frame.number -e frame.protocols -e coap.code -e coap.opt.ctype -e coap.opt.block_number -e coap.opt.block_mflag -e coap.opt.block_size -r "${PCAP}"
+FIELDS="frame.number frame.time_epoch frame.protocols"
+FIELDS="${FIELDS} coap.code coap.token coap.opt.ctype coap.opt.block_number coap.opt.block_mflag coap.opt.block_size"
+
+if echo "$PCAP" | grep -q "oscore"; then
+    FIELDS="${FIELDS} oscore.code oscore.opt.ctype oscore.opt.block_number oscore.opt.block_mflag oscore.opt.block_size"
+fi
+
+
+echo "${FIELDS}" | \
+    awk 'BEGIN {OFS="\t"} { for (i = 1; i <= NF; i++) { printf "%s%s", $i, (i < NF) ? OFS : ORS } }'
+tshark -Tfields $(for field in ${FIELDS}; do printf -- "-e %s " "${field}"; done) -r "${PCAP}"

@@ -13,4 +13,5 @@ fi
 
 PCAP="$1"
 
-tshark -Tfields -e frame.number -e data --disable-protocol ALL --enable-protocol eth -r "${PCAP}"
+echo "frame.number\tframe.time_epoch\teth.payload"
+tshark -Tfields -e frame.number -e frame.time_epoch -e data --disable-protocol ALL --enable-protocol eth -r "${PCAP}"
