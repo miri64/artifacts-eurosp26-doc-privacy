@@ -56,7 +56,7 @@ kill_docker() {
 
 trap kill_docker SIGHUP SIGTERM SIGINT SIGQUIT SIGABRT
 
-if [ "$1" = "--build" ]; then
+if [ "$1" = "--build" ] || ! docker image ls | grep -q "pivot-eval/"; then
     docker system prune -f
 
     for l2 in "${LINK_LAYERS[@]}"; do
