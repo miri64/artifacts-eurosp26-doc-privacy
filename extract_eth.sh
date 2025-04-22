@@ -13,5 +13,7 @@ fi
 
 PCAP="$1"
 
-echo "frame.number\tframe.time_epoch\teth.payload"
+FIELDS="frame.number frame.time_epoch eth.payload"
+echo "${FIELDS}" | \
+    awk 'BEGIN {OFS="\t"} { for (i = 1; i <= NF; i++) { printf "%s%s", $i, (i < NF) ? OFS : ORS } }'
 tshark -Tfields -e frame.number -e frame.time_epoch -e data --disable-protocol ALL --enable-protocol eth -r "${PCAP}"
