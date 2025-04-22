@@ -6,4 +6,4 @@
 # Distributed under terms of the MIT license.
 #
 
-rsync --partial --progress -avz output_dataset/ male646f@dgw.zih.tu-dresden.de:/glw/netdresdat/private-dns-constrained-eval-mlenders/
+rsync --exclude .gitignore --partial --progress -avz output_dataset/ male646f@dgw.zih.tu-dresden.de:/glw/netdresdat/private-dns-constrained-eval-mlenders/
