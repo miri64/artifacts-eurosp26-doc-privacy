@@ -114,9 +114,11 @@ for data_env in "${DATA_ENVS[@]}"; do
                             fi
                             if [ "${sec}" = "transport" ]; then
                                 ADDITIONAL_OPTS="${ADDITIONAL_OPTS} --env-file "${SCRIPT_DIR}"/.dtls.env"
-                            fi
-                            if [ "${sec}" = "object" ]; then
+                            elif [ "${sec}" = "object" ]; then
                                 ADDITIONAL_OPTS="${ADDITIONAL_OPTS} --env-file "${SCRIPT_DIR}"/.oscore.env"
+                            elif [ -n "${sec}" ]; then
+                                echo "Unexpected security mode \"${sec}\"!" >&1
+                                continue
                             fi
                             if [ "${block}" = "block" ]; then
                                 ADDITIONAL_OPTS="${ADDITIONAL_OPTS} --env-file "${SCRIPT_DIR}"/.block.env"
