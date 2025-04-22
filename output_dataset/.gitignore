@@ -1,2 +1,4 @@
+*.coap.csv
+*.eth.csv
 *.log
 *.pcapng

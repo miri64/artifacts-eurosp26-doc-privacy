@@ -1,4 +1,5 @@
 main.pdf
+.jupyter_ystore.db
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
