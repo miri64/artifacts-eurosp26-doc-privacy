@@ -128,6 +128,7 @@ async def send_requests(context, args, parser):
         "url",
         "media_type",
         "response_code",
+        "token",
         "response_payload",
         sep="\t",
     )
@@ -195,8 +196,20 @@ async def send_requests(context, args, parser):
             request.is_inner = True
         request.remote.maximum_block_size_exp = block_exp
         response = await context.request(request).response
+        response_timestamp = time.time()
         with db.connect(args.db_uri) as conn:
             cur = conn.cursor()
+            cur.execute(
+                """
+                SELECT msg_id FROM sync
+                WHERE data_id = %(dns_id)s AND data_type = 1
+                    AND client_id = %(client_id)s;
+                """,
+                {"dns_id": dns_id, "client_id": str(args.client_id)},
+            )
+            res = cur.fetchall()
+            assert res
+            tokens = [row[0] for row in res]
             cur.execute(
                 """
                 DELETE FROM sync
@@ -210,19 +223,21 @@ async def send_requests(context, args, parser):
         assert response.opt.content_format == coap_server.DNS_CONTENT_FORMATS[
             args.default_dns_type
         ], "Server did not respond with a DNS response"
-        print(
-            time.time(),
-            os.environ.get("WPAN_SIMULATION_PREFIX"),
-            os.environ.get("UPSTREAM_PREFIX"),
-            "dns",
-            dns_name,
-            dns_type,
-            url,
-            args.default_dns_type,
-            response.code,
-            response.payload.hex(),
-            sep="\t",
-        )
+        for token in tokens:
+            print(
+                response_timestamp,
+                os.environ.get("WPAN_SIMULATION_PREFIX"),
+                os.environ.get("UPSTREAM_PREFIX"),
+                "dns",
+                dns_name,
+                dns_type,
+                url,
+                args.default_dns_type,
+                response.code,
+                token,
+                response.payload.hex(),
+                sep="\t",
+            )
 
         data_type = 0
         if query and (len(url) > 32):
@@ -249,8 +264,20 @@ async def send_requests(context, args, parser):
         request.opt.uri_host = args.coap_server
         request.remote.maximum_block_size_exp = block_exp
         response = await context.request(request).response
+        response_timestamp = time.time()
         with db.connect(args.db_uri) as conn:
             cur = conn.cursor()
+            cur.execute(
+                """
+                SELECT msg_id FROM sync
+                WHERE data_id = %(data_id)s AND data_type = 0
+                    AND client_id = %(client_id)s;
+                """,
+                {"data_id": data_id, "client_id": str(args.client_id)},
+            )
+            res = cur.fetchall()
+            assert res
+            tokens = [row[0] for row in res]
             cur.execute(
                 """
                 DELETE FROM sync
@@ -260,19 +287,21 @@ async def send_requests(context, args, parser):
                 {"data_id": data_id, "client_id": str(args.client_id)},
             )
             conn.commit()
-        print(
-            time.time(),
-            os.environ.get("WPAN_SIMULATION_PREFIX"),
-            os.environ.get("UPSTREAM_PREFIX"),
-            "data",
-            "",
-            "",
-            url,
-            args.default_data_type,
-            response.code,
-            response.payload.hex(),
-            sep="\t",
-        )
+        for token in tokens:
+            print(
+                response_timestamp,
+                os.environ.get("WPAN_SIMULATION_PREFIX"),
+                os.environ.get("UPSTREAM_PREFIX"),
+                "data",
+                "",
+                "",
+                url,
+                args.default_data_type,
+                response.code,
+                token,
+                response.payload.hex(),
+                sep="\t",
+            )
         stop = time.time()
         if args.delay > 0 and (stop - start) < args.delay:
             await asyncio.sleep(args.delay - (stop - start))

@@ -7,6 +7,7 @@
 
 import argparse
 import asyncio
+import sys
 
 import aiocoap.cli.client
 import aiocoap.cli.common
@@ -38,6 +39,8 @@ class Proxy(aiocoap.proxy.server.ForwardProxyWithPooledObservations):
                     {"new_token": new_token.hex(), "old_token": old_token.hex()},
                 )
                 conn.commit()
+            print(old_token.hex(), new_token.hex(), sep="\t")
+            sys.stdout.flush()
             return new_token
 
         aiocoap.tokenmanager.TokenManager.next_token = next_token
@@ -56,6 +59,7 @@ async def main():
     aiocoap.cli.common.add_server_arguments(parser)
     args = parser.parse_args()
 
+    print("old_token", "new_token", sep="\t")
     outgoing_context = await aiocoap.Context.create_client_context()
     try:
         if args.credentials:
