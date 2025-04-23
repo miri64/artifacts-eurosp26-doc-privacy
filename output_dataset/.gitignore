@@ -1,4 +1,6 @@
 *.coap.csv
 *.eth.csv
+*.merged.csv
+*.training.csv
 *.log
 *.pcapng
