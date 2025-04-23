@@ -1,7 +1,7 @@
 cbor2
 git+https://github.com/netd-tud/cbor4dns
 dnspython
-hvplot
+gensim
 jupyter_server_fileid
 jupyter_server_ydoc
 jupyterlab
@@ -9,6 +9,4 @@ matplotlib
 nbclassic
 notebook
 polars
-pyarrow
-sqlalchemy
-voila
+scikit-learn
