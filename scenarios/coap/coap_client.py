@@ -43,7 +43,16 @@ def block_exp_from_block_size(block_size):
 
 
 async def send_requests(context, args, parser):
-    tm_next_token = aiocoap.tokenmanager.TokenManager.next_token
+    with db.connect(args.db_uri) as conn:
+        cur = conn.cursor()
+        cur.execute(
+            """
+            DELETE FROM sync
+            WHERE client_id = %(client_id)s;
+            """,
+            {"client_id": str(args.client_id)},
+        )
+        conn.commit()
 
     if args.block_size is not None:
         block_exp = block_exp_from_block_size(args.block_size)
