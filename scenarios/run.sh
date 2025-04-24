@@ -77,11 +77,11 @@ if [ "$1" = "--build" ] || ! docker image ls | grep -q "pivot-eval/"; then
                 export UPSTREAM_NAME="${prot}${l2}-${setup}-upstream"
                 export UPSTREAM_IFACE="${prot}${l2_iface}${setup}_upstream"
                 export UPSTREAM_PREFIX="fdd8:${PREFIX_HINT_1}b${PREFIX_HINT_2}6:ecc0::"
-                    COMPOSE_BAKE=true DATA_FORMAT=application/cbor DNS_FORMAT=application/dns+cbor \
+                COMPOSE_BAKE=true DATA_FORMAT=application/cbor DNS_FORMAT=application/dns+cbor \
                     docker compose --env-file "${MAIN_ENV}" \
                         ${ADDITIONAL_OPTS} \
                         -f "${SCRIPT_DIR}/docker-compose-${prot}${l2}-${setup}.yaml" build
-                    PREFIX_HINT_2=$(( PREFIX_HINT_2 + 1 ))
+                PREFIX_HINT_2=$(( PREFIX_HINT_2 + 1 ))
             done
             PREFIX_HINT_1=$(( PREFIX_HINT_1 + 1 ))
         done
@@ -112,6 +112,7 @@ for data_env in "${DATA_ENVS[@]}"; do
                             export UPSTREAM_NAME="${prot}${l2}-${setup}-upstream"
                             export UPSTREAM_IFACE="${prot}${l2_iface}${setup}_upstream"
                             export UPSTREAM_PREFIX="fdd8:${PREFIX_HINT_1}b${PREFIX_HINT_2}6:ecc0::"
+                            ADDITIONAL_OPTS=""
                             
                             if [ "$prot" != "coap" -a -n "$block" ]; then
                                 continue
