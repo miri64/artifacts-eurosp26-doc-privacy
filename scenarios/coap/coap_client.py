@@ -10,6 +10,7 @@ import argparse
 import math
 import os
 import pathlib
+import random
 import re
 import time
 
@@ -141,6 +142,10 @@ async def send_requests(context, args, parser):
         "response_payload",
         sep="\t",
     )
+    first_token = random.randint(0x0000, 0xff)
+    token_pool = list(range(first_token, first_token + (len(rows) * 100)))
+    # shuffle token pool to guarantee random tokens
+    random.shuffle(token_pool)
     for data_id, url, query, url_wo_query in rows:
         start = time.time()
 
@@ -163,7 +168,7 @@ async def send_requests(context, args, parser):
             dns_id, dns_name, dns_type, dns_query = res
 
         def next_token(self):
-            token = tm_next_token(self)
+            token = token_pool.pop().to_bytes(8, "big").lstrip(b"\0")
             if data_type == 0:
                 _id = data_id
             else:
