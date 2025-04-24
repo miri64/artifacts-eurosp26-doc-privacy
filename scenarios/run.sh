@@ -23,7 +23,11 @@ DNS_ENVS=(
     "${SCRIPT_DIR}"/.dns-msg.env
     "${SCRIPT_DIR}"/.dns-cbor.env
 )
-SECURITIES=("transport", "object")
+SECURITIES=(
+    "transport"
+    "object"
+    ""
+)
 LINK_LAYERS=(
     ""
     # "schc" 
