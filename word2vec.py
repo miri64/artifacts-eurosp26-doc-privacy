@@ -87,8 +87,9 @@ for data in DATA_FORMATS:
                 for blk in BLOCKWISE:
                     for stp in NETWORK_SETUPS:
                         scenario = f"{prot}{l2}-{stp}_{data}_{dns}{blk}"
-                        file = INPUT_PATH / f"{scenario}.training.csv.gz" 
-                        if file.exists():
+                        file = INPUT_PATH / f"{scenario}.training.csv.gz"
+                        vector_file = INPUT_PATH / f"{scenario}.vector.parquet"
+                        if file.exists() and not vector_file.exists():
                             scenarios.append(scenario)
 
 
