@@ -18,7 +18,7 @@ OUTPUT_DATASET="${OUTPUT_DATASET:-${SCRIPT_DIR}/output_dataset}"
 extract_from_pcap() {
     PCAP="$1"
 
-    if ! echo "$PCAP" | grep -q "oscore.*\.upstream.pcapng"; then
+    if ! echo "$PCAP" | grep -Eq ".*\.upstream.pcapng"; then
         "${SCRIPT_DIR}/extract_eth.sh" "${PCAP}" > "${PCAP%.pcapng}".eth.csv
     fi
     "${SCRIPT_DIR}/extract_coap.sh" "${PCAP}" > "${PCAP%.pcapng}".coap.csv
@@ -27,5 +27,5 @@ extract_from_pcap() {
 export -f extract_from_pcap
 export SCRIPT_DIR
 
-find "${OUTPUT_DATASET}" -name *.wpan.pcapng -o -name oscore*.upstream.pcapng |
+find "${OUTPUT_DATASET}" -name "*.wpan.pcapng" -o -name "*.upstream.pcapng" |
     parallel -j"${PROCS}" extract_from_pcap
