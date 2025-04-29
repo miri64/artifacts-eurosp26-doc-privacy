@@ -8,6 +8,5 @@ jupyterlab
 matplotlib
 nbclassic
 notebook
-polars
 polars-u64-idx
 scikit-learn
