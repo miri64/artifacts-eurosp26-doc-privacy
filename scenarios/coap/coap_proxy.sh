@@ -25,6 +25,8 @@ if [ "${SECURITY}" = "dtls" ]; then
     NETWORK_SCENARIO="$(echo "${NETWORK_SCENARIO}" | sed 's/coap/coaps/g')"
 elif [ "${SECURITY}" = "oscore" ]; then
     NETWORK_SCENARIO="$(echo "${NETWORK_SCENARIO}" | sed 's/coap/oscore/g')"
+elif [ "${SECURITY}" = "oscore-base" ]; then
+    NETWORK_SCENARIO="$(echo "${NETWORK_SCENARIO}" | sed 's/coap/oscore-base/g')"
 fi
 
 LOGFILE="/dumps/${NETWORK_SCENARIO}_${DATA_FORMAT}_${DNS_FORMAT}${BLOCK_SIZE}.proxy.log"

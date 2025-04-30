@@ -33,7 +33,7 @@ if [ "${SECURITY}" = "dtls" ]; then
     NETWORK_SCENARIO="$(echo "${NETWORK_SCENARIO}" | sed 's/coap/coaps/g')"
     SECURITY="-s ${SECURITY}"
     CLIENT_CREDENTIALS="--credentials ${CLIENT_CREDENTIALS}"
-elif [ "${SECURITY}" = "oscore" ]; then
+elif [ "${SECURITY}" = "oscore" ] || [ "${SECURITY}" = "oscore-base" ]; then
     if [ -z "${CLIENT_CREDENTIALS}" ]; then
         echo "OSCORE configured as security but no credentials provided" >&2
         exit 1
@@ -42,8 +42,12 @@ elif [ "${SECURITY}" = "oscore" ]; then
         echo "OSCORE-capable proxy configured as security but no proxy credentials provided" >&2
         exit 1
     fi
-    NETWORK_SCENARIO="$(echo "${NETWORK_SCENARIO}" | sed 's/coap/oscore/g')"
-    SECURITY="-s ${SECURITY}"
+    NETWORK_SCENARIO="$(echo "${NETWORK_SCENARIO}" | sed "s/coap/${SECURITY}/g")"
+    if [ "${SECURITY}" = "oscore-base" ]; then
+        SECURITY="-c -s oscore"
+    else
+        SECURITY="-s ${SECURITY}"
+    fi
     CLIENT_CREDENTIALS="--credentials ${CLIENT_CREDENTIALS}"
     if [ -n "${PROXY}" ] && [ -n "${CLIENT_PROXY_CREDENTIALS}" ]; then
         CLIENT_PROXY_CREDENTIALS="--proxy-credentials ${CLIENT_PROXY_CREDENTIALS}"
