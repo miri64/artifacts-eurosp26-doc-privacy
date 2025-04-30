@@ -8,5 +8,7 @@ jupyterlab
 matplotlib
 nbclassic
 notebook
+pandas
 polars-u64-idx
 scikit-learn
+seaborn
