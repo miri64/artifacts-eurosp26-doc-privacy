@@ -159,7 +159,7 @@ async def send_requests(context, args, parser):
         last_mids = collections.deque(maxlen=128)
     else:
         token_pool = []
-        mid_pool = None
+        last_mids = None
     for data_id, url, query, url_wo_query in rows:
         start = time.time()
 
