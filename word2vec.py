@@ -67,7 +67,7 @@ def scenario2vec(scenario):
                 ).tolist(),
                 return_dtype=polars.List(polars.Float32),
             ),
-            label=(polars.col("client.type") != "dns").cast(
+            label=(polars.col("client.type") == "dns").cast(
                 polars.Int8
             ),
         )[["vector", "label"]]
