@@ -97,9 +97,14 @@ async def send_requests(context, args, parser):
                 args.proxy_credentials,
                 parser.error,
             )
-            proxy_context = OSCOREProxyForwarder(
-                f"{scheme}://{args.proxy}", context
-            )
+            if args.classic:
+                proxy_context = aiocoap.proxy.client.ProxyForwarder(
+                    f"{scheme}://{args.proxy}", context
+                )
+            else:
+                proxy_context = OSCOREProxyForwarder(
+                    f"{scheme}://{args.proxy}", context
+                )
             context = await aiocoap.Context.create_client_context()
             for ri in context.request_interfaces:
                 if isinstance(ri, aiocoap.transports.oscore.TransportOSCORE):
@@ -231,7 +236,7 @@ async def send_requests(context, args, parser):
             content_format=coap_server.DNS_CONTENT_FORMATS[dns_content_format],
             block2=block2,
         )
-        if args.security == "oscore":
+        if args.security == "oscore" and not args.classic:
             request.is_inner = True
         request.remote.maximum_block_size_exp = block_exp
         response = await context.request(request).response
@@ -298,7 +303,7 @@ async def send_requests(context, args, parser):
             scheme,
             args.coap_server,
         )
-        if args.security == "oscore":
+        if args.security == "oscore" and not args.classic:
             request.is_inner = True
         request.opt.uri_host = args.coap_server
         request.remote.maximum_block_size_exp = block_exp
@@ -378,6 +383,12 @@ async def main():
         default=None,
         help="Block size in bytes (will be rounded down to next legal block size, "
         "capped at 16)",
+    )
+    parser.add_argument(
+        "--classic",
+        "-c",
+        help="Use classic OSCORE instead of Onion OSCORE if --security is \"oscore\"",
+        action="store_true",
     )
     parser.add_argument(
         "--proxy",
