@@ -7,6 +7,7 @@
 
 import asyncio
 import argparse
+import collections
 import math
 import os
 import pathlib
@@ -17,6 +18,7 @@ import time
 import aiocoap
 import aiocoap.error
 import aiocoap.cli.client
+import aiocoap.messagemanager
 import aiocoap.proxy.client
 import aiocoap.tokenmanager
 import aiocoap.transports.oscore
@@ -44,6 +46,8 @@ def block_exp_from_block_size(block_size):
 
 
 async def send_requests(context, args, parser):
+    tm_next_token = aiocoap.tokenmanager.TokenManager.next_token
+    mm_next_mid = aiocoap.messagemanager.MessageManager._next_message_id
     with db.connect(args.db_uri) as conn:
         cur = conn.cursor()
         cur.execute(
@@ -142,10 +146,15 @@ async def send_requests(context, args, parser):
         "response_payload",
         sep="\t",
     )
-    first_token = random.randint(0x0000, 0xff)
-    token_pool = list(range(first_token, first_token + (len(rows) * 100)))
-    # shuffle token pool to guarantee random tokens
-    random.shuffle(token_pool)
+    if args.randomize:
+        first_token = random.randint(0x0000, 0xff)
+        token_pool = list(range(first_token, first_token + (len(rows) * 100)))
+        # shuffle token pool to guarantee random tokens
+        random.shuffle(token_pool)
+        last_mids = collections.deque(maxlen=128)
+    else:
+        token_pool = []
+        mid_pool = None
     for data_id, url, query, url_wo_query in rows:
         start = time.time()
 
@@ -168,7 +177,10 @@ async def send_requests(context, args, parser):
             dns_id, dns_name, dns_type, dns_query = res
 
         def next_token(self):
-            token = token_pool.pop().to_bytes(8, "big").lstrip(b"\0")
+            if token_pool:
+                token = token_pool.pop().to_bytes(8, "big").lstrip(b"\0")
+            else:
+                token = tm_next_token()
             if data_type == 0:
                 _id = data_id
             else:
@@ -190,7 +202,20 @@ async def send_requests(context, args, parser):
                 conn.commit()
             return token
 
+        def next_mid(self):
+            if last_mids is not None:
+                mid = None
+                while mid is None or mid in last_mids:
+                    mid = random.randint(0x0000, 0xffff)
+                    if mid not in last_mids:
+                        break
+                last_mids.append(mid)
+                return mid
+            else:
+                return mm_next_mid
+
         aiocoap.tokenmanager.TokenManager.next_token = next_token
+        aiocoap.messagemanager.MessageManager._next_message_id = next_mid
 
         code = aiocoap.FETCH
         coap_url = f"{scheme}://{args.dns_server}"
@@ -358,6 +383,12 @@ async def main():
         "--proxy",
         "-p",
         help="Proxy hostname to send requests over to the server(s)",
+    )
+    parser.add_argument(
+        "--randomize",
+        "-r",
+        help="Randomize CoAP message ID and token",
+        action="store_true",
     )
     parser.add_argument(
         "--security",
