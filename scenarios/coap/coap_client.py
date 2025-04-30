@@ -185,7 +185,7 @@ async def send_requests(context, args, parser):
             if token_pool:
                 token = token_pool.pop().to_bytes(8, "big").lstrip(b"\0")
             else:
-                token = tm_next_token()
+                token = tm_next_token(self)
             if data_type == 0:
                 _id = data_id
             else:
@@ -217,7 +217,7 @@ async def send_requests(context, args, parser):
                 last_mids.append(mid)
                 return mid
             else:
-                return mm_next_mid
+                return mm_next_mid(self)
 
         aiocoap.tokenmanager.TokenManager.next_token = next_token
         aiocoap.messagemanager.MessageManager._next_message_id = next_mid
