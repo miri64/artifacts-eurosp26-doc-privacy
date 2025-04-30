@@ -123,7 +123,7 @@ for data_env in "${DATA_ENVS[@]}"; do
                             elif [ "${sec}" = "object" ]; then
                                 ADDITIONAL_OPTS="${ADDITIONAL_OPTS} --env-file "${SCRIPT_DIR}"/.oscore.env"
                             elif [ "${sec}" = "object-base" ]; then
-                                ADDITIONAL_OPTS="${ADDITIONAL_OPTS} --env-file "${SCRIPT_DIR}"/.oscore.env"
+                                ADDITIONAL_OPTS="${ADDITIONAL_OPTS} --env-file "${SCRIPT_DIR}"/.oscore-base.env"
                             elif [ -n "${sec}" ]; then
                                 echo "Unexpected security mode \"${sec}\"!" >&1
                                 continue
