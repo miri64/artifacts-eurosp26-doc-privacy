@@ -46,7 +46,7 @@ elif [ "${SECURITY}" = "oscore" ] || [ "${SECURITY}" = "oscore-base" ]; then
     if [ "${SECURITY}" = "oscore-base" ]; then
         SECURITY="-c -s oscore"
     else
-        SECURITY="-s ${SECURITY}"
+        SECURITY="-r -s ${SECURITY}"
     fi
     CLIENT_CREDENTIALS="--credentials ${CLIENT_CREDENTIALS}"
     if [ -n "${PROXY}" ] && [ -n "${CLIENT_PROXY_CREDENTIALS}" ]; then
