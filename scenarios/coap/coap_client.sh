@@ -38,7 +38,7 @@ elif [ "${SECURITY}" = "oscore" ] || [ "${SECURITY}" = "oscore-base" ]; then
         echo "OSCORE configured as security but no credentials provided" >&2
         exit 1
     fi
-    if [ -n "${PROXY}" ] && [ -z "${CLIENT_PROXY_CREDENTIALS}" ]; then
+    if [ "${SECURITY}" = "oscore" ] && [ -n "${PROXY}" ] && [ -z "${CLIENT_PROXY_CREDENTIALS}" ]; then
         echo "OSCORE-capable proxy configured as security but no proxy credentials provided" >&2
         exit 1
     fi

@@ -91,29 +91,35 @@ async def send_requests(context, args, parser):
 
     if args.proxy:
         if args.security == "oscore":
-            assert args.credentials and args.proxy_credentials
-            aiocoap.cli.client.apply_credentials(
-                context,
-                args.proxy_credentials,
-                parser.error,
-            )
+            assert args.credentials and (args.classic or args.proxy_credentials)
+            if args.proxy_credentials:
+                aiocoap.cli.client.apply_credentials(
+                    context,
+                    args.proxy_credentials,
+                    parser.error,
+                )
             if args.classic:
-                proxy_context = aiocoap.proxy.client.ProxyForwarder(
+                aiocoap.cli.client.apply_credentials(
+                    context,
+                    args.credentials,
+                    parser.error,
+                )
+                context = aiocoap.proxy.client.ProxyForwarder(
                     f"{scheme}://{args.proxy}", context
                 )
             else:
                 proxy_context = OSCOREProxyForwarder(
                     f"{scheme}://{args.proxy}", context
                 )
-            context = await aiocoap.Context.create_client_context()
-            for ri in context.request_interfaces:
-                if isinstance(ri, aiocoap.transports.oscore.TransportOSCORE):
-                    ri._wire = proxy_context
-            aiocoap.cli.client.apply_credentials(
-                context,
-                args.credentials,
-                parser.error,
-            )
+                context = await aiocoap.Context.create_client_context()
+                for ri in context.request_interfaces:
+                    if isinstance(ri, aiocoap.transports.oscore.TransportOSCORE):
+                        ri._wire = proxy_context
+                aiocoap.cli.client.apply_credentials(
+                    context,
+                    args.credentials,
+                    parser.error,
+                )
         else:
             if args.credentials:
                 aiocoap.cli.client.apply_credentials(
