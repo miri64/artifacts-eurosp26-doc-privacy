@@ -156,10 +156,11 @@ async def send_requests(context, args, parser):
         token_pool = list(range(first_token, first_token + (len(rows) * 100)))
         # shuffle token pool to guarantee random tokens
         random.shuffle(token_pool)
-        last_mids = collections.deque(maxlen=128)
+        mid_pool = list(range(0x0000, 0xffff))
+        random.shuffle(mid_pool)
     else:
         token_pool = []
-        last_mids = None
+        mid_pool = []
     for data_id, url, query, url_wo_query in rows:
         start = time.time()
 
@@ -208,16 +209,10 @@ async def send_requests(context, args, parser):
             return token
 
         def next_mid(self):
-            if last_mids is not None:
-                mid = None
-                while mid is None or mid in last_mids:
-                    mid = random.randint(0x0000, 0xffff)
-                    if mid not in last_mids:
-                        break
-                last_mids.append(mid)
-                return mid
-            else:
-                return mm_next_mid(self)
+            mid = mm_next_mid(self)
+            if mid_pool:
+                mid = mid_pool[mid]
+            return mid
 
         aiocoap.tokenmanager.TokenManager.next_token = next_token
         aiocoap.messagemanager.MessageManager._next_message_id = next_mid
