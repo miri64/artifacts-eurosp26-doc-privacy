@@ -15,7 +15,9 @@ if [ -n "${BLOCK_SIZE}" ]; then
     BLOCK_SIZE="_b${BLOCK_SIZE}"
 fi
 
-if [ -n "${PROXY_CREDENTIALS}" ]; then
+# Exclude oscore-base as a workaround to not confuse aiocoap in the order of
+# operation
+if [ -n "${PROXY_CREDENTIALS}" ] && [ "${SECURITY}" != "oscore-base" ]; then
     PROXY_CREDENTIALS="--credentials ${PROXY_CREDENTIALS}"
     cp -r "${SCRIPT_DIR}"/creds/oscore /creds/
     chown -R root: /creds/oscore
