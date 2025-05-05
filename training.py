@@ -105,7 +105,7 @@ CLASSIFIER_READABLE = {
 }
 CLASSIFIER_ARGS = {
     "nb": {},
-    "lr": {"max_iter": 600},
+    "lr": {"max_iter": 2400},
     "knn": {
         "algorithm": "brute",
         "n_jobs": -1,
@@ -127,8 +127,18 @@ def train_nb(x_train, y_train):
 
 @contextlib.contextmanager
 def train_lr(x_train, y_train):
-    lr = sk_linear_model.LogisticRegression(**CLASSIFIER_ARGS["lr"])
-    lr.fit(x_train, numpy.ravel(y_train))
+    while True:
+        warnings.filterwarnings("error")
+        try:
+            lr = sk_linear_model.LogisticRegression(**CLASSIFIER_ARGS["lr"])
+            lr.fit(x_train, numpy.ravel(y_train))
+            print("- Converged at", CLASSIFIER_ARGS["lr"])
+            break
+        except sk_exceptions.ConvergenceWarning:
+            CLASSIFIER_ARGS["lr"]["max_iter"] += 200
+            print("- Updated args to", CLASSIFIER_ARGS["lr"])
+        finally:
+            warnings.resetwarnings()
     try:
         yield lr
     finally:
