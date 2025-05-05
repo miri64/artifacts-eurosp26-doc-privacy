@@ -101,46 +101,54 @@ for data_env in "${DATA_ENVS[@]}"; do
                         continue
                     fi
                     for block in "${BLOCKWISE}"; do
-                        PREFIX_HINT_2=0
-                        unset DOCKER_COMPOSE_PIDS
-                        for setup in "${NETWORK_SETUPS[@]}"; do
-                            setup_iface=$(echo "${setup}" | sed -E -e 's/([dp])1/\1i/g' -e 's/([dp])2/\1ii/g')
-                            l2_iface=$(echo "${l2}" | sed -E -e 's/-//g' -e 's/schc/0/g')
-                            export DATABASE_BACKEND_PREFIX="fd00:${PREFIX_HINT_1}b${PREFIX_HINT_2}6::"
-                            export WPAN_SIMULATION_NAME="${prot}${l2}-${setup}-wpan-simulation"
-                            export WPAN_SIMULATION_IFACE="${prot}${l2_iface}${setup}_wpan"
-                            export WPAN_SIMULATION_PREFIX="fdd8:${PREFIX_HINT_1}b${PREFIX_HINT_2}6:eccc::"
-                            export UPSTREAM_NAME="${prot}${l2}-${setup}-upstream"
-                            export UPSTREAM_IFACE="${prot}${l2_iface}${setup}_upstream"
-                            export UPSTREAM_PREFIX="fdd8:${PREFIX_HINT_1}b${PREFIX_HINT_2}6:ecc0::"
-                            ADDITIONAL_OPTS=""
-                            
-                            if [ "$prot" != "coap" -a -n "$block" ]; then
-                                continue
-                            fi
-                            if [ "${sec}" = "transport" ]; then
-                                ADDITIONAL_OPTS="${ADDITIONAL_OPTS} --env-file "${SCRIPT_DIR}"/.dtls.env"
-                            elif [ "${sec}" = "object" ]; then
-                                ADDITIONAL_OPTS="${ADDITIONAL_OPTS} --env-file "${SCRIPT_DIR}"/.oscore.env"
-                            elif [ "${sec}" = "object-base" ]; then
-                                ADDITIONAL_OPTS="${ADDITIONAL_OPTS} --env-file "${SCRIPT_DIR}"/.oscore-base.env"
-                            elif [ -n "${sec}" ]; then
-                                echo "Unexpected security mode \"${sec}\"!" >&1
-                                continue
-                            fi
-                            if [ "${block}" = "block" ]; then
-                                ADDITIONAL_OPTS="${ADDITIONAL_OPTS} --env-file "${SCRIPT_DIR}"/.block.env"
-                            fi
-                            docker compose --env-file "${MAIN_ENV}" \
-                                ${ADDITIONAL_OPTS} \
-                                --env-file "${data_env}" --env-file "${dns_env}" \
-                                -f "${SCRIPT_DIR}/docker-compose-${prot}${l2}-${setup}.yaml" up \
-                                    --abort-on-container-exit &
-                            DOCKER_COMPOSE_PIDS+=("$!")
-                            PREFIX_HINT_2=$(( PREFIX_HINT_2 + 1 ))
-                        done
-                        for pid in ${DOCKER_COMPOSE_PIDS[@]}; do
-                            tail --pid="${pid}" -f /dev/null
+                        ALL_SUCCESSFUL=0
+                        while [ ${ALL_SUCCESSFUL} -eq 0 ]; do
+                            PREFIX_HINT_2=0
+                            unset DOCKER_COMPOSE_PIDS
+                            for setup in "${NETWORK_SETUPS[@]}"; do
+                                setup_iface=$(echo "${setup}" | sed -E -e 's/([dp])1/\1i/g' -e 's/([dp])2/\1ii/g')
+                                l2_iface=$(echo "${l2}" | sed -E -e 's/-//g' -e 's/schc/0/g')
+                                export DATABASE_BACKEND_PREFIX="fd00:${PREFIX_HINT_1}b${PREFIX_HINT_2}6::"
+                                export WPAN_SIMULATION_NAME="${prot}${l2}-${setup}-wpan-simulation"
+                                export WPAN_SIMULATION_IFACE="${prot}${l2_iface}${setup}_wpan"
+                                export WPAN_SIMULATION_PREFIX="fdd8:${PREFIX_HINT_1}b${PREFIX_HINT_2}6:eccc::"
+                                export UPSTREAM_NAME="${prot}${l2}-${setup}-upstream"
+                                export UPSTREAM_IFACE="${prot}${l2_iface}${setup}_upstream"
+                                export UPSTREAM_PREFIX="fdd8:${PREFIX_HINT_1}b${PREFIX_HINT_2}6:ecc0::"
+                                ADDITIONAL_OPTS=""
+
+                                if [ "$prot" != "coap" -a -n "$block" ]; then
+                                    continue
+                                fi
+                                if [ "${sec}" = "transport" ]; then
+                                    ADDITIONAL_OPTS="${ADDITIONAL_OPTS} --env-file "${SCRIPT_DIR}"/.dtls.env"
+                                elif [ "${sec}" = "object" ]; then
+                                    ADDITIONAL_OPTS="${ADDITIONAL_OPTS} --env-file "${SCRIPT_DIR}"/.oscore.env"
+                                elif [ "${sec}" = "object-base" ]; then
+                                    ADDITIONAL_OPTS="${ADDITIONAL_OPTS} --env-file "${SCRIPT_DIR}"/.oscore-base.env"
+                                elif [ -n "${sec}" ]; then
+                                    echo "Unexpected security mode \"${sec}\"!" >&1
+                                    continue
+                                fi
+                                if [ "${block}" = "block" ]; then
+                                    ADDITIONAL_OPTS="${ADDITIONAL_OPTS} --env-file "${SCRIPT_DIR}"/.block.env"
+                                fi
+                                docker compose --env-file "${MAIN_ENV}" \
+                                    ${ADDITIONAL_OPTS} \
+                                    --env-file "${data_env}" --env-file "${dns_env}" \
+                                    -f "${SCRIPT_DIR}/docker-compose-${prot}${l2}-${setup}.yaml" up \
+                                        --abort-on-container-exit &
+                                DOCKER_COMPOSE_PIDS+=("$!")
+                                PREFIX_HINT_2=$(( PREFIX_HINT_2 + 1 ))
+                            done
+                            ALL_SUCCESSFUL=1
+                            for pid in ${DOCKER_COMPOSE_PIDS[@]}; do
+                                wait "${pid}"
+                                RESULT=$?
+                                if [ "$RESULT" -ne 0 ]; then
+                                    ALL_SUCCESSFUL=0
+                                fi
+                            done
                         done
                         PREFIX_HINT_1=$(( PREFIX_HINT_1 + 1 ))
                     done
