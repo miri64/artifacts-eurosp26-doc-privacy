@@ -14,6 +14,11 @@ export HOST_UID=$(id -u)
 chmod -R o+r ${SCRIPT_DIR}/database/ ${SCRIPT_DIR}/../jsons/
 chmod o+x ${SCRIPT_DIR}/database/ ${SCRIPT_DIR}/../jsons/
 
+if ! ls ${SCRIPT_DIR}/../jsons/*.sqlite3 &> /dev/null; then
+    echo "No base database found!" >&2
+    exit 1
+fi
+
 MAIN_ENV="${SCRIPT_DIR}"/.env
 DATA_ENVS=(
     "${SCRIPT_DIR}"/.json.env
