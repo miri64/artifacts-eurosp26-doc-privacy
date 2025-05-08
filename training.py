@@ -343,10 +343,10 @@ def main():
                                                 "classifier_args": str_classifier_args(
                                                     cls
                                                 ),
-                                                "true_dns": conf_matrix[0][0],
-                                                "false_dns": conf_matrix[0][1],
-                                                "false_data": conf_matrix[1][0],
-                                                "true_data": conf_matrix[1][1],
+                                                "true_data": conf_matrix[0][0],
+                                                "false_data": conf_matrix[0][1],
+                                                "false_dns": conf_matrix[1][0],
+                                                "true_dns": conf_matrix[1][1],
                                                 "accuracy": accuracy,
                                                 "precision": precision,
                                                 "recall": recall,

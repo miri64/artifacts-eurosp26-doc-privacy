@@ -1,6 +1,6 @@
 protocol,link_layer,blocksize,network_setup,data_format,dns_format,test_size,classifier,classifier_args,true_data,false_data,false_dns,true_dns,accuracy,precision,recall,f1_score
-oscore,eth,1024,d2,json,dns_message,0.2,nb,,23536,704,0,25253,0.9857757662699775,0.9728782216743075,1.0,0.9862526850224566
-oscore,eth,1024,d2,json,dns_message,0.2,knn,"algorithm=brute,n_jobs=-1",24240,0,0,25253,1.0,1.0,1.0,1.0
-oscore,eth,1024,d2,json,dns_message,0.2,dt,,24240,0,0,25253,1.0,1.0,1.0,1.0
-oscore,eth,1024,d2,json,dns_message,0.2,rf,"n_estimators=250,max_depth=9",24240,0,0,25253,1.0,1.0,1.0,1.0
-oscore,eth,1024,d2,json,dns_message,0.2,lr,max_iter=2400,24008,0,0,25485,1.0,1.0,1.0,1.0
+oscore,eth,1024,d2,json,dns_message,0.2,nb,,25328,0,108,24057,0.9978178732345988,1.0,0.9955307262569832,0.9977603583426652
+oscore,eth,1024,d2,json,dns_message,0.2,lr,max_iter=2400,25328,0,0,24165,1.0,1.0,1.0,1.0
+oscore,eth,1024,d2,json,dns_message,0.2,knn,"algorithm=brute,n_jobs=-1",25328,0,0,24165,1.0,1.0,1.0,1.0
+oscore,eth,1024,d2,json,dns_message,0.2,dt,,25328,0,0,24165,1.0,1.0,1.0,1.0
+oscore,eth,1024,d2,json,dns_message,0.2,rf,"n_estimators=250,max_depth=9",25328,0,0,24165,1.0,1.0,1.0,1.0
