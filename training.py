@@ -105,7 +105,7 @@ CLASSIFIER_READABLE = {
 }
 CLASSIFIER_ARGS = {
     "nb": {},
-    "lr": {"max_iter": 2400},
+    "lr": {"max_iter": 2600},
     "knn": {
         "algorithm": "brute",
         "n_jobs": -1,
