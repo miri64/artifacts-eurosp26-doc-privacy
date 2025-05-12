@@ -25,7 +25,7 @@ WORKERS = multiprocessing.cpu_count()
 if WORKERS > 96:
     WORKERS //= 2
 
-PROTOCOLS = ["coap", "coaps", "oscore"]
+PROTOCOLS = ["coap", "coaps", "oscore", "oscore-base"]
 LINK_LAYERS = [""]
 BLOCKWISE = [""]
 NETWORK_SETUPS = ["d1", "d2", "p1", "p2"]

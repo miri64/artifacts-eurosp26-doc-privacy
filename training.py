@@ -45,7 +45,7 @@ INPUT_PATH = pathlib.Path(
     os.environ.get("INPUT_PATH", EVALUATION_DIR / "output_dataset")
 )
 
-PROTOCOLS = ["coap", "coaps", "oscore"]
+PROTOCOLS = ["coap", "coaps", "oscore", "oscore-base"]
 LINK_LAYERS = [""]
 BLOCKWISE = [""]
 NETWORK_SETUPS = ["d1", "d2", "p1", "p2"]
