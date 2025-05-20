@@ -1,3 +1,3 @@
 [submodule "scenarios/coap/openschc"]
-	path = scenarios/coap/openschc
+	path = scenarios/schc/openschc
 	url = https://github.com/openschc/openschc.git
