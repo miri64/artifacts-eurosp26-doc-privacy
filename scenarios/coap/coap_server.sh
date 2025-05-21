@@ -31,7 +31,13 @@ fi
 
 LOGFILE="/dumps/${NETWORK_SCENARIO}_${DATA_FORMAT_LOG}_${DNS_FORMAT_LOG}${BLOCK_SIZE}.server.log"
 
+SCHC_DIR="${SCRIPT_DIR}/../schc"
+source "${SCHC_DIR}/schc.sh"
+
 chown_logs() {
+    if [ -n "${SCHC_PID}" ]; then
+        kill "${SCHC_PID}"
+    fi
     chown user: "${LOGFILE}" "${LOGFILE%.log}.stderr.log"
 }
 

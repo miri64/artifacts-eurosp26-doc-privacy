@@ -1,0 +1,52 @@
+include:
+  - networks/database_backend.yaml
+  - networks/wpan_simulation.yaml
+
+name: coap-schc-d1
+
+services:
+  db:
+    extends:
+      file: database/database.yaml
+      service: db-base
+  coap-server-global:
+    extends:
+      file: coap/coap_server.yaml
+      service: coap-server-base
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      BIND_PREFIX: "${SCHC_PREFIX}"
+      SERVER_CREDENTIALS: "${DATA_SERVER_CREDENTIALS:-}"
+      NETWORK_SCENARIO: "coap-schc-d1"
+      SCHC_DEV_ADDR: abcdef0101
+      SCHC_IP_ADDR: "${SCHC_PREFIX}1/${SCHC_PREFIX_LEN}"
+  coap-client:
+    extends:
+      file: coap/coap_client.yaml
+      service: coap-client-base
+    depends_on:
+      sniffer:
+        condition: service_started
+    extra_hosts:
+      - "coap-server=${SCHC_PREFIX}1"
+      - "dns-server=${SCHC_PREFIX}1"
+    environment:
+      COAP_SERVER: "coap-server"
+      DNS_SERVER: "coap-server"
+      NETWORK_SCENARIO: "coap-schc-d1"
+      SCHC_DEV_ADDR: abcdef0103
+      SCHC_IP_ADDR: "${SCHC_PREFIX}3/${SCHC_PREFIX_LEN}"
+  sniffer:
+    extends:
+      file: sniffer/sniffer.yaml
+      service: sniffer-base
+    environment:
+      SNIFFER_IFACE: "${WPAN_SIMULATION_IFACE}"
+      SNIFFER_LOGNAME: wpan
+      SNIFFER_FILTER: "udp port 5683 or udp port 5684"
+      NETWORK_SCENARIO: "coap-schc-d1"
+    depends_on:
+      coap-server-global:
+        condition: service_started

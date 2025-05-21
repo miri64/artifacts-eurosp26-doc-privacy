@@ -465,7 +465,7 @@ async def main():
     async with (
         # TBD: addrs for NorthInterface?
         NorthInterface(name=args.north_iface) as north,
-        SCHCEncInterface(name=args.south_iface) as south,
+        SCHCEncInterface(name=args.south_iface.split("@")[0]) as south,
     ):
         for addr in args.ipv6_address:
             await north.add_addr(addr)

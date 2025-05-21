@@ -6,6 +6,7 @@ services:
         HOST_UID: "${HOST_UID}"
       context: .
       dockerfile: Dockerfile
+      target: coap-base
     image:
       pivot-eval/coap
     tmpfs:

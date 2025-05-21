@@ -58,7 +58,15 @@ fi
 
 LOGFILE="/dumps/${NETWORK_SCENARIO}_${DATA_FORMAT_LOG}_${DNS_FORMAT_LOG}${BLOCK_SIZE_LOG}.client.log"
 
+ADDITIONAL_SCHC_ARGS="--client"
+SCHC_DIR="${SCRIPT_DIR}/../schc"
+source "${SCHC_DIR}/schc.sh"
+
 chown_logs() {
+    if [ -n "${SCHC_PID}" ]; then
+        kill "${SCHC_PID}"
+        chown user: "${SCHC_LOGFILE}" "${SCHC_LOGFILE%.log}.stderr.log"
+    fi
     chown user: "${LOGFILE}" "${LOGFILE%.log}.stderr.log"
 }
 

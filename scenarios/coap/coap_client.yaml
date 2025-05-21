@@ -22,5 +22,11 @@ services:
       DATABASE_URI: "${DATABASE_URI}"
       UPSTREAM_PREFIX: "${UPSTREAM_PREFIX}"
       WPAN_SIMULATION_PREFIX: "${WPAN_SIMULATION_PREFIX}"
+      SCHC_DEV_ADDR: "${SCHC_DEV_ADDR:-}"
+      SCHC_IP_ADDR: "${SCHC_IP_ADDR:-}"
+    cap_add:    # required for tun for SCHC
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun
     command: |
       /app/coap/coap_client.sh
