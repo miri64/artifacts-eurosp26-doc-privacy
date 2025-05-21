@@ -35,7 +35,7 @@ chown_logs() {
     chown user: "${LOGFILE}" "${LOGFILE%.log}.stderr.log"
 }
 
-trap chown_logs SIGEXIT SIGHUP SIGTERM SIGINT SIGQUIT SIGABRT SIGKILL
+trap chown_logs EXIT HUP TERM INT QUIT ABRT KILL
 
 BIND_ADDRESS="$(ip addr | grep -oE "${BIND_PREFIX}[0-9:]+")"
 "${SCRIPT_DIR}"/coap_server.py --bind "[${BIND_ADDRESS}]" ${SERVER_CREDENTIALS} \

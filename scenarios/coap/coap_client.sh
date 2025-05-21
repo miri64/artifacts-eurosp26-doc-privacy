@@ -62,7 +62,7 @@ chown_logs() {
     chown user: "${LOGFILE}" "${LOGFILE%.log}.stderr.log"
 }
 
-trap chown_logs SIGEXIT SIGHUP SIGTERM SIGINT SIGQUIT SIGABRT SIGKILL
+trap chown_logs EXIT HUP TERM INT QUIT ABRT KILL
 
 "${SCRIPT_DIR}"/coap_client.py ${BLOCK_SIZE} \
     ${PROXY} ${SECURITY} ${CLIENT_CREDENTIALS} ${CLIENT_PROXY_CREDENTIALS} \

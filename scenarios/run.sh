@@ -64,7 +64,7 @@ kill_docker() {
     exit
 }
 
-trap kill_docker SIGHUP SIGTERM SIGINT SIGQUIT SIGABRT
+trap kill_docker HUP TERM INT QUIT ABRT
 
 if [ "$1" = "--build" ] || ! docker image ls | grep -q "pivot-eval/"; then
     docker system prune -f
