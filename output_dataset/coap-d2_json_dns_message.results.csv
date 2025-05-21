@@ -1,6 +1,6 @@
-protocol,link_layer,blocksize,network_setup,data_format,dns_format,test_size,classifier,classifier_args,true_data,false_data,false_dns,true_dns,accuracy,precision,recall,f1_score
-coap,eth,1024,d2,json,dns_message,0.2,nb,,25201,14,460,23664,0.9903929953991771,0.999408733845764,0.9809318520974962,0.9900840968997113
-coap,eth,1024,d2,json,dns_message,0.2,lr,max_iter=2400,25215,0,1,24123,0.9999797320578042,1.0,0.9999585475045598,0.9999792733226937
-coap,eth,1024,d2,json,dns_message,0.2,knn,"algorithm=brute,n_jobs=-1",25215,0,0,24124,1.0,1.0,1.0,1.0
-coap,eth,1024,d2,json,dns_message,0.2,dt,,25215,0,0,24124,1.0,1.0,1.0,1.0
-coap,eth,1024,d2,json,dns_message,0.2,rf,"n_estimators=250,max_depth=9",25215,0,0,24124,1.0,1.0,1.0,1.0
+protocol,link_layer,blocksize,network_setup,data_format,dns_format,test_size,classifier,classifier_args,true_dns,false_dns,false_data,true_data,accuracy,precision,recall,f1_score
+coap,eth,1024,d2,json,dns_message,0.2,nb,,24026,162,18554,6597,0.6206651938628671,0.5642555190230155,0.9933024640317513,0.7196860771627127
+coap,eth,1024,d2,json,dns_message,0.2,lr,max_iter=2800,24106,0,0,25233,1.0,1.0,1.0,1.0
+coap,eth,1024,d2,json,dns_message,0.2,knn,"algorithm=brute,n_jobs=-1",24188,0,0,25151,1.0,1.0,1.0,1.0
+coap,eth,1024,d2,json,dns_message,0.2,dt,,24188,0,0,25151,1.0,1.0,1.0,1.0
+coap,eth,1024,d2,json,dns_message,0.2,rf,"n_estimators=250,max_depth=9",24188,0,0,25151,1.0,1.0,1.0,1.0

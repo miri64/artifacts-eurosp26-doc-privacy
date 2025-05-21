@@ -1,6 +1,6 @@
-protocol,link_layer,blocksize,network_setup,data_format,dns_format,test_size,classifier,classifier_args,true_data,false_data,false_dns,true_dns,accuracy,precision,recall,f1_score
-coap,eth,1024,d1,cbor,dns_cbor,0.2,nb,,9246,15696,1386,22796,0.6522677306408273,0.5922269562506495,0.9426846414688611,0.7274467881418132
-coap,eth,1024,d1,cbor,dns_cbor,0.2,lr,max_iter=2600,24942,0,0,24182,1.0,1.0,1.0,1.0
-coap,eth,1024,d1,cbor,dns_cbor,0.2,knn,"algorithm=brute,n_jobs=-1",24942,0,15,24167,0.999694650272779,1.0,0.9993797039120007,0.9996897557343482
-coap,eth,1024,d1,cbor,dns_cbor,0.2,dt,,24942,0,3,24179,0.9999389300545558,1.0,0.9998759407824002,0.999937966543289
-coap,eth,1024,d1,cbor,dns_cbor,0.2,rf,"n_estimators=250,max_depth=9",24942,0,0,24182,1.0,1.0,1.0,1.0
+protocol,link_layer,blocksize,network_setup,data_format,dns_format,test_size,classifier,classifier_args,true_dns,false_dns,false_data,true_data,accuracy,precision,recall,f1_score
+coap,eth,1024,d1,cbor,dns_cbor,0.2,nb,,22735,1539,16127,8723,0.6403794479276932,0.5850187844166538,0.9365988300238939,0.7201913329954385
+coap,eth,1024,d1,cbor,dns_cbor,0.2,lr,max_iter=2800,24076,4,3,25041,0.9998575034606303,0.9998754101083932,0.9998338870431893,0.9998546481446874
+coap,eth,1024,d1,cbor,dns_cbor,0.2,knn,"algorithm=brute,n_jobs=-1",24255,19,0,24850,0.9996132236788535,1.0,0.9992172695064678,0.9996084815265099
+coap,eth,1024,d1,cbor,dns_cbor,0.2,dt,,24274,0,3,24847,0.9999389300545558,0.9998764262470651,1.0,0.9999382093056786
+coap,eth,1024,d1,cbor,dns_cbor,0.2,rf,"n_estimators=250,max_depth=9",24274,0,0,24850,1.0,1.0,1.0,1.0

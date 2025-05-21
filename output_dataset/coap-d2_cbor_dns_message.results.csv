@@ -1,6 +1,6 @@
-protocol,link_layer,blocksize,network_setup,data_format,dns_format,test_size,classifier,classifier_args,true_data,false_data,false_dns,true_dns,accuracy,precision,recall,f1_score
-coap,eth,1024,d2,cbor,dns_message,0.2,nb,,24822,0,6,24296,0.9998778601091116,1.0,0.999753106740186,0.9998765381291411
-coap,eth,1024,d2,cbor,dns_message,0.2,lr,max_iter=2600,24822,0,0,24302,1.0,1.0,1.0,1.0
-coap,eth,1024,d2,cbor,dns_message,0.2,knn,"algorithm=brute,n_jobs=-1",24822,0,0,24302,1.0,1.0,1.0,1.0
-coap,eth,1024,d2,cbor,dns_message,0.2,dt,,24822,0,0,24302,1.0,1.0,1.0,1.0
-coap,eth,1024,d2,cbor,dns_message,0.2,rf,"n_estimators=250,max_depth=9",24822,0,0,24302,1.0,1.0,1.0,1.0
+protocol,link_layer,blocksize,network_setup,data_format,dns_format,test_size,classifier,classifier_args,true_dns,false_dns,false_data,true_data,accuracy,precision,recall,f1_score
+coap,eth,1024,d2,cbor,dns_message,0.2,nb,,24066,5,0,25053,0.999898216757593,1.0,0.9997922811682107,0.9998961297962067
+coap,eth,1024,d2,cbor,dns_message,0.2,lr,max_iter=2800,24080,0,0,25044,1.0,1.0,1.0,1.0
+coap,eth,1024,d2,cbor,dns_message,0.2,knn,"algorithm=brute,n_jobs=-1",24071,0,0,25053,1.0,1.0,1.0,1.0
+coap,eth,1024,d2,cbor,dns_message,0.2,dt,,24071,0,0,25053,1.0,1.0,1.0,1.0
+coap,eth,1024,d2,cbor,dns_message,0.2,rf,"n_estimators=250,max_depth=9",24071,0,0,25053,1.0,1.0,1.0,1.0
