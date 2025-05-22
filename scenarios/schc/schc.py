@@ -480,6 +480,7 @@ async def main():
                 if args.client
                 else openschc_loader.protocol.T_POSITION_CORE
             ),
+            config={"debug_level": 10 if args.verbose else 0},
             unique_peer=False,
         )
         upper.protocol = prot
