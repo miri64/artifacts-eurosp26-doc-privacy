@@ -23,6 +23,7 @@ services:
       AIOCOAP_DTLSSERVER_ENABLED: "yes"
     cap_add:    # required for tun for SCHC
       - NET_ADMIN
+      - NET_RAW
     devices:
       - /dev/net/tun
     command: |

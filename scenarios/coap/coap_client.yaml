@@ -26,6 +26,7 @@ services:
       SCHC_PEER_ADDRS: "${SCHC_PEER_ADDRS:-}"
     cap_add:    # required for tun for SCHC
       - NET_ADMIN
+      - NET_RAW
     devices:
       - /dev/net/tun
     command: |
