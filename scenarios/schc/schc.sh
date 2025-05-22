@@ -28,9 +28,10 @@ if [ -n "${SCHC_IP_ADDR}" ] && [ -n "${SCHC_DEV_ADDR}" ]; then
         ADDITIONAL_SCHC_ARGS="${ADDITIONAL_SCHC_ARGS} --duty-cycle '${SCHC_DUTY_CYCLE}'"
     fi
     SCHC_LOGFILE="${LOGFILE%.log}.schc.log"
+    SCHC_RULES="${NETWORK_SCENARIO}-rules.json"
 
     "${SCHC_DIR}"/schc.py --north "${NORTH_IFACE}" ${ADDITIONAL_SCHC_ARGS} \
-        "${SOUTH_IFACE}" "${SCHC_DEV_ADDR}" "${SCHC_DIR}"/rules.json \
+        "${SOUTH_IFACE}" "${SCHC_DEV_ADDR}" "${SCHC_DIR}"/"${SCHC_RULES}" \
         --ipv6-address "${SCHC_IP_ADDR}" \
         > "${SCHC_LOGFILE}" 2> "${SCHC_LOGFILE%.log}.stderr.log" \
         &
