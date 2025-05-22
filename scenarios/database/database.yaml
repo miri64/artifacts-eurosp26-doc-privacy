@@ -3,7 +3,7 @@ include:
 
 services:
   db-base:
-    image: postgres:17.4-alpine3.21
+    image: pivot-eval/db
     build:
       context: .
       dockerfile: Dockerfile
