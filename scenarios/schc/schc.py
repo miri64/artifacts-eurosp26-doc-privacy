@@ -19,6 +19,9 @@ import socket
 import struct
 import sys
 
+
+from scapy.all import IPv6, load_contrib
+
 SCRIPT_PATH = pathlib.Path(__file__).resolve().parent
 OPENSCHC_PATH = SCRIPT_PATH / "openschc" / "src"
 
@@ -334,7 +337,7 @@ class IoTSCHCUpperLayer:
     async def send_north(self, address: bytes, raw_packet: bytes):
         self.system.log(
             canon_name(type(self)),
-            f"send_north from address={address} raw_packet={raw_packet.hex()}",
+            f"send_north from address={address} raw_packet={IPv6(raw_packet)!r}",
         )
         try:
             await self.north_iface.send(address, raw_packet)
@@ -354,7 +357,7 @@ class IoTSCHCUpperLayer:
         while True:
             addr, data = await self.north_iface.recv()
             self.system.log(
-                canon_name(type(self)), f"Received {data} from {addr} from north"
+                canon_name(type(self)), f"Received {IPv6(data)!r} from {addr} from north"
             )
             await self.send_packet(data)
 
@@ -460,6 +463,7 @@ async def main():
     )
     args = parser.parse_args()
 
+    load_contrib("coap")
     openschc_loader = OpenSCHCLoader(OPENSCHC_PATH)
     system = IoTSCHCSystem(debug=args.verbose)
     async with (
