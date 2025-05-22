@@ -14,14 +14,12 @@ if [ -n "${SCHC_IP_ADDR}" ]; then
         SOUTH_IFACE="$(ip addr | awk -v wpan_prefix="${WPAN_SIMULATION_PREFIX}" ' \
             BEGIN { FS=":" } \
             $0 ~ /^[0-9]+:\s+([^:]+):/ { iface=$2 } \
-            $0 ~ wpan_prefix { print iface }' | xargs echo)"
-    elif [ $(ip link | grep -E '^[0-9]+:\s+[^:]+:' | wc -l) -eq 2 ]; then
-        SOUTH_IFACE=$(ip link | grep -Eo '^[0-9]+:\s+[^:]+:' | \
-            grep -Ev '^[0-9]+:\s+lo:' | sed -E "s/^[0-9]+:\s+([^:]+):/\1/")
+            $0 ~ wpan_prefix { print iface }' | cut -d'@' -f1 | xargs echo)"
     else
-        echo "Unable to find south interface" >&2
+        echo "Unable to find south interface. Maybe WPAN simulation prefix was not set?" >&2
         exit 1
     fi
+
     ADDITIONAL_SCHC_ARGS="${ADDITIONAL_SCHC_ARGS} -v"
     if [ -n "${SCHC_PDU}" ]; then
         ADDITIONAL_SCHC_ARGS="${ADDITIONAL_SCHC_ARGS} --pdu '${SCHC_PDU}'"

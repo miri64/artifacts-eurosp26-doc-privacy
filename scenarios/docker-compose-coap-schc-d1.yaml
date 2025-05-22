@@ -17,6 +17,8 @@ services:
     extends:
       file: coap/coap_server.yaml
       service: coap-server-base
+    networks:
+      - wpan_simulation
     depends_on:
       db:
         condition: service_healthy
@@ -24,6 +26,7 @@ services:
       BIND_PREFIX: "${SCHC_PREFIX}"
       SERVER_CREDENTIALS: "${DATA_SERVER_CREDENTIALS:-}"
       NETWORK_SCENARIO: "coap-schc-d1"
+      WPAN_SIMULATION_IFACE: "${WPAN_SIMULATION_IFACE}"
       SCHC_IP_ADDR: "${SCHC_PREFIX}1/${SCHC_PREFIX_LEN}"
       SCHC_PEER_ADDRS: "${SCHC_PREFIX}3/${SCHC_PREFIX_LEN}"
     volumes:
