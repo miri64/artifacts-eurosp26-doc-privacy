@@ -33,13 +33,21 @@ if [ -n "${SCHC_IP_ADDR}" ] && [ -n "${SCHC_DEV_ADDR}" ]; then
     "${SCHC_DIR}"/schc.py --north "${NORTH_IFACE}" ${ADDITIONAL_SCHC_ARGS} \
         "${SOUTH_IFACE}" "${SCHC_DEV_ADDR}" "${SCHC_DIR}"/"${SCHC_RULES}" \
         --ipv6-address "${SCHC_IP_ADDR}" \
-        > "${SCHC_LOGFILE}" 2> "${SCHC_LOGFILE%.log}.stderr.log" \
         &
+        # > "${SCHC_LOGFILE}" 2> "${SCHC_LOGFILE%.log}.stderr.log" \
     SCHC_PID="$!"
 
     # wait for north interface to be initialized
-    while ! ip addr show dev "${NORTH_IFACE}"; do
-        sleep 1
+    while ! ip addr show dev "${NORTH_IFACE}" | grep -q "${SCHC_IP_ADDR}" 2> /dev/null; do
+        sleep 5
+        if ! ps | grep -q "^\s\+\<${SCHC_PID}\>"; then
+            echo "SCHC process (PID=${SCHC_PID}) was stopped unexpectedly" >&2
+            echo "================================== stdout ==================================" >&2
+            cat "${SCHC_LOGFILE}" >&2
+            echo "================================== stderr ==================================" >&2
+            cat "${SCHC_LOGFILE%.log}.stderr.log" >&2
+            exit 1
+        fi
     done
 fi
 
