@@ -162,7 +162,7 @@ async def send_requests(context, args, parser):
         token_pool = list(range(first_token, first_token + (len(rows) * 100)))
         # shuffle token pool to guarantee random tokens
         random.shuffle(token_pool)
-        mid_pool = list(range(0x0000, 0xffff))
+        mid_pool = list(range(0x0000, 0xffff + 1))
         random.shuffle(mid_pool)
     else:
         token_pool = []
