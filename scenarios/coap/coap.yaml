@@ -7,6 +7,8 @@ services:
       context: .
       dockerfile: Dockerfile
       target: coap-base
+    sysctls:
+      net.ipv6.auto_flowlabels: 0
     image:
       pivot-eval/coap
     tmpfs:
