@@ -22,8 +22,8 @@ services:
       DATABASE_URI: "${DATABASE_URI}"
       UPSTREAM_PREFIX: "${UPSTREAM_PREFIX}"
       WPAN_SIMULATION_PREFIX: "${WPAN_SIMULATION_PREFIX}"
-      SCHC_DEV_ADDR: "${SCHC_DEV_ADDR:-}"
       SCHC_IP_ADDR: "${SCHC_IP_ADDR:-}"
+      SCHC_PEER_ADDRS: "${SCHC_PEER_ADDRS:-}"
     cap_add:    # required for tun for SCHC
       - NET_ADMIN
     devices:

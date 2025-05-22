@@ -65,6 +65,7 @@ source "${SCHC_DIR}/schc.sh"
 chown_logs() {
     if [ -n "${SCHC_PID}" ]; then
         kill "${SCHC_PID}"
+        rm -f "${ROUTE_FILE}"
         chown user: "${SCHC_LOGFILE}" "${SCHC_LOGFILE%.log}.stderr.log"
     fi
     chown user: "${LOGFILE}" "${LOGFILE%.log}.stderr.log"

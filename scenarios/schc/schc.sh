@@ -4,8 +4,10 @@
 # Distributed under terms of the MIT license.
 #
 
-if [ -n "${SCHC_IP_ADDR}" ] && [ -n "${SCHC_DEV_ADDR}" ]; then
+if [ -n "${SCHC_IP_ADDR}" ]; then
     NORTH_IFACE="${NORTH_IFACE:-tun0}"
+    ROUTE_FILE="${ROUTE_FILE:-/schc/route/routes.txt}"
+
 
     # find wpan-simulation interface within docker
     if [ -n "${WPAN_SIMULATION_PREFIX}" ]; then
@@ -30,9 +32,25 @@ if [ -n "${SCHC_IP_ADDR}" ] && [ -n "${SCHC_DEV_ADDR}" ]; then
     SCHC_LOGFILE="${LOGFILE%.log}.schc.log"
     SCHC_RULES="${NETWORK_SCENARIO}-rules.json"
 
+
+    if ! echo "${ADDITIONAL_SCHC_ARGS}" | grep -q -e "--client"; then
+        rm -f "${ROUTE_FILE}"
+    fi
+    if [ -f "${ROUTE_FILE}" ]; then
+        cat "${ROUTE_FILE}"
+    fi
+    SCHC_DEV_ADDR=$( \
+        ip addr show dev "${SOUTH_IFACE}" | grep "link/ether" | awk '{print $2}' | tr -d ':' \
+    )
+    if [ -f "${ROUTE_FILE}" ]; then
+        sed -i "#${SCHC_IP_ADDR}#d" "${ROUTE_FILE}"
+    fi
+    echo "${SCHC_IP_ADDR}=${SCHC_DEV_ADDR}" >> "${ROUTE_FILE}"
+
     "${SCHC_DIR}"/schc.py --north "${NORTH_IFACE}" ${ADDITIONAL_SCHC_ARGS} \
-        "${SOUTH_IFACE}" "${SCHC_DEV_ADDR}" "${SCHC_DIR}"/"${SCHC_RULES}" \
-        --ipv6-address "${SCHC_IP_ADDR}" \
+        "${SOUTH_IFACE}" "${SCHC_DIR}"/"${SCHC_RULES}" ${SCHC_PEER_ADDRS} \
+        --ipv6-address "${SCHC_IP_ADDR}" --route-file "${ROUTE_FILE}" \
+        > "${SCHC_LOGFILE}" \
         &
         # > "${SCHC_LOGFILE}" 2> "${SCHC_LOGFILE%.log}.stderr.log" \
     SCHC_PID="$!"

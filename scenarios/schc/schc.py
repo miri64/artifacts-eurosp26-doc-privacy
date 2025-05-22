@@ -11,6 +11,7 @@ import enum
 import fcntl
 import functools
 import importlib
+import ipaddress
 import logging
 import pathlib
 import psutil
@@ -282,6 +283,7 @@ class IoTSCHCSystem:
         else:
             self.logger = logger
         logging.basicConfig()
+        self.debug = debug
         if debug:
             self.logger.setLevel(logging.DEBUG)
 
@@ -316,15 +318,42 @@ class IoTSCHCScheduler:
 
 
 class IoTSCHCUpperLayer:
-    def __init__(self, system: IoTSCHCSystem, north_iface: NorthInterface):
+    def __init__(self,
+        system: IoTSCHCSystem,
+        north_iface: NorthInterface,
+        is_device: bool = True,
+        route_file: pathlib.Path = None,
+    ):
         self.north_iface = north_iface
         self.system = system
+        self.is_device = is_device
         self._protocol = None
+        self._route_file = route_file
+        self._routes = {}
+        self.address = None
+
+    def iterate_route_file(self):
+        if self._route_file is not None and self._route_file.exists():
+            with open(self._route_file) as f:
+                for line in f:
+                    ip_addr_str, mac_str = line.strip().split("=")
+                    ip_addr_str = ip_addr_str.split("/")[0]
+                    ip_addr = ipaddress.ip_address(ip_addr_str).packed
+                    mac_addr = bytes.fromhex(mac_str.strip())
+                    self._routes[ip_addr] = mac_addr
+                    yield ip_addr_str, ip_addr, mac_addr
 
     def route(self, l3_addr):  # pylint: disable=unused-argument
-        # TODO pylint: disable=fixme
-        return bytes.fromhex("260B5BF0")
-        # return bytes.fromhex("E2BC7DCBF550")
+        if l3_addr in self._routes:
+            return self._routes[l3_addr]
+
+        if self._route_file is None:
+            return None
+
+        for _, ip_addr, mac_addr in self.iterate_route_file():
+            if ip_addr == l3_addr:
+                return mac_addr
+        return None
 
     @property
     def protocol(self):
@@ -351,7 +380,15 @@ class IoTSCHCUpperLayer:
                 # try to guess address based on routing IPv6 address
                 dst_l3_addr = packet[24:40]
                 address = self.route(dst_l3_addr)
-        self.protocol.schc_send(packet, device_id=address)
+        if self.is_device:
+            kwargs = {"core_id": address, "device_id": self.address}
+        else:
+            kwargs = {"device_id": address, "core_id": self.address}
+        self.system.log(
+            canon_name(type(self)),
+            f"Using {kwargs} to send over SCHC",
+        )
+        self.protocol.schc_send(packet, verbose=self.system.debug, **kwargs)
 
     async def handle_north(self):
         while True:
@@ -431,6 +468,13 @@ async def main():
         default="tun0",
     )
     parser.add_argument(
+        "-r",
+        "--route-file",
+        help="File that translates IPv6 prefixes to MAC addresses",
+        default=None,
+        type=pathlib.Path,
+    )
+    parser.add_argument(
         "-s",
         "--pdu",
         help="PDU for the south interface",
@@ -447,19 +491,22 @@ async def main():
         help="South interface name",
     )
     parser.add_argument(
-        "dev_addr",
-        help="SCHC device address",
-    )
-    parser.add_argument(
         "rule_config",
         help="SCHC rule configuration "
         "(see https://openschc.github.io/openschc/Source/gen_rulemanager.html)",
+    )
+    parser.add_argument(
+        "peer_addresses",
+        help="IPv6 address of one of the SCHC peers",
+        nargs="*",
+        metavar="peer_address",
     )
     parser.add_argument(
         "-a",
         "--ipv6-address",
         help="Configure IPv6 addresses for the north interface",
         nargs="*",
+        dest="ipv6_addresses",
     )
     args = parser.parse_args()
 
@@ -471,10 +518,15 @@ async def main():
         NorthInterface(name=args.north_iface) as north,
         SCHCEncInterface(name=args.south_iface.split("@")[0]) as south,
     ):
-        for addr in args.ipv6_address:
+        for addr in args.ipv6_addresses:
             await north.add_addr(addr)
         lower = IoTSCHCLowerLayer(system, south)
-        upper = IoTSCHCUpperLayer(system, north)
+        upper = IoTSCHCUpperLayer(
+            system,
+            north,
+            route_file=args.route_file,
+            is_device=args.client
+        )
         lower.north = upper
         prot = openschc_loader.get_protocol(
             layer2=lower,
@@ -489,9 +541,28 @@ async def main():
         )
         upper.protocol = prot
         rule_manager = openschc_loader.get_rule_manager()
-        rule_manager.Add(
-            device=bytes.fromhex(args.dev_addr), file=args.rule_config
-        )
+        added_devices = set()
+        peer_addresses = [a.split("/")[0] for a in args.peer_addresses]
+        for _ in range(60 // 5):
+            for ip_addr, _, mac_addr in upper.iterate_route_file():
+                if args.client:
+                    ip_candidate = ip_addr not in peer_addresses
+                else:
+                    ip_candidate = ip_addr in peer_addresses
+                if (
+                    ip_candidate and ip_addr not in added_devices
+                ):
+                    rule_manager.Add(
+                        device=mac_addr, file=args.rule_config
+                    )
+                    added_devices.add(ip_addr)
+                elif ip_addr in [a.split("/")[0] for a in args.ipv6_addresses]:
+                    upper.address = mac_addr
+            if len(added_devices) >= len(args.peer_addresses) and upper.address:
+                break
+            await asyncio.sleep(5)
+        if len(added_devices) < len(args.peer_addresses):
+            raise AssertionError("Not all peers added to rules")
         if args.verbose:
             rule_manager.Print()
         prot.set_rulemanager(rule_manager)

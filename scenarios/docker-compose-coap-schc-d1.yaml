@@ -9,6 +9,10 @@ services:
     extends:
       file: database/database.yaml
       service: db-base
+    environment:
+      SCHC_ROUTE_FILE: "/schc/route/routes.txt"
+    volumes:
+      - schc_route:/schc/route/
   coap-server-global:
     extends:
       file: coap/coap_server.yaml
@@ -20,8 +24,10 @@ services:
       BIND_PREFIX: "${SCHC_PREFIX}"
       SERVER_CREDENTIALS: "${DATA_SERVER_CREDENTIALS:-}"
       NETWORK_SCENARIO: "coap-schc-d1"
-      SCHC_DEV_ADDR: abcdef0101
       SCHC_IP_ADDR: "${SCHC_PREFIX}1/${SCHC_PREFIX_LEN}"
+      SCHC_PEER_ADDRS: "${SCHC_PREFIX}3/${SCHC_PREFIX_LEN}"
+    volumes:
+      - schc_route:/schc/route/
   coap-client:
     extends:
       file: coap/coap_client.yaml
@@ -36,8 +42,10 @@ services:
       COAP_SERVER: "coap-server"
       DNS_SERVER: "coap-server"
       NETWORK_SCENARIO: "coap-schc-d1"
-      SCHC_DEV_ADDR: abcdef0103
       SCHC_IP_ADDR: "${SCHC_PREFIX}3/${SCHC_PREFIX_LEN}"
+      SCHC_PEER_ADDRS: "${SCHC_PREFIX}1/${SCHC_PREFIX_LEN}"
+    volumes:
+      - schc_route:/schc/route/
   sniffer:
     extends:
       file: sniffer/sniffer.yaml
@@ -50,3 +58,6 @@ services:
     depends_on:
       coap-server-global:
         condition: service_started
+
+volumes:
+  schc_route:
