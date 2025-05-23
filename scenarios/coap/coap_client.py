@@ -297,7 +297,11 @@ async def send_requests(context, args, parser):
             code=code,
             payload=query or b"",
             uri=coap_url,
-            content_format=ContentFormat.by_media_type(args.default_data_type),
+            content_format=(
+                ContentFormat.by_media_type(args.default_data_type)
+                if code == aiocoap.FETCH
+                else None
+            ),
             block2=block2,
         )
         request.remote = aiocoap.message.UndecidedRemote(
