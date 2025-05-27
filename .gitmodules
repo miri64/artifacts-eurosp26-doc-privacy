@@ -1,3 +1,3 @@
 [submodule "scenarios/coap/openschc"]
 	path = scenarios/schc/openschc
-	url = https://github.com/openschc/openschc.git
+	url = https://github.com/miri64/openschc.git
