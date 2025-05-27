@@ -211,6 +211,10 @@ class SCHCEncInterface(AsyncInterface):
     def duty_cycle(self):
         return self._duty_cycle
 
+    @property
+    def mac_addr(self):
+        return self._mac_addr
+
     def etherhdr(self, address):
         if address is None:
             address = b"\xff" * 6
@@ -249,17 +253,12 @@ class SCHCEncInterface(AsyncInterface):
             raise ConnectionError("Interface is not opened")
         data = await self.loop.sock_recv(self._sock, self.ETHERNET_HDR_LEN + self._pdu)
         assert len(data) >= self.ETHERNET_HDR_LEN
-        _, src, ethertype = struct.unpack(
+        dst, src, ethertype = struct.unpack(
             self.ETHERNET_HDR_FMT, data[: self.ETHERNET_HDR_LEN]
         )
         assert ethertype == self.ethertype
+        assert self._mac_addr and self._mac_addr == dst
         return src, data[self.ETHERNET_HDR_LEN :]
-
-
-def canon_name(typ):
-    if isinstance(typ, type(None)):
-        return "None"
-    return f"{typ.__module__}.{typ.__name__}"
 
 
 class OpenSCHCLoader:
@@ -423,17 +422,30 @@ class IoTSCHCUpperLayer:
     async def handle_north(self):
         while True:
             addr, data = await self.north_iface.recv()
-            self.system.log(
+            if (data[0] & 0xF0) == 0x60 and len(data) > 4 and data[6] == 58:
+                # drop ICMPv6 packets
+                self.system.log(canon_name(type(self)), f"Dropped ICMPv6 packet")
+                continue
+            # self.system.log(
+            print(
                 canon_name(type(self)), f"Received {IPv6(data)!r} from {addr} from north"
             )
+            print(canon_name(type(self)), f"data: {data}")
+            self.system.log(canon_name(type(self)), f"data: {data}")
             await self.send_packet(data)
 
 
 class IoTSCHCLowerLayer:
-    def __init__(self, system, south_iface: SCHCEncInterface):
+    def __init__(
+        self,
+        system: IoTSCHCSystem,
+        south_iface: SCHCEncInterface,
+        is_device: bool = False
+    ):
         self.south_iface = south_iface
         self.system = system
         self.protocol = None
+        self.is_device = is_device
         self._north = None
 
     def _set_protocol(self, prot):
@@ -462,8 +474,20 @@ class IoTSCHCLowerLayer:
     def get_mtu_size(self):
         return self.south_iface.pdu * 8
 
-    async def recv_packet(self, data, dst_l2_addr=None):
-        res = self.protocol.schc_recv(bytearray(data), device_id=dst_l2_addr)
+    async def recv_packet(self, data, src_l2_addr=None, dst_l2_addr=None):
+        if self.is_device:
+            kwargs = {"core_id": src_l2_addr, "device_id": dst_l2_addr}
+        else:
+            kwargs = {"device_id": src_l2_addr, "core_id": dst_l2_addr}
+        self.system.log(
+            canon_name(type(self)),
+            f"Using {kwargs} to send over SCHC",
+        )
+        res = self.protocol.schc_recv(
+            bytearray(data),
+            verbose=self.system.debug,
+            **kwargs,
+        )
         schc_addr, schc_data = res if res else (None, None)
         if schc_data:
             await self.north.send_north(schc_addr, bytes(schc_data))
@@ -474,7 +498,11 @@ class IoTSCHCLowerLayer:
             self.system.log(
                 canon_name(type(self)), f"Received {data} from {addr} from south"
             )
-            await self.recv_packet(data, dst_l2_addr=addr)
+            await self.recv_packet(
+                data,
+                src_l2_addr=addr,
+                dst_l2_addr=self.south_iface.mac_addr
+            )
 
 
 async def main():
@@ -556,7 +584,7 @@ async def main():
     ):
         for addr in args.ipv6_addresses:
             await north.add_addr(addr)
-        lower = IoTSCHCLowerLayer(system, south)
+        lower = IoTSCHCLowerLayer(system, south, is_device=args.client)
         upper = IoTSCHCUpperLayer(
             system,
             north,
