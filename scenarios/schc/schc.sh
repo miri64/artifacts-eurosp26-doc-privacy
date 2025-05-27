@@ -51,9 +51,8 @@ if [ -n "${SCHC_IP_ADDR}" ]; then
     "${SCHC_DIR}"/schc.py --north "${NORTH_IFACE}" ${ADDITIONAL_SCHC_ARGS} \
         "${SOUTH_IFACE}" "${SCHC_DIR}"/"${SCHC_RULES}" ${SCHC_PEER_ADDRS} \
         --ipv6-address "${SCHC_IP_ADDR}" --route-file "${ROUTE_FILE}" \
-        > "${SCHC_LOGFILE}" \
+        > "${SCHC_LOGFILE}" 2> "${SCHC_LOGFILE%.log}.stderr.log" \
         &
-        # > "${SCHC_LOGFILE}" 2> "${SCHC_LOGFILE%.log}.stderr.log" \
     SCHC_PID="$!"
 
     # wait for north interface to be initialized
