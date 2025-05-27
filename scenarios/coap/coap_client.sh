@@ -62,6 +62,14 @@ ADDITIONAL_SCHC_ARGS="--client"
 SCHC_DIR="${SCRIPT_DIR}/../schc"
 source "${SCHC_DIR}/schc.sh"
 
+if [ -n "${SCHC_IP_ADDR}" ]; then
+    BIND_ADDR=$(echo "${SCHC_IP_ADDR}" | sed 's#/[0-9]\+$##')
+    BIND_PORT=45575
+
+    # bind to fixed port for DEV_PORT compression
+    BIND="--bind [${BIND_ADDR}]:${BIND_PORT}"
+fi
+
 if [ -n "${NORTH_IFACE}" ]; then
     su - user -c "/usr/bin/tshark -i '${NORTH_IFACE}' -w '${LOGFILE%.log}.pcapng'" &
     TSHARK_PID=$!
@@ -81,7 +89,7 @@ chown_logs() {
 
 trap chown_logs EXIT HUP TERM INT QUIT ABRT KILL
 
-"${SCRIPT_DIR}"/coap_client.py ${BLOCK_SIZE} \
+"${SCRIPT_DIR}"/coap_client.py ${BIND} ${BLOCK_SIZE} \
     ${PROXY} ${SECURITY} ${CLIENT_CREDENTIALS} ${CLIENT_PROXY_CREDENTIALS} \
     "${DATABASE_URI}" \
     "${DATA_FORMAT}" \

@@ -22,6 +22,7 @@ import aiocoap.messagemanager
 import aiocoap.proxy.client
 import aiocoap.tokenmanager
 import aiocoap.transports.oscore
+from aiocoap.util import hostportsplit
 import psycopg2 as db
 
 from aiocoap.numbers.contentformat import ContentFormat
@@ -365,6 +366,23 @@ def valid_filename(parser, arg):
     )
 
 
+def hostportsplit_helper(parser, arg):
+    if arg.isnumeric():
+        raise parser.error(
+            f"Invalid argument to --bind. Did you mean --bind :{arg}?"
+        )
+
+    try:
+        bind = hostportsplit(arg)
+        if bind[0] is None:
+            return ("", bind[1])
+        return bind
+    except ValueError:
+        raise parser.error(
+            f"Invalid argument to --bind. Did you mean --bind '[{arg}]'?"
+        )
+
+
 async def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -380,6 +398,12 @@ async def main():
         type=float,
         default=0,
         help="Client ID used for synchronization",
+    )
+    parser.add_argument(
+        "--bind",
+        help="Host and/or port to bind to",
+        type=lambda arg: hostportsplit_helper(parser, arg),
+        default=None,
     )
     parser.add_argument(
         "--block-size",
@@ -462,7 +486,7 @@ async def main():
         return protected_message, request_id
 
     aiocoap.oscore.CanProtect.protect = protect
-    context = await aiocoap.Context.create_client_context()
+    context = await aiocoap.Context.create_client_context(local_bind=args.bind)
     try:
         await send_requests(context, args, parser)
     finally:
