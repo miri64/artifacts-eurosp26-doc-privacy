@@ -7,6 +7,7 @@
 
 import argparse
 import asyncio
+import collections
 import enum
 import fcntl
 import functools
@@ -302,23 +303,48 @@ class IoTSCHCScheduler:
     def __init__(self, system, loop):
         self.loop = loop
         self.system = system
+        self.sessions = collections.defaultdict(list)
 
     def get_clock(self):
         return self.loop.time()
 
-    def add_event(self, time_in_sec, event_function, event_args):
-        self.system.log(
+    def add_event(self, time_in_sec, event_function, event_args, session_id=None):
+        # self.system.log(
+        print(
             canon_name(type(self)),
-            f"Add event: call {canon_name(event_function)} in {time_in_sec} sec",
+            f"Add event: call {canon_name(event_function)} with {event_args} "
+            f"in {time_in_sec} sec",
         )
         assert time_in_sec >= 0
         if event_args is None:
             event_args = []
-        return self.loop.call_later(time_in_sec, event_function, *event_args)
+        self.session_id = session_id
+
+        def event_wrapper(*event_args):
+            event_function(*event_args)
+            if handler in self.sessions[session_id]:
+                self.sessions[session_id].remove(handler)
+
+        handler = self.loop.call_later(
+            time_in_sec,
+            event_wrapper,
+            *event_args,
+        )
 
     def cancel_event(self, event_handle):
         self.system.log(canon_name(type(self)), f"Cancel event {event_handle}")
         event_handle.cancel()
+
+    def _cancel_session(self, session_id):
+        for task in self.sessions[session_id]:
+            task.cancel()
+
+    def cancel_session(self, session_id=None):
+        if session_id is None:
+            for session_id in self.sessions:
+                self._cancel_session(session_id)
+        else:
+            self._cancel_session(session_id)
 
 
 class IoTSCHCUpperLayer:
