@@ -29,7 +29,7 @@ elif [ "${SECURITY}" = "oscore-base" ]; then
     NETWORK_SCENARIO="$(echo "${NETWORK_SCENARIO}" | sed 's/coap/oscore-base/g')"
 fi
 
-LOGFILE="/dumps/${NETWORK_SCENARIO}_${DATA_FORMAT_LOG}_${DNS_FORMAT_LOG}${BLOCK_SIZE}.server.log"
+LOGFILE="/dumps/${NETWORK_SCENARIO}_${DATA_FORMAT_LOG}_${DNS_FORMAT_LOG}${BLOCK_SIZE}.${SERVER_NAME}.log"
 
 SCHC_DIR="${SCRIPT_DIR}/../schc"
 source "${SCHC_DIR}/schc.sh"

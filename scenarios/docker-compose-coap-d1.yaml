@@ -27,6 +27,7 @@ services:
       BIND_PREFIX: "${WPAN_SIMULATION_PREFIX}"
       SERVER_CREDENTIALS: "${DATA_SERVER_CREDENTIALS:-}"
       NETWORK_SCENARIO: "coap-d1"
+      SERVER_NAME: "server"
   coap-client:
     extends:
       file: coap/coap_client.yaml

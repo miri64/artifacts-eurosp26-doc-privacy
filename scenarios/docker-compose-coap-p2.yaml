@@ -24,6 +24,7 @@ services:
       BIND_PREFIX: "${UPSTREAM_PREFIX}"
       SERVER_CREDENTIALS: "${DATA_SERVER_CREDENTIALS:-}"
       NETWORK_SCENARIO: "coap-p2"
+      SERVER_NAME: "coap-server"
     depends_on:
       db:
         condition: service_healthy
@@ -41,6 +42,7 @@ services:
       BIND_PREFIX: "${UPSTREAM_PREFIX}"
       SERVER_CREDENTIALS: "${DNS_SERVER_CREDENTIALS:-}"
       NETWORK_SCENARIO: "coap-p2"
+      SERVER_NAME: "dns-server"
     depends_on:
       db:
         condition: service_healthy

@@ -25,6 +25,7 @@ services:
       WPAN_SIMULATION_IFACE: "${WPAN_SIMULATION_IFACE}"
       SCHC_IP_ADDR: "${SCHC_PREFIX}1/${SCHC_PREFIX_LEN}"
       SCHC_PEER_ADDRS: "${SCHC_PREFIX}3/${SCHC_PREFIX_LEN}"
+      SERVER_NAME: "server"
     volumes:
       - schc_route:/schc/route/
   coap-client:
