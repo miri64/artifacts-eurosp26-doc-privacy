@@ -26,3 +26,11 @@ sudo apt-get update
 sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 sudo usermod -a -G docker "${USER}"
 ```
+
+# Benchmarking runtime
+
+```
+sudo apt-get install hyperfine
+
+hyperfine --warmup 0 --max-runs 1 --show-output ./run.sh
+```
