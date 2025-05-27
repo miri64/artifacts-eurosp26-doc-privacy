@@ -11,6 +11,7 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "$(realpath "$0")" )" &> /dev/null && pwd )
 export HOST_GID=$(id -g)
 export HOST_UID=$(id -u)
 
+git -C ../ submodule update --init --recursive
 chmod -R o+r ${SCRIPT_DIR}/database/ ${SCRIPT_DIR}/../jsons/
 chmod o+x ${SCRIPT_DIR}/database/ ${SCRIPT_DIR}/../jsons/
 
@@ -36,7 +37,7 @@ SECURITIES=(
 )
 LINK_LAYERS=(
     ""
-    # "schc" 
+    "schc" 
 )
 PROTOCOLS=(
     "coap"
@@ -45,7 +46,7 @@ PROTOCOLS=(
 NETWORK_SETUPS=("d1" "d2" "p1" "p2")
 BLOCKWISE=(
     ""
-    # "block"
+    "block"
 )
 
 if id | grep -q "=0(root)" || id | grep -vq "docker"; then
@@ -76,17 +77,21 @@ if [ "$1" = "--build" ] || ! docker image ls | grep -q "pivot-eval/"; then
             for setup in "${NETWORK_SETUPS[@]}"; do
                 setup_iface=$(echo "${setup}" | sed -E -e 's/([dp])1/\1i/g' -e 's/([dp])2/\1ii/g')
                 l2_iface=$(echo "${l2}" | sed -E -e 's/-//g' -e 's/schc/0/g')
+                if [ -n "${l2}" ]; then
+                    l2_dash="-${l2}"
+                    ADDITIONAL_OPTS="${ADDITIONAL_OPTS} --env-file "${SCRIPT_DIR}"/.${l2}.env"
+                fi
                 export DATABASE_BACKEND_PREFIX="fd00:${PREFIX_HINT_1}b${PREFIX_HINT_2}6::"
-                export WPAN_SIMULATION_NAME="${prot}${l2}-${setup}-wpan-simulation"
+                export WPAN_SIMULATION_NAME="${prot}${l2_dash}-${setup}-wpan-simulation"
                 export WPAN_SIMULATION_IFACE="${prot}${l2_iface}${setup}_wpan"
                 export WPAN_SIMULATION_PREFIX="fdd8:${PREFIX_HINT_1}b${PREFIX_HINT_2}6:eccc::"
-                export UPSTREAM_NAME="${prot}${l2}-${setup}-upstream"
+                export UPSTREAM_NAME="${prot}${l2_dash}-${setup}-upstream"
                 export UPSTREAM_IFACE="${prot}${l2_iface}${setup}_upstream"
                 export UPSTREAM_PREFIX="fdd8:${PREFIX_HINT_1}b${PREFIX_HINT_2}6:ecc0::"
                 COMPOSE_BAKE=true DATA_FORMAT=application/cbor DNS_FORMAT=application/dns+cbor \
                     docker compose --env-file "${MAIN_ENV}" \
                         ${ADDITIONAL_OPTS} \
-                        -f "${SCRIPT_DIR}/docker-compose-${prot}${l2}-${setup}.yaml" build
+                        -f "${SCRIPT_DIR}/docker-compose-${prot}${l2_dash}-${setup}.yaml" build
                 PREFIX_HINT_2=$(( PREFIX_HINT_2 + 1 ))
             done
             PREFIX_HINT_1=$(( PREFIX_HINT_1 + 1 ))
@@ -99,28 +104,33 @@ fi
 for data_env in "${DATA_ENVS[@]}"; do
     for dns_env in "${DNS_ENVS[@]}"; do
         for sec in "${SECURITIES[@]}"; do
+            PREFIX_HINT_1=6
             for l2 in "${LINK_LAYERS[@]}"; do
-                PREFIX_HINT_1=6
                 for prot in "${PROTOCOLS[@]}"; do
                     if [ "$prot" != "coap" -a "$sec" != "transport" ]; then
                         continue
                     fi
-                    for block in "${BLOCKWISE}"; do
+                    for block in "${BLOCKWISE[@]}"; do
                         ALL_SUCCESSFUL=0
                         while [ ${ALL_SUCCESSFUL} -eq 0 ]; do
                             PREFIX_HINT_2=0
                             unset DOCKER_COMPOSE_PIDS
                             for setup in "${NETWORK_SETUPS[@]}"; do
+                                ADDITIONAL_OPTS=""
+
                                 setup_iface=$(echo "${setup}" | sed -E -e 's/([dp])1/\1i/g' -e 's/([dp])2/\1ii/g')
                                 l2_iface=$(echo "${l2}" | sed -E -e 's/-//g' -e 's/schc/0/g')
+                                if [ -n "${l2}" ]; then
+                                    l2_dash="-${l2}"
+                                    ADDITIONAL_OPTS="${ADDITIONAL_OPTS} --env-file "${SCRIPT_DIR}"/.${l2}.env"
+                                fi
                                 export DATABASE_BACKEND_PREFIX="fd00:${PREFIX_HINT_1}b${PREFIX_HINT_2}6::"
-                                export WPAN_SIMULATION_NAME="${prot}${l2}-${setup}-wpan-simulation"
+                                export WPAN_SIMULATION_NAME="${prot}${l2_dash}-${setup}-wpan-simulation"
                                 export WPAN_SIMULATION_IFACE="${prot}${l2_iface}${setup}_wpan"
                                 export WPAN_SIMULATION_PREFIX="fdd8:${PREFIX_HINT_1}b${PREFIX_HINT_2}6:eccc::"
-                                export UPSTREAM_NAME="${prot}${l2}-${setup}-upstream"
+                                export UPSTREAM_NAME="${prot}${l2_dash}-${setup}-upstream"
                                 export UPSTREAM_IFACE="${prot}${l2_iface}${setup}_upstream"
                                 export UPSTREAM_PREFIX="fdd8:${PREFIX_HINT_1}b${PREFIX_HINT_2}6:ecc0::"
-                                ADDITIONAL_OPTS=""
 
                                 if [ "$prot" != "coap" -a -n "$block" ]; then
                                     continue
@@ -141,7 +151,7 @@ for data_env in "${DATA_ENVS[@]}"; do
                                 docker compose --env-file "${MAIN_ENV}" \
                                     ${ADDITIONAL_OPTS} \
                                     --env-file "${data_env}" --env-file "${dns_env}" \
-                                    -f "${SCRIPT_DIR}/docker-compose-${prot}${l2}-${setup}.yaml" up \
+                                    -f "${SCRIPT_DIR}/docker-compose-${prot}${l2_dash}-${setup}.yaml" up \
                                         --abort-on-container-exit &
                                 DOCKER_COMPOSE_PIDS+=("$!")
                                 PREFIX_HINT_2=$(( PREFIX_HINT_2 + 1 ))
@@ -155,8 +165,8 @@ for data_env in "${DATA_ENVS[@]}"; do
                                 fi
                             done
                         done
-                        PREFIX_HINT_1=$(( PREFIX_HINT_1 + 1 ))
                     done
+                    PREFIX_HINT_1=$(( PREFIX_HINT_1 + 1 ))
                 done
             done
         done
