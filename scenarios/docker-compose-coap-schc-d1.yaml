@@ -9,10 +9,6 @@ services:
     extends:
       file: database/database.yaml
       service: db-base
-    environment:
-      SCHC_ROUTE_FILE: "/schc/route/routes.txt"
-    volumes:
-      - schc_route:/schc/route/
   coap-server-global:
     extends:
       file: coap/coap_server.yaml
