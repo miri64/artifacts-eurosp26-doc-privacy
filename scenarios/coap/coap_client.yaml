@@ -24,6 +24,8 @@ services:
       WPAN_SIMULATION_PREFIX: "${WPAN_SIMULATION_PREFIX}"
       SCHC_IP_ADDR: "${SCHC_IP_ADDR:-}"
       SCHC_PEER_ADDRS: "${SCHC_PEER_ADDRS:-}"
+      SCHC_PDU: "${SCHC_PDU:-}"
+      SCHC_DUTY_CYCLE: "${SCHC_DUTY_CYCLE:-}"
     cap_add:    # required for tun for SCHC
       - NET_ADMIN
       - NET_RAW

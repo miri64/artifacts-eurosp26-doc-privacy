@@ -22,10 +22,10 @@ if [ -n "${SCHC_IP_ADDR}" ]; then
 
     ADDITIONAL_SCHC_ARGS="${ADDITIONAL_SCHC_ARGS} -v"
     if [ -n "${SCHC_PDU}" ]; then
-        ADDITIONAL_SCHC_ARGS="${ADDITIONAL_SCHC_ARGS} --pdu '${SCHC_PDU}'"
+        ADDITIONAL_SCHC_ARGS="${ADDITIONAL_SCHC_ARGS} --pdu ${SCHC_PDU}"
     fi
     if [ -n "${SCHC_DUTY_CYCLE}" ]; then
-        ADDITIONAL_SCHC_ARGS="${ADDITIONAL_SCHC_ARGS} --duty-cycle '${SCHC_DUTY_CYCLE}'"
+        ADDITIONAL_SCHC_ARGS="${ADDITIONAL_SCHC_ARGS} --duty-cycle ${SCHC_DUTY_CYCLE}"
     fi
     SCHC_LOGFILE="${LOGFILE%.log}.schc.log"
     SCHC_RULES="${NETWORK_SCENARIO}-rules.json"

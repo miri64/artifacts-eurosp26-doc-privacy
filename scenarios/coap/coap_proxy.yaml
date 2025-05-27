@@ -18,6 +18,11 @@ services:
       DATABASE_URI: "${DATABASE_URI}"
       DATA_FORMAT: "${DATA_FORMAT}"
       DNS_FORMAT: "${DNS_FORMAT}"
+      WPAN_SIMULATION_PREFIX: "${WPAN_SIMULATION_PREFIX}"
+      SCHC_IP_ADDR: "${SCHC_IP_ADDR:-}"
+      SCHC_PEER_ADDRS: "${SCHC_PEER_ADDRS:-}"
+      SCHC_PDU: "${SCHC_PDU:-}"
+      SCHC_DUTY_CYCLE: "${SCHC_DUTY_CYCLE:-}"
       AIOCOAP_DTLSSERVER_ENABLED: "yes"
     command: |
       /app/coap/coap_proxy.sh

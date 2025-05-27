@@ -26,6 +26,10 @@ from scapy.all import IPv6, load_contrib
 SCRIPT_PATH = pathlib.Path(__file__).resolve().parent
 OPENSCHC_PATH = SCRIPT_PATH / "openschc" / "src"
 
+ETHERNET_PDU = 1500
+DEFAULT_PDU = ETHERNET_PDU
+DEFAULT_DUTY_CYCLE = 500
+
 
 class AsyncInterface:
     @staticmethod
@@ -158,7 +162,7 @@ class TunTap(AsyncInterface):
             )
 
     async def read(self):
-        return await self._run_async(os.read)(self._handle, 1500)
+        return await self._run_async(os.read)(self._handle, ETHERNET_PDU)
 
     async def write(self, data):
         return await self._run_async(os.write)(self._handle, data)
@@ -187,7 +191,7 @@ class SCHCEncInterface(AsyncInterface):
     ETHERNET_HDR_LEN = 14
 
     def __init__(
-        self, name, ethertype=DEFAULT_ETHERTYPE, pdu=1500, duty_cycle=1000
+        self, name, ethertype=DEFAULT_ETHERTYPE, pdu=1500, duty_cycle=500
     ):
         super().__init__()
         self._iface_name = name
@@ -430,7 +434,7 @@ class IoTSCHCLowerLayer:
             transmit_callback(1)
 
     def get_mtu_size(self):
-        return self.south_iface.pdu
+        return self.south_iface.pdu * 8
 
     async def recv_packet(self, data, dst_l2_addr=None):
         res = self.protocol.schc_recv(bytearray(data), device_id=dst_l2_addr)
@@ -458,8 +462,9 @@ async def main():
     parser.add_argument(
         "-d",
         "--duty-cycle",
-        help="Duty cycle for the south interface",
+        help=f"Duty cycle for the south interface (default: {DEFAULT_DUTY_CYCLE})",
         type=int,
+        default=DEFAULT_DUTY_CYCLE,
     )
     parser.add_argument(
         "-n",
@@ -477,8 +482,9 @@ async def main():
     parser.add_argument(
         "-s",
         "--pdu",
-        help="PDU for the south interface",
+        help=f"PDU for the south interface (default: {DEFAULT_PDU})",
         type=int,
+        default=DEFAULT_PDU,
     )
     parser.add_argument(
         "-v",
@@ -516,7 +522,11 @@ async def main():
     async with (
         # TBD: addrs for NorthInterface?
         NorthInterface(name=args.north_iface) as north,
-        SCHCEncInterface(name=args.south_iface.split("@")[0]) as south,
+        SCHCEncInterface(
+            name=args.south_iface,
+            duty_cycle=args.duty_cycle,
+            pdu=args.pdu,
+        ) as south,
     ):
         for addr in args.ipv6_addresses:
             await north.add_addr(addr)
@@ -536,7 +546,10 @@ async def main():
                 if args.client
                 else openschc_loader.protocol.T_POSITION_CORE
             ),
-            config={"debug_level": 10 if args.verbose else 0},
+            config={
+                "debug_level": 10 if args.verbose else 0,
+                "tx_interval": south.duty_cycle,
+            },
             unique_peer=False,
         )
         upper.protocol = prot
