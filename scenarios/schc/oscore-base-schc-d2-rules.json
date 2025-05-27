@@ -1,0 +1,99 @@
+[
+  {
+    "RuleID" : 1,
+    "RuleIDLength" : 8,
+    "Compression" : [
+      {"FID": "IPV6.VER",       "FL":  4, "FP": 1, "DI": "BI", "TV": 6,             "MO": "equal",        "CDA": "not-sent"},
+      {"FID": "IPV6.TC",        "FL":  8, "FP": 1, "DI": "BI", "TV": 0,             "MO": "equal",        "CDA": "not-sent"},
+      {"FID": "IPV6.FL",        "FL": 20, "FP": 1, "DI": "BI", "TV": 0,             "MO": "equal",        "CDA": "not-sent"},
+      {"FID": "IPV6.LEN",       "FL": 16, "FP": 1, "DI": "BI",                      "MO": "ignore",       "CDA": "compute-length"},
+      {"FID": "IPV6.NXT",       "FL":  8, "FP": 1, "DI": "BI", "TV": 17,            "MO": "equal",        "CDA": "not-sent"},
+      {"FID": "IPV6.HOP_LMT",   "FL":  8, "FP": 1, "DI": "BI", "TV": 64,            "MO": "equal",        "CDA": "not-sent"},
+      {"FID": "IPV6.DEV_PREFIX","FL": 64, "FP": 1, "DI": "BI", "TV": "fd01:45c4:6af8::/64", "MO": "equal","CDA": "not-sent"},
+      {"FID": "IPV6.DEV_IID",   "FL": 64, "FP": 1, "DI": "BI", "TV": "::3",         "MO": "equal",        "CDA": "not-sent"},
+      {"FID": "IPV6.APP_PREFIX","FL": 64, "FP": 1, "DI": "BI", "TV": "fd01:45c4:6af8::/64", "MO": "equal","CDA": "not-sent"},
+      {"FID": "IPV6.APP_IID",   "FL": 64, "FP": 1, "DI": "BI", "TV": "::1",         "MO": "equal",        "CDA": "not-sent"},
+      {"FID": "UDP.DEV_PORT",   "FL": 16, "FP": 1, "DI": "BI", "TV": 45575,         "MO": "equal",        "CDA": "not-sent"},
+      {"FID": "UDP.APP_PORT",   "FL": 16, "FP": 1, "DI": "BI", "TV": 5683,          "MO": "equal",        "CDA": "not-sent"},
+      {"FID": "UDP.LEN",        "FL": 16, "FP": 1, "DI": "BI",                      "MO": "ignore",       "CDA": "compute-length"},
+      {"FID": "UDP.CKSUM",      "FL": 16, "FP": 1, "DI": "BI",                      "MO": "ignore",       "CDA": "compute-length"},
+      {"FID": "COAP.VER",       "FL":  2, "FP": 1, "DI": "BI", "TV": 1,             "MO": "equal",        "CDA": "not-sent"},
+      {"FID": "COAP.TYPE",      "FL":  2, "FP": 1, "DI": "BI",                      "MO": "ignore",       "CDA": "value-sent"},
+      {"FID": "COAP.TKL",       "FL":  4, "FP": 1, "DI": "BI",                      "MO": "ignore",       "CDA": "value-sent"},
+      {"FID": "COAP.CODE",      "FL":  8, "FP": 1, "DI": "UP", "TV": 2,             "MO": "equal",        "CDA": "not-sent"},
+      {"FID": "COAP.CODE",      "FL":  8, "FP": 1, "DI": "DW", "TV": 68,            "MO": "equal",        "CDA": "not-sent"},
+      {"FID": "COAP.MID",       "FL": 16, "FP": 1, "DI": "BI",                      "MO": "ignore",       "CDA": "value-sent"},
+      {"FID": "COAP.TOKEN",  "FL": "tkl", "FP": 1, "DI": "BI",                      "MO": "ignore",       "CDA": "value-sent"},
+      {"FID": "COAP.URI-HOST",  "FL": 80, "FP": 1, "DI": "UP", "TV": "dns-server",  "MO": "equal",        "CDA": "not-sent"},
+      {"FID": "COAP.OSCORE.FLAGS","FL":8, "FP": 1, "DI": "UP", "TV": 8, "MO.VAL": 5,"MO": "msb",          "CDA": "lsb"},
+      {"FID": "COAP.OSCORE.FLAGS","FL":"var","FP":1,"DI":"DW", "TV":"",             "MO": "equal",        "CDA": "not-sent"},
+      {"FID": "COAP.OSCORE.PIV","FL":"osc.piv","FP":1,"DI":"UP",                    "MO": "ignore",       "CDA": "value-sent"},
+      {"FID": "COAP.OSCORE.PIV","FL":"osc.piv","FP":1,"DI":"DW","TV":"",            "MO": "equal",        "CDA": "not-sent"},
+      {"FID": "COAP.OSCORE.KIDCTX","FL":"var","FP":1,"DI":"BI","TV":"",             "MO": "equal",        "CDA": "not-sent"},
+      {"FID": "COAP.OSCORE.KID","FL":"var","FP":1,"DI":"UP", "TV":2,                "MO": "equal",        "CDA": "not-sent"},
+      {"FID": "COAP.OSCORE.KID","FL":"var","FP":1,"DI":"DW","TV":"",                "MO": "equal",        "CDA": "not-sent"},
+      {"FID": "COAP.End",       "FL": 8, "FP": 1,  "DI": "BI", "TV": 255,           "MO": "equal",        "CDA": "not-sent"}
+    ]
+  },
+  {
+    "RuleID" : 2,
+    "RuleIDLength" : 8,
+    "Compression" : [
+      {"FID": "IPV6.VER",       "FL":  4, "FP": 1, "DI": "BI", "TV": 6,             "MO": "equal",        "CDA": "not-sent"},
+      {"FID": "IPV6.TC",        "FL":  8, "FP": 1, "DI": "BI", "TV": 0,             "MO": "equal",        "CDA": "not-sent"},
+      {"FID": "IPV6.FL",        "FL": 20, "FP": 1, "DI": "BI", "TV": 0,             "MO": "equal",        "CDA": "not-sent"},
+      {"FID": "IPV6.LEN",       "FL": 16, "FP": 1, "DI": "BI",                      "MO": "ignore",       "CDA": "compute-length"},
+      {"FID": "IPV6.NXT",       "FL":  8, "FP": 1, "DI": "BI", "TV": 17,            "MO": "equal",        "CDA": "not-sent"},
+      {"FID": "IPV6.HOP_LMT",   "FL":  8, "FP": 1, "DI": "BI", "TV": 64,            "MO": "equal",        "CDA": "not-sent"},
+      {"FID": "IPV6.DEV_PREFIX","FL": 64, "FP": 1, "DI": "BI", "TV": "fd01:45c4:6af8::/64", "MO": "equal","CDA": "not-sent"},
+      {"FID": "IPV6.DEV_IID",   "FL": 64, "FP": 1, "DI": "BI", "TV": "::3",         "MO": "equal",        "CDA": "not-sent"},
+      {"FID": "IPV6.APP_PREFIX","FL": 64, "FP": 1, "DI": "BI", "TV": "fd01:45c4:6af8::/64", "MO": "equal","CDA": "not-sent"},
+      {"FID": "IPV6.APP_IID",   "FL": 64, "FP": 1, "DI": "BI", "TV": "::2",         "MO": "equal",        "CDA": "not-sent"},
+      {"FID": "UDP.DEV_PORT",   "FL": 16, "FP": 1, "DI": "BI", "TV": 45575,         "MO": "equal",        "CDA": "not-sent"},
+      {"FID": "UDP.APP_PORT",   "FL": 16, "FP": 1, "DI": "BI", "TV": 5683,          "MO": "equal",        "CDA": "not-sent"},
+      {"FID": "UDP.LEN",        "FL": 16, "FP": 1, "DI": "BI",                      "MO": "ignore",       "CDA": "compute-length"},
+      {"FID": "UDP.CKSUM",      "FL": 16, "FP": 1, "DI": "BI",                      "MO": "ignore",       "CDA": "compute-length"},
+      {"FID": "COAP.VER",       "FL":  2, "FP": 1, "DI": "BI", "TV": 1,             "MO": "equal",        "CDA": "not-sent"},
+      {"FID": "COAP.TYPE",      "FL":  2, "FP": 1, "DI": "BI",                      "MO": "ignore",       "CDA": "value-sent"},
+      {"FID": "COAP.TKL",       "FL":  4, "FP": 1, "DI": "BI",                      "MO": "ignore",       "CDA": "value-sent"},
+      {"FID": "COAP.CODE",      "FL":  8, "FP": 1, "DI": "UP", "TV": 2,             "MO": "equal",        "CDA": "not-sent"},
+      {"FID": "COAP.CODE",      "FL":  8, "FP": 1, "DI": "DW", "TV": 68,            "MO": "equal",        "CDA": "not-sent"},
+      {"FID": "COAP.MID",       "FL": 16, "FP": 1, "DI": "BI",                      "MO": "ignore",       "CDA": "value-sent"},
+      {"FID": "COAP.TOKEN",  "FL": "tkl", "FP": 1, "DI": "BI",                      "MO": "ignore",       "CDA": "value-sent"},
+      {"FID": "COAP.URI-HOST",  "FL": 88, "FP": 1, "DI": "UP", "TV": "coap-server", "MO": "equal",        "CDA": "not-sent"},
+      {"FID": "COAP.OSCORE.FLAGS","FL":8, "FP": 1, "DI": "UP", "TV": 8, "MO.VAL": 5,"MO": "msb",          "CDA": "lsb"},
+      {"FID": "COAP.OSCORE.FLAGS","FL":"var","FP":1,"DI":"DW", "TV":"",             "MO": "equal",        "CDA": "not-sent"},
+      {"FID": "COAP.OSCORE.PIV","FL":"osc.piv","FP":1,"DI":"UP",                    "MO": "ignore",       "CDA": "value-sent"},
+      {"FID": "COAP.OSCORE.PIV","FL":"osc.piv","FP":1,"DI":"DW","TV":"",            "MO": "equal",        "CDA": "not-sent"},
+      {"FID": "COAP.OSCORE.KIDCTX","FL":"var","FP":1,"DI":"BI","TV":"",             "MO": "equal",        "CDA": "not-sent"},
+      {"FID": "COAP.OSCORE.KID","FL":"var","FP":1,"DI":"UP", "TV":1,                "MO": "equal",        "CDA": "not-sent"},
+      {"FID": "COAP.OSCORE.KID","FL":"var","FP":1,"DI":"DW","TV":"",                "MO": "equal",        "CDA": "not-sent"},
+      {"FID": "COAP.End",       "FL": 8, "FP": 1,  "DI": "BI", "TV": 255,           "MO": "equal",        "CDA": "not-sent"}
+    ]
+  },
+  {
+    "RuleID" : 23,
+    "RuleIDLength" : 8,
+    "Fragmentation" : {
+      "FRMode" : "NoAck",
+      "FRDirection" : "UP",
+      "FRModeProfile": {
+        "MICAlgorithm": "RCS_CRC32",
+        "MICWordSize": 4
+      }
+    }
+  },
+  {
+    "RuleID" : 24,
+    "RuleIDLength" : 8,
+    "Fragmentation" : {
+      "FRMode" : "NoAck",
+      "FRDirection" : "DW",
+      "FRModeProfile": {
+        "MICAlgorithm": "RCS_CRC32",
+        "MICWordSize": 4
+      }
+    }
+  }
+]
+

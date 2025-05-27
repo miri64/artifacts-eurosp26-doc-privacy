@@ -650,10 +650,17 @@ async def main():
                     added_devices.add(ip_addr)
                 elif ip_addr in [a.split("/")[0] for a in args.ipv6_addresses]:
                     upper.address = mac_addr
-            if len(added_devices) >= len(args.peer_addresses) and upper.address:
-                break
+            if args.client:
+                if len(added_devices) >= 1 and upper.address:
+                    break
+            else:
+                if len(added_devices) >= len(args.peer_addresses) and upper.address:
+                    break
             await asyncio.sleep(5)
-        if len(added_devices) < len(args.peer_addresses):
+        if (
+            (not args.client and len(added_devices) < len(args.peer_addresses))
+            or (args.client and len(added_devices) == 0)
+        ):
             raise AssertionError("Not all peers added to rules")
         if args.verbose:
             rule_manager.Print()

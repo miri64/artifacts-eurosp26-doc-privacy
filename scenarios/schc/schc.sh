@@ -33,8 +33,7 @@ if [ -n "${SCHC_IP_ADDR}" ]; then
     SCHC_LOGFILE="${LOGFILE%.log}.schc.log"
     SCHC_RULES="${NETWORK_SCENARIO}-rules.json"
 
-
-    if ! echo "${ADDITIONAL_SCHC_ARGS}" | grep -q -e "--client"; then
+    if [ "${SERVER_NAME}" = "server" ] || [ "${SERVER_NAME}" = "coap-server" ]; then
         rm -f "${ROUTE_FILE}"
     fi
     if [ -f "${ROUTE_FILE}" ]; then

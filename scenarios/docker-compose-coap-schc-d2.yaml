@@ -1,0 +1,91 @@
+include:
+  - networks/database_backend.yaml
+  - networks/wpan_simulation.yaml
+
+name: coap-schc-d2
+
+services:
+  db:
+    extends:
+      file: database/database.yaml
+      service: db-base
+  coap-server-global:
+    extends:
+      file: coap/coap_server.yaml
+      service: coap-server-base
+    networks:
+    - wpan_simulation
+    environment:
+      BIND_PREFIX: "${SCHC_PREFIX}"
+      SERVER_CREDENTIALS: "${DATA_SERVER_CREDENTIALS:-}"
+      NETWORK_SCENARIO: "coap-schc-d2"
+      WPAN_SIMULATION_IFACE: "${WPAN_SIMULATION_IFACE}"
+      SCHC_IP_ADDR: "${SCHC_PREFIX}2/${SCHC_PREFIX_LEN}"
+      SCHC_PEER_ADDRS: "${SCHC_PREFIX}3/${SCHC_PREFIX_LEN}"
+      SERVER_NAME: "coap-server"
+    volumes:
+      - schc_route:/schc/route/
+    depends_on:
+      db:
+        condition: service_healthy
+  dns-server-global:
+    extends:
+      file: coap/coap_server.yaml
+      service: coap-server-base
+    networks:
+      wpan_simulation:
+        aliases:
+          # need to trick docker-compose to use the hostname over this network instead of
+          # database_backend
+          - dns-server
+    environment:
+      BIND_PREFIX: "${SCHC_PREFIX}"
+      SERVER_CREDENTIALS: "${DNS_SERVER_CREDENTIALS:-}"
+      NETWORK_SCENARIO: "coap-schc-d2"
+      WPAN_SIMULATION_IFACE: "${WPAN_SIMULATION_IFACE}"
+      SCHC_IP_ADDR: "${SCHC_PREFIX}1/${SCHC_PREFIX_LEN}"
+      SCHC_PEER_ADDRS: "${SCHC_PREFIX}3/${SCHC_PREFIX_LEN}"
+      SERVER_NAME: "dns-server"
+    volumes:
+      - schc_route:/schc/route/
+    depends_on:
+      coap-server-global:
+        # coap-server needs to have started schc.py otherwise it might delete the route file
+        condition: service_started
+      db:
+        condition: service_healthy
+  coap-client:
+    extends:
+      file: coap/coap_client.yaml
+      service: coap-client-base
+    depends_on:
+      sniffer:
+        condition: service_started
+    extra_hosts:
+      - "coap-server=${SCHC_PREFIX}2"
+      - "dns-server=${SCHC_PREFIX}1"
+    environment:
+      COAP_SERVER: "coap-server"
+      DNS_SERVER: "dns-server"
+      NETWORK_SCENARIO: "coap-schc-d2"
+      SCHC_IP_ADDR: "${SCHC_PREFIX}3/${SCHC_PREFIX_LEN}"
+      SCHC_PEER_ADDRS: "${SCHC_PREFIX}1/${SCHC_PREFIX_LEN} ${SCHC_PREFIX}2/${SCHC_PREFIX_LEN}"
+    volumes:
+      - schc_route:/schc/route/
+  sniffer:
+    extends:
+      file: sniffer/sniffer.yaml
+      service: sniffer-base
+    environment:
+      SNIFFER_IFACE: "${WPAN_SIMULATION_IFACE}"
+      SNIFFER_LOGNAME: wpan
+      SNIFFER_FILTER: "ether proto ${SCHC_ETHERTYPE:-0x88b5}"
+      NETWORK_SCENARIO: "coap-schc-d2"
+    depends_on:
+      coap-server-global:
+        condition: service_started
+      dns-server-global:
+        condition: service_started
+
+volumes:
+  schc_route:
