@@ -52,7 +52,7 @@ services:
     environment:
       SNIFFER_IFACE: "${WPAN_SIMULATION_IFACE}"
       SNIFFER_LOGNAME: wpan
-      SNIFFER_FILTER: "udp port 5683 or udp port 5684"
+      SNIFFER_FILTER: "ether proto ${SCHC_ETHERTYPE:-0x88b5}"
       NETWORK_SCENARIO: "coap-schc-d1"
     depends_on:
       coap-server-global:

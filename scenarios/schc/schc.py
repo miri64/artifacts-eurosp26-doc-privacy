@@ -195,7 +195,7 @@ class NorthInterface(TunTap):
 
 
 class SCHCEncInterface(AsyncInterface):
-    DEFAULT_ETHERTYPE = 0x88B5  # local experimental ethertype
+    DEFAULT_ETHERTYPE = 0x88b5  # local experimental ethertype
     ETHERNET_HDR_FMT = "!6s6sH"  # 6 byte source address, 6 byte dest, 2 byte ethertype
     ETHERNET_HDR_LEN = 14
 
@@ -514,6 +514,12 @@ class IoTSCHCLowerLayer:
             )
 
 
+def hex_int_argument(parser, value):
+    if not value.startswith("0x"):
+        parser.error("Value must start with 0x")
+    return int(value[2:], base=16)
+
+
 async def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -527,6 +533,14 @@ async def main():
         "--duty-cycle",
         help=f"Duty cycle for the south interface (default: {DEFAULT_DUTY_CYCLE})",
         type=int,
+        default=DEFAULT_DUTY_CYCLE,
+    )
+    parser.add_argument(
+        "-e",
+        "--ethertype",
+        help="Ethertype for SCHC over Ethernet "
+        f"(default: 0x{SCHCEncInterface.DEFAULT_ETHERTYPE:04x})",
+        type=lambda x: hex_int_argument(parser, x),
         default=DEFAULT_DUTY_CYCLE,
     )
     parser.add_argument(
@@ -590,6 +604,7 @@ async def main():
             system=system,
             duty_cycle=args.duty_cycle,
             pdu=args.pdu,
+            ethertype=args.ethertype,
         ) as south,
     ):
         for addr in args.ipv6_addresses:

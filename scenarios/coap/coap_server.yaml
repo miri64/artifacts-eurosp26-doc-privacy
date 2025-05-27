@@ -22,6 +22,7 @@ services:
       SCHC_PEER_ADDRS: "${SCHC_PEER_ADDRS:-}"
       SCHC_PDU: "${SCHC_PDU:-}"
       SCHC_DUTY_CYCLE: "${SCHC_DUTY_CYCLE:-}"
+      SCHC_ETHERTYPE: "${SCHC_ETHERTYPE:-}"
       AIOCOAP_DTLSSERVER_ENABLED: "yes"
     cap_add:    # required for tun for SCHC
       - NET_ADMIN

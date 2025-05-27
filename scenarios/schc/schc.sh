@@ -27,6 +27,9 @@ if [ -n "${SCHC_IP_ADDR}" ]; then
     if [ -n "${SCHC_DUTY_CYCLE}" ]; then
         ADDITIONAL_SCHC_ARGS="${ADDITIONAL_SCHC_ARGS} --duty-cycle ${SCHC_DUTY_CYCLE}"
     fi
+    if [ -n "${SCHC_ETHERTYPE}" ]; then
+        ADDITIONAL_SCHC_ARGS="${ADDITIONAL_SCHC_ARGS} --ethertype ${SCHC_ETHERTYPE}"
+    fi
     SCHC_LOGFILE="${LOGFILE%.log}.schc.log"
     SCHC_RULES="${NETWORK_SCENARIO}-rules.json"
 
