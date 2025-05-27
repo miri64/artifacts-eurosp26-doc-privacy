@@ -32,6 +32,14 @@ DEFAULT_PDU = ETHERNET_PDU
 DEFAULT_DUTY_CYCLE = 500
 
 
+def canon_name(typ):
+    if isinstance(typ, type(None)):
+        return "None"
+    if typ.__module__ == "__main__":
+        return f"schc.{typ.__name__}"
+    return f"{typ.__module__}.{typ.__name__}"
+
+
 class AsyncInterface:
     @staticmethod
     def _run_async(func):
@@ -192,10 +200,11 @@ class SCHCEncInterface(AsyncInterface):
     ETHERNET_HDR_LEN = 14
 
     def __init__(
-        self, name, ethertype=DEFAULT_ETHERTYPE, pdu=1500, duty_cycle=500
+        self, name, system, ethertype=DEFAULT_ETHERTYPE, pdu=1500, duty_cycle=500
     ):
         super().__init__()
         self._iface_name = name
+        self.system = system
         self._duty_cycle = duty_cycle
         self._pdu = pdu
         self._sock = None
@@ -283,10 +292,10 @@ class IoTSCHCSystem:
         loop.set_debug(debug)
         self.scheduler = IoTSCHCScheduler(self, loop)
         if logger is None:
-            self.logger = logging.getLogger(__name__)
+            self.logger = logging.getLogger("schc")
         else:
             self.logger = logger
-        logging.basicConfig()
+        logging.basicConfig(format="%(asctime)s %(levelname)-8s %(message)s")
         self.debug = debug
         if debug:
             self.logger.setLevel(logging.DEBUG)
@@ -578,6 +587,7 @@ async def main():
         NorthInterface(name=args.north_iface) as north,
         SCHCEncInterface(
             name=args.south_iface,
+            system=system,
             duty_cycle=args.duty_cycle,
             pdu=args.pdu,
         ) as south,
