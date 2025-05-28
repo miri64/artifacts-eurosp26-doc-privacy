@@ -19,11 +19,17 @@ services:
       DATA_FORMAT: "${DATA_FORMAT}"
       DNS_FORMAT: "${DNS_FORMAT}"
       WPAN_SIMULATION_PREFIX: "${WPAN_SIMULATION_PREFIX}"
+      SERVER_NAME: "${SERVER_NAME:-proxy}"
       SCHC_IP_ADDR: "${SCHC_IP_ADDR:-}"
       SCHC_PEER_ADDRS: "${SCHC_PEER_ADDRS:-}"
       SCHC_PDU: "${SCHC_PDU:-}"
       SCHC_DUTY_CYCLE: "${SCHC_DUTY_CYCLE:-}"
       SCHC_ETHERTYPE: "${SCHC_ETHERTYPE:-}"
       AIOCOAP_DTLSSERVER_ENABLED: "yes"
+    cap_add:    # required for tun for SCHC
+      - NET_ADMIN
+      - NET_RAW
+    devices:
+      - /dev/net/tun
     command: |
       /app/coap/coap_proxy.sh

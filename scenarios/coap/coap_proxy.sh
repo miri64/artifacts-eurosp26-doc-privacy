@@ -31,7 +31,23 @@ fi
 
 LOGFILE="/dumps/${NETWORK_SCENARIO}_${DATA_FORMAT}_${DNS_FORMAT}${BLOCK_SIZE}.proxy.log"
 
+SCHC_DIR="${SCRIPT_DIR}/../schc"
+source "${SCHC_DIR}/schc.sh"
+
+if [ -n "${NORTH_IFACE}" ]; then
+    su - user -c "/usr/bin/tshark -i '${NORTH_IFACE}' -w '${LOGFILE%.log}.pcapng'" &
+    TSHARK_PID=$!
+fi
+
 chown_logs() {
+    if [ -n "${SCHC_PID}" ]; then
+        kill "${SCHC_PID}"
+        rm -f "${ROUTE_FILE}"
+        chown user: "${SCHC_LOGFILE}" "${SCHC_LOGFILE%.log}.stderr.log"
+    fi
+    if [ -n "${TSHARK_PID}" ]; then
+        kill "${TSHARK_PID}"
+    fi
     chown user: "${LOGFILE}" "${LOGFILE%.log}.stderr.log"
 }
 

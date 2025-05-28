@@ -33,7 +33,7 @@ if [ -n "${SCHC_IP_ADDR}" ]; then
     SCHC_LOGFILE="${LOGFILE%.log}.schc.log"
     SCHC_RULES="${NETWORK_SCENARIO}-rules.json"
 
-    if [ "${SERVER_NAME}" = "server" ] || [ "${SERVER_NAME}" = "coap-server" ]; then
+    if [ "${SERVER_NAME}" = "server" ] || [ "${SERVER_NAME}" = "coap-server" ] || [ "${SERVER_NAME}" = "proxy" ]; then
         rm -f "${ROUTE_FILE}"
     fi
     if [ -f "${ROUTE_FILE}" ]; then
