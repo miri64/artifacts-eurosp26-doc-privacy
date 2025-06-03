@@ -86,7 +86,7 @@ if [ "$1" = "--build" ] || ! docker image ls | grep -q "pivot-eval/"; then
                 export WPAN_SIMULATION_IFACE="${prot}${l2_iface}${setup}_wpan"
                 export WPAN_SIMULATION_PREFIX="fdd8:${PREFIX_HINT_1}b${PREFIX_HINT_2}6:eccc::"
                 export UPSTREAM_NAME="${prot}${l2_dash}-${setup}-upstream"
-                export UPSTREAM_IFACE="${prot}${l2_iface}${setup}_upstream"
+                export UPSTREAM_IFACE="${prot}${l2_iface}${setup}_ups"
                 export UPSTREAM_PREFIX="fdd8:${PREFIX_HINT_1}b${PREFIX_HINT_2}6:ecc0::"
                 COMPOSE_BAKE=true DATA_FORMAT=application/cbor DNS_FORMAT=application/dns+cbor \
                     docker compose --env-file "${MAIN_ENV}" \
@@ -129,7 +129,7 @@ for data_env in "${DATA_ENVS[@]}"; do
                                 export WPAN_SIMULATION_IFACE="${prot}${l2_iface}${setup}_wpan"
                                 export WPAN_SIMULATION_PREFIX="fdd8:${PREFIX_HINT_1}b${PREFIX_HINT_2}6:eccc::"
                                 export UPSTREAM_NAME="${prot}${l2_dash}-${setup}-upstream"
-                                export UPSTREAM_IFACE="${prot}${l2_iface}${setup}_upstream"
+                                export UPSTREAM_IFACE="${prot}${l2_iface}${setup}_ups"
                                 export UPSTREAM_PREFIX="fdd8:${PREFIX_HINT_1}b${PREFIX_HINT_2}6:ecc0::"
 
                                 if [ "$prot" != "coap" -a -n "$block" ]; then
