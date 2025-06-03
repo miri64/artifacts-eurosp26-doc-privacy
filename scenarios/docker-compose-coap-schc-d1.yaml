@@ -34,7 +34,7 @@ services:
       service: coap-client-base
     depends_on:
       sniffer:
-        condition: service_started
+        condition: service_healthy
     extra_hosts:
       - "coap-server=${SCHC_PREFIX}1"
       - "dns-server=${SCHC_PREFIX}1"

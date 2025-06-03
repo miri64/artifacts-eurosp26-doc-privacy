@@ -21,3 +21,10 @@ services:
       SECURITY: "${SECURITY:-}"
     command: |
       /app/sniffer.sh
+    healthcheck:
+      test: ["CMD", "pgrep", "tshark"]
+      interval: 10m
+      timeout: 10s
+      retries: 60
+      start_period: 5m
+      start_interval: 1s
