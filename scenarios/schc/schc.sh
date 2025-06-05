@@ -48,6 +48,8 @@ if [ -n "${SCHC_IP_ADDR}" ]; then
         else
             SCHC_RULES="${SERVER_NAME}=${SCHC_DIR}/${NETWORK_SCENARIO}-rules-${SERVER_NAME}.json"
         fi
+    elif [ "${SCHC_RULES_MODE}" = "min-rules" ]; then
+        SCHC_RULES="${SCHC_DIR}/${NETWORK_SCENARIO}-rules-min.json"
     else
         SCHC_RULES="${SCHC_DIR}/${NETWORK_SCENARIO}-rules.json"
     fi

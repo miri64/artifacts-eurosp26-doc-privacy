@@ -42,6 +42,7 @@ LINK_LAYERS=(
 LINK_LAYER_MODE=(
     ""
     "peer"
+    "min"
 )
 PROTOCOLS=(
     "coap"
