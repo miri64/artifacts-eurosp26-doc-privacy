@@ -8,6 +8,13 @@
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "$(realpath "$0")" )" &> /dev/null && pwd )
 
+if [ $# -eq 1 ]; then
+    case $1 in
+      coap|coaps|oscore|oscore-base|https) PROTOCOL="$1" ;;
+      *)  echo "usage: $0 [coap|coaps|oscore|oscore-base|https]"; exit 1 ;;
+    esac
+fi
+
 export HOST_GID=$(id -g)
 export HOST_UID=$(id -u)
 
@@ -29,12 +36,33 @@ DNS_ENVS=(
     "${SCRIPT_DIR}"/.dns-msg.env
     "${SCRIPT_DIR}"/.dns-cbor.env
 )
-SECURITIES=(
-    "transport"
-    "object"
-    "object-base"
-    ""
-)
+if [ -z "${PROTOCOL}" ]; then
+    SECURITIES=(
+        "transport"
+        "object"
+        "object-base"
+        ""
+    )
+    PROTOCOLS=(
+        "coap"
+        # "http"
+    )
+elif [ "${PROTOCOL}" = "coap" ]; then
+    SECURITIES=("")
+    PROTOCOLS=("coap")
+elif [ "${PROTOCOL}" = "coaps" ]; then
+    SECURITIES=("transport")
+    PROTOCOLS=("coap")
+elif [ "${PROTOCOL}" = "oscore" ]; then
+    SECURITIES=("object")
+    PROTOCOLS=("coap")
+elif [ "${PROTOCOL}" = "oscore-base" ]; then
+    SECURITIES=("object-base")
+    PROTOCOLS=("coap")
+elif [ "${PROTOCOL}" = "https" ]; then
+    SECURITIES=("transport")
+    PROTOCOLS=("http")
+fi
 LINK_LAYERS=(
     ""
     "schc" 
@@ -43,10 +71,6 @@ LINK_LAYER_MODE=(
     ""
     "peer"
     "min"
-)
-PROTOCOLS=(
-    "coap"
-    # "https"
 )
 NETWORK_SETUPS=("d1" "d2" "p1" "p2")
 BLOCKWISE=(
