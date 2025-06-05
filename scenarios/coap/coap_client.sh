@@ -101,4 +101,8 @@ trap chown_logs EXIT HUP TERM INT QUIT ABRT KILL
     "${DNS_SERVER}" \
     > "${LOGFILE}" 2> "${LOGFILE%.log}.stderr.log"
 ERROR="$?"
+if [ ${ERROR} -eq 139 ] && echo "${SECURITY}" | grep -q "dtls"; then
+    # tinyDTLS sometimes crashes on close so gracefully stop
+    ERROR=0
+fi
 exit "${ERROR}"
