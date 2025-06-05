@@ -198,11 +198,16 @@ for data_env in "${DATA_ENVS[@]}"; do
                                     if [ "${l2}" = "schc" ] && [ -n "${l2_mode}" ]; then
                                         ADDITIONAL_OPTS="${ADDITIONAL_OPTS} --env-file "${SCRIPT_DIR}"/.schc.${l2_mode}.env"
                                     fi
-                                    COMPOSE_BAKE=true docker compose -p "${prot}${l2_name}-${setup}" \
-                                        --env-file "${MAIN_ENV}" ${ADDITIONAL_OPTS} \
-                                        --env-file "${data_env}" --env-file "${dns_env}" \
-                                        -f "${SCRIPT_DIR}/docker-compose-${prot}${l2_dash}-${setup}.yaml" up \
-                                            --abort-on-container-exit &
+                                    source "${data_env}"
+                                    source "${dns_env}"
+                                    DATA_NAME="$(echo "${DATA_FORMAT}" | sed 's#application/##g')"
+                                    DNS_NAME="$(echo "${DNS_FORMAT}" | sed 's#application/##g')"
+                                    script -efq "${SCRIPT_DIR}/../output_dataset/docker-compose-${prot}${l2_dash}-${setup}-${sec}-${DATA_NAME}-${DNS_NAME}.log" -c \
+                                    "COMPOSE_BAKE=true docker compose -p '${prot}${l2_name}-${setup}' \
+                                        --env-file '${MAIN_ENV}' ${ADDITIONAL_OPTS} \
+                                        --env-file '${data_env}' --env-file '${dns_env}' \
+                                        -f '${SCRIPT_DIR}/docker-compose-${prot}${l2_dash}-${setup}.yaml' up \
+                                            --abort-on-container-exit" &
                                     DOCKER_COMPOSE_PIDS+=("$!")
                                     PREFIX_HINT_2=$(( PREFIX_HINT_2 + 1 ))
                                     unset l2_dash
@@ -211,13 +216,19 @@ for data_env in "${DATA_ENVS[@]}"; do
                                 done
                             done
                             ALL_SUCCESSFUL=1
+                            server=$(docker ps | awk '$NF ~ /server/ { print $NF }' | sort | head -n 1)
                             for pid in ${DOCKER_COMPOSE_PIDS[@]}; do
                                 wait "${pid}"
                                 RESULT=$?
                                 if [ "$RESULT" -ne 0 ]; then
+                                    exit 1
                                     ALL_SUCCESSFUL=0
                                 fi
                             done
+                            # set permissions of logs
+                            docker start "${server}" && \
+                            docker exec "${server}" chown "${HOST_UID}:${HOST_GID}" /dumps/*.log
+                            docker stop "${server}"
                         done
                     done
                     PREFIX_HINT_1=$(( PREFIX_HINT_1 + 1 ))

@@ -92,6 +92,7 @@ chown_logs() {
 
 trap chown_logs EXIT HUP TERM INT QUIT ABRT KILL
 
+echo "$(date -R): Starting ${LOGFILE#/dumps/%.client.log}"
 "${SCRIPT_DIR}"/coap_client.py ${BIND} ${BLOCK_SIZE} \
     ${PROXY} ${SECURITY} ${CLIENT_CREDENTIALS} ${CLIENT_PROXY_CREDENTIALS} \
     "${DATABASE_URI}" \
@@ -106,4 +107,5 @@ if [ ${ERROR} -eq 139 ] && echo "${SECURITY}" | grep -q "dtls"; then
     # tinyDTLS sometimes crashes on close so gracefully stop
     ERROR=0
 fi
+echo "$(date -R): Stopping ${LOGFILE#/dumps/%.client.log}"
 exit "${ERROR}"
