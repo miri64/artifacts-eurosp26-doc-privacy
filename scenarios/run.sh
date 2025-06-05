@@ -240,7 +240,7 @@ for data_env in "${DATA_ENVS[@]}"; do
                                 done
                             done
                             ALL_SUCCESSFUL=1
-                            server=$(docker ps | awk '$NF ~ /server/ { print $NF }' | sort | head -n 1)
+                            server=$(docker ps | awk -v pattern="${prot}.*server" '$NF ~ pattern { print $NF }' | sort | head -n 1)
                             for pid in ${DOCKER_COMPOSE_PIDS[@]}; do
                                 wait "${pid}"
                                 RESULT=$?
