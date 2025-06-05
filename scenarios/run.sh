@@ -192,7 +192,7 @@ for data_env in "${DATA_ENVS[@]}"; do
                                     if [ "${l2}" = "schc" ] && [ -n "${l2_mode}" ]; then
                                         ADDITIONAL_OPTS="${ADDITIONAL_OPTS} --env-file "${SCRIPT_DIR}"/.schc.${l2_mode}.env"
                                     fi
-                                    docker compose --env-file "${MAIN_ENV}" \
+                                    COMPOSE_BAKE=true docker compose --env-file "${MAIN_ENV}" \
                                         ${ADDITIONAL_OPTS} \
                                         --env-file "${data_env}" --env-file "${dns_env}" \
                                         -f "${SCRIPT_DIR}/docker-compose-${prot}${l2_dash}-${setup}.yaml" up \
