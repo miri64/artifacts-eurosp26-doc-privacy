@@ -154,7 +154,7 @@ for data_env in "${DATA_ENVS[@]}"; do
                                         continue
                                     elif [[ "${l2}" = "schc" && -n "${l2_mode}" &&
                                           "${setup}" != "d2" && ! (
-                                            "${sec}" = "object-base" && "${setup}" = "p2"
+                                            "${sec}" = "object-base" && "${setup}" = "p2" && "${l2_mode}" != "peer"
                                           )
                                     ]]; then
                                         PREFIX_HINT_2=$(( PREFIX_HINT_2 + 1 ))
