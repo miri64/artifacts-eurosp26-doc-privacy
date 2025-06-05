@@ -39,6 +39,10 @@ LINK_LAYERS=(
     ""
     "schc" 
 )
+LINK_LAYER_MODE=(
+    ""
+    "peer"
+)
 PROTOCOLS=(
     "coap"
     # "https"
@@ -75,24 +79,43 @@ if [ "$1" = "--build" ] || ! docker image ls | grep -q "pivot-eval/"; then
         for prot in "${PROTOCOLS[@]}"; do
             PREFIX_HINT_2=0
             for setup in "${NETWORK_SETUPS[@]}"; do
-                setup_iface=$(echo "${setup}" | sed -E -e 's/([dp])1/\1i/g' -e 's/([dp])2/\1ii/g')
-                l2_iface=$(echo "${l2}" | sed -E -e 's/-//g' -e 's/schc/0/g')
-                if [ -n "${l2}" ]; then
-                    l2_dash="-${l2}"
-                    ADDITIONAL_OPTS="${ADDITIONAL_OPTS} --env-file "${SCRIPT_DIR}"/.${l2}.env"
-                fi
-                export DATABASE_BACKEND_PREFIX="fd00:${PREFIX_HINT_1}b${PREFIX_HINT_2}6::"
-                export WPAN_SIMULATION_NAME="${prot}${l2_dash}-${setup}-wpan-simulation"
-                export WPAN_SIMULATION_IFACE="${prot}${l2_iface}${setup}_wpan"
-                export WPAN_SIMULATION_PREFIX="fdd8:${PREFIX_HINT_1}b${PREFIX_HINT_2}6:eccc::"
-                export UPSTREAM_NAME="${prot}${l2_dash}-${setup}-upstream"
-                export UPSTREAM_IFACE="${prot}${l2_iface}${setup}_ups"
-                export UPSTREAM_PREFIX="fdd8:${PREFIX_HINT_1}b${PREFIX_HINT_2}6:ecc0::"
-                COMPOSE_BAKE=true DATA_FORMAT=application/cbor DNS_FORMAT=application/dns+cbor \
-                    docker compose --env-file "${MAIN_ENV}" \
-                        ${ADDITIONAL_OPTS} \
-                        -f "${SCRIPT_DIR}/docker-compose-${prot}${l2_dash}-${setup}.yaml" build
-                PREFIX_HINT_2=$(( PREFIX_HINT_2 + 1 ))
+                for l2_mode in "${LINK_LAYER_MODE[@]}"; do
+                    if [[ "${l2}" != "schc" && -n "${l2_mode}" ]]; then
+                        PREFIX_HINT_2=$(( PREFIX_HINT_2 + 1 ))
+                        continue
+                    elif [[ "${l2}" = "schc" && -n "${l2_mode}" &&
+                          "${setup}" != "d2" && ! (
+                            "${sec}" = "object-base" && "${setup}" = "p2"
+                          )
+                    ]]; then
+                        PREFIX_HINT_2=$(( PREFIX_HINT_2 + 1 ))
+                        continue
+                    fi
+
+                    setup_iface=$(echo "${setup}" | sed -E -e 's/([dp])1/\1i/g' -e 's/([dp])2/\1ii/g')
+                    l2_iface=$(echo "${l2}${l2_mode}" | sed -E -e 's/-//g' -e 's/schc/0/g' -e 's/peer/1/' -e 's/min/2/')
+                    if [ -n "${l2}" ]; then
+                        l2_dash="-${l2}"
+                        ADDITIONAL_OPTS="${ADDITIONAL_OPTS} --env-file "${SCRIPT_DIR}"/.${l2}.env"
+                        if [ -n "${l2_mode}" ]; then
+                            l2_dash="${l2_dash}-${l2_mode}"
+                        fi
+                    fi
+                    PREFIX_HINT_1_HEX="$(printf "%x" "${PREFIX_HINT_1}")"
+                    PREFIX_HINT_2_HEX="$(printf "%02x" "${PREFIX_HINT_2}")"
+                    export DATABASE_BACKEND_PREFIX="fd00:${PREFIX_HINT_1_HEX}b${PREFIX_HINT_2_HEX}::"
+                    export WPAN_SIMULATION_NAME="${prot}${l2_dash}-${setup}-wpan-simulation"
+                    export WPAN_SIMULATION_IFACE="${prot}${l2_iface}${setup}_wpan"
+                    export WPAN_SIMULATION_PREFIX="fdd8:${PREFIX_HINT_1_HEX}b${PREFIX_HINT_2_HEX}:eccc::"
+                    export UPSTREAM_NAME="${prot}${l2_dash}-${setup}-upstream"
+                    export UPSTREAM_IFACE="${prot}${l2_iface}${setup}_ups"
+                    export UPSTREAM_PREFIX="fdd8:${PREFIX_HINT_1_HEX}b${PREFIX_HINT_2_HEX}:ecc0::"
+                    COMPOSE_BAKE=true DATA_FORMAT=application/cbor DNS_FORMAT=application/dns+cbor \
+                        docker compose --env-file "${MAIN_ENV}" \
+                            ${ADDITIONAL_OPTS} \
+                            -f "${SCRIPT_DIR}/docker-compose-${prot}${l2_dash}-${setup}.yaml" build
+                    PREFIX_HINT_2=$(( PREFIX_HINT_2 + 1 ))
+                done
             done
             PREFIX_HINT_1=$(( PREFIX_HINT_1 + 1 ))
         done
@@ -107,7 +130,7 @@ for data_env in "${DATA_ENVS[@]}"; do
             PREFIX_HINT_1=6
             for l2 in "${LINK_LAYERS[@]}"; do
                 for prot in "${PROTOCOLS[@]}"; do
-                    if [ "$prot" != "coap" -a "$sec" != "transport" ]; then
+                    if [[ "$prot" != "coap" && "$sec" != "transport" ]]; then
                         continue
                     fi
                     for block in "${BLOCKWISE[@]}"; do
@@ -116,45 +139,66 @@ for data_env in "${DATA_ENVS[@]}"; do
                             PREFIX_HINT_2=0
                             unset DOCKER_COMPOSE_PIDS
                             for setup in "${NETWORK_SETUPS[@]}"; do
-                                ADDITIONAL_OPTS=""
+                                for l2_mode in "${LINK_LAYER_MODE[@]}"; do
+                                    ADDITIONAL_OPTS=""
 
-                                setup_iface=$(echo "${setup}" | sed -E -e 's/([dp])1/\1i/g' -e 's/([dp])2/\1ii/g')
-                                l2_iface=$(echo "${l2}" | sed -E -e 's/-//g' -e 's/schc/0/g')
-                                if [ -n "${l2}" ]; then
-                                    l2_dash="-${l2}"
-                                    ADDITIONAL_OPTS="${ADDITIONAL_OPTS} --env-file "${SCRIPT_DIR}"/.${l2}.env"
-                                fi
-                                export DATABASE_BACKEND_PREFIX="fd00:${PREFIX_HINT_1}b${PREFIX_HINT_2}6::"
-                                export WPAN_SIMULATION_NAME="${prot}${l2_dash}-${setup}-wpan-simulation"
-                                export WPAN_SIMULATION_IFACE="${prot}${l2_iface}${setup}_wpan"
-                                export WPAN_SIMULATION_PREFIX="fdd8:${PREFIX_HINT_1}b${PREFIX_HINT_2}6:eccc::"
-                                export UPSTREAM_NAME="${prot}${l2_dash}-${setup}-upstream"
-                                export UPSTREAM_IFACE="${prot}${l2_iface}${setup}_ups"
-                                export UPSTREAM_PREFIX="fdd8:${PREFIX_HINT_1}b${PREFIX_HINT_2}6:ecc0::"
+                                    if [[ "${l2}" != "schc" && -n "${l2_mode}" ]]; then
+                                        PREFIX_HINT_2=$(( PREFIX_HINT_2 + 1 ))
+                                        continue
+                                    elif [[ "${l2}" = "schc" && -n "${l2_mode}" &&
+                                          "${setup}" != "d2" && ! (
+                                            "${sec}" = "object-base" && "${setup}" = "p2"
+                                          )
+                                    ]]; then
+                                        PREFIX_HINT_2=$(( PREFIX_HINT_2 + 1 ))
+                                        continue
+                                    fi
+                                    setup_iface=$(echo "${setup}" | sed -E -e 's/([dp])1/\1i/g' -e 's/([dp])2/\1ii/g')
+                                    l2_iface=$(echo "${l2}${l2_mode}" | sed -E -e 's/-//g' -e 's/schc/0/g' -e 's/peer/1/' -e 's/min/2/')
+                                    if [ -n "${l2}" ]; then
+                                        l2_dash="-${l2}"
+                                        ADDITIONAL_OPTS="${ADDITIONAL_OPTS} --env-file "${SCRIPT_DIR}"/.${l2}.env"
+                                        if [ -n "${l2_mode}" ]; then
+                                            l2_dash="${l2_dash}-${l2_mode}"
+                                        fi
+                                    fi
+                                    PREFIX_HINT_1_HEX="$(printf "%x" "${PREFIX_HINT_1}")"
+                                    PREFIX_HINT_2_HEX="$(printf "%02x" "${PREFIX_HINT_2}")"
+                                    export DATABASE_BACKEND_PREFIX="fd00:${PREFIX_HINT_1_HEX}b${PREFIX_HINT_2_HEX}::"
+                                    export WPAN_SIMULATION_NAME="${prot}${l2_dash}-${setup}-wpan-simulation"
+                                    export WPAN_SIMULATION_IFACE="${prot}${l2_iface}${setup}_wpan"
+                                    export WPAN_SIMULATION_PREFIX="fdd8:${PREFIX_HINT_1_HEX}b${PREFIX_HINT_2_HEX}:eccc::"
+                                    export UPSTREAM_NAME="${prot}${l2_dash}-${setup}-upstream"
+                                    export UPSTREAM_IFACE="${prot}${l2_iface}${setup}_ups"
+                                    export UPSTREAM_PREFIX="fdd8:${PREFIX_HINT_1_HEX}b${PREFIX_HINT_2_HEX}:ecc0::"
 
-                                if [ "$prot" != "coap" -a -n "$block" ]; then
-                                    continue
-                                fi
-                                if [ "${sec}" = "transport" ]; then
-                                    ADDITIONAL_OPTS="${ADDITIONAL_OPTS} --env-file "${SCRIPT_DIR}"/.dtls.env"
-                                elif [ "${sec}" = "object" ]; then
-                                    ADDITIONAL_OPTS="${ADDITIONAL_OPTS} --env-file "${SCRIPT_DIR}"/.oscore.env"
-                                elif [ "${sec}" = "object-base" ]; then
-                                    ADDITIONAL_OPTS="${ADDITIONAL_OPTS} --env-file "${SCRIPT_DIR}"/.oscore-base.env"
-                                elif [ -n "${sec}" ]; then
-                                    echo "Unexpected security mode \"${sec}\"!" >&1
-                                    continue
-                                fi
-                                if [ "${block}" = "block" ]; then
-                                    ADDITIONAL_OPTS="${ADDITIONAL_OPTS} --env-file "${SCRIPT_DIR}"/.block.env"
-                                fi
-                                docker compose --env-file "${MAIN_ENV}" \
-                                    ${ADDITIONAL_OPTS} \
-                                    --env-file "${data_env}" --env-file "${dns_env}" \
-                                    -f "${SCRIPT_DIR}/docker-compose-${prot}${l2_dash}-${setup}.yaml" up \
-                                        --abort-on-container-exit &
-                                DOCKER_COMPOSE_PIDS+=("$!")
-                                PREFIX_HINT_2=$(( PREFIX_HINT_2 + 1 ))
+                                    if [ "$prot" != "coap" -a -n "$block" ]; then
+                                        continue
+                                    fi
+                                    if [ "${sec}" = "transport" ]; then
+                                        ADDITIONAL_OPTS="${ADDITIONAL_OPTS} --env-file "${SCRIPT_DIR}"/.dtls.env"
+                                    elif [ "${sec}" = "object" ]; then
+                                        ADDITIONAL_OPTS="${ADDITIONAL_OPTS} --env-file "${SCRIPT_DIR}"/.oscore.env"
+                                    elif [ "${sec}" = "object-base" ]; then
+                                        ADDITIONAL_OPTS="${ADDITIONAL_OPTS} --env-file "${SCRIPT_DIR}"/.oscore-base.env"
+                                    elif [ -n "${sec}" ]; then
+                                        echo "Unexpected security mode \"${sec}\"!" >&1
+                                        continue
+                                    fi
+                                    if [ "${block}" = "block" ]; then
+                                        ADDITIONAL_OPTS="${ADDITIONAL_OPTS} --env-file "${SCRIPT_DIR}"/.block.env"
+                                    fi
+                                    if [ "${l2}" = "schc" ] && [ -n "${l2_mode}" ]; then
+                                        ADDITIONAL_OPTS="${ADDITIONAL_OPTS} --env-file "${SCRIPT_DIR}"/.schc.${l2_mode}.env"
+                                    fi
+                                    docker compose --env-file "${MAIN_ENV}" \
+                                        ${ADDITIONAL_OPTS} \
+                                        --env-file "${data_env}" --env-file "${dns_env}" \
+                                        -f "${SCRIPT_DIR}/docker-compose-${prot}${l2_dash}-${setup}.yaml" up \
+                                            --abort-on-container-exit &
+                                    DOCKER_COMPOSE_PIDS+=("$!")
+                                    PREFIX_HINT_2=$(( PREFIX_HINT_2 + 1 ))
+                                done
                             done
                             ALL_SUCCESSFUL=1
                             for pid in ${DOCKER_COMPOSE_PIDS[@]}; do

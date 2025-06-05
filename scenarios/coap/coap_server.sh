@@ -29,7 +29,11 @@ elif [ "${SECURITY}" = "oscore-base" ]; then
     NETWORK_SCENARIO="$(echo "${NETWORK_SCENARIO}" | sed 's/coap/oscore-base/g')"
 fi
 
-LOGFILE="/dumps/${NETWORK_SCENARIO}_${DATA_FORMAT_LOG}_${DNS_FORMAT_LOG}${BLOCK_SIZE}.${SERVER_NAME}.log"
+if [ -n "${SCHC_RULES_MODE}" ]; then
+    SCHC_RULES_LOG="-${SCHC_RULES_MODE}"
+fi
+
+LOGFILE="/dumps/${NETWORK_SCENARIO}${SCHC_RULES_LOG}_${DATA_FORMAT_LOG}_${DNS_FORMAT_LOG}${BLOCK_SIZE}.${SERVER_NAME}.log"
 
 SCHC_DIR="${SCRIPT_DIR}/../schc"
 source "${SCHC_DIR}/schc.sh"
@@ -42,8 +46,7 @@ fi
 chown_logs() {
     if [ -n "${SCHC_PID}" ]; then
         kill "${SCHC_PID}"
-        rm -f "${ROUTE_FILE}"
-        chown user: "${SCHC_LOGFILE}" "${SCHC_LOGFILE%.log}.stderr.log"
+        chown user: "${SCHC_LOGFILE}" "${SCHC_LOGFILE%.log}.stderr.log" "${ROUTE_FILE}"
     fi
     if [ -n "${TSHARK_PID}" ]; then
         kill "${TSHARK_PID}"

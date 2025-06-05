@@ -1,6 +1,7 @@
 *.coap.csv
 *.eth.csv
 *.merged.csv
+*.routes.txt
 *.training.csv
 *.training.csv.gz
 *.log

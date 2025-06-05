@@ -23,8 +23,6 @@ services:
       SCHC_IP_ADDR: "${SCHC_PREFIX}2/${SCHC_PREFIX_LEN}"
       SCHC_PEER_ADDRS: "${SCHC_PREFIX}3/${SCHC_PREFIX_LEN}"
       SERVER_NAME: "coap-server"
-    volumes:
-      - schc_route:/schc/route/
     depends_on:
       db:
         condition: service_healthy
@@ -46,8 +44,6 @@ services:
       SCHC_IP_ADDR: "${SCHC_PREFIX}1/${SCHC_PREFIX_LEN}"
       SCHC_PEER_ADDRS: "${SCHC_PREFIX}3/${SCHC_PREFIX_LEN}"
       SERVER_NAME: "dns-server"
-    volumes:
-      - schc_route:/schc/route/
     depends_on:
       coap-server-global:
         # coap-server needs to have started schc.py otherwise it might delete the route file
@@ -70,8 +66,6 @@ services:
       NETWORK_SCENARIO: "coap-schc-d2"
       SCHC_IP_ADDR: "${SCHC_PREFIX}3/${SCHC_PREFIX_LEN}"
       SCHC_PEER_ADDRS: "${SCHC_PREFIX}1/${SCHC_PREFIX_LEN} ${SCHC_PREFIX}2/${SCHC_PREFIX_LEN}"
-    volumes:
-      - schc_route:/schc/route/
   sniffer:
     extends:
       file: sniffer/sniffer.yaml
@@ -86,6 +80,3 @@ services:
         condition: service_started
       dns-server-global:
         condition: service_started
-
-volumes:
-  schc_route:

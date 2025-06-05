@@ -22,6 +22,7 @@ services:
       SERVER_NAME: "${SERVER_NAME:-proxy}"
       SCHC_IP_ADDR: "${SCHC_IP_ADDR:-}"
       SCHC_PEER_ADDRS: "${SCHC_PEER_ADDRS:-}"
+      SCHC_RULES_MODE: "${SCHC_RULES_MODE:-}"
       SCHC_PDU: "${SCHC_PDU:-}"
       SCHC_DUTY_CYCLE: "${SCHC_DUTY_CYCLE:-}"
       SCHC_ETHERTYPE: "${SCHC_ETHERTYPE:-}"

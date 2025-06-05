@@ -5,9 +5,14 @@
 #
 
 if [ -n "${SCHC_IP_ADDR}" ]; then
-    NORTH_IFACE="${NORTH_IFACE:-tun0}"
-    ROUTE_FILE="${ROUTE_FILE:-/schc/route/routes.txt}"
+    if [ -z "${SERVER_NAME}" ]; then
+        HOST="client"
+    else
+        HOST="${SERVER_NAME}"
+    fi
 
+    NORTH_IFACE="${NORTH_IFACE:-tun0}"
+    ROUTE_FILE="${ROUTE_FILE:-${LOGFILE%".${HOST}.log"}.routes.txt}"
 
     # find wpan-simulation interface within docker
     if [ -n "${WPAN_SIMULATION_PREFIX}" ]; then
@@ -31,7 +36,21 @@ if [ -n "${SCHC_IP_ADDR}" ]; then
         ADDITIONAL_SCHC_ARGS="${ADDITIONAL_SCHC_ARGS} --ethertype ${SCHC_ETHERTYPE}"
     fi
     SCHC_LOGFILE="${LOGFILE%.log}.schc.log"
-    SCHC_RULES="${NETWORK_SCENARIO}-rules.json"
+
+    if [ "${SCHC_RULES_MODE}" = "peer-based" ]; then
+        if [ -z "${SERVER_NAME}" ]; then
+            if [ "${COAP_SERVER}" = "${DNS_SERVER}" ]; then
+                SCHC_RULES="server=${SCHC_DIR}/${NETWORK_SCENARIO}-rules.json"
+            else
+                SCHC_RULES="${COAP_SERVER}=${SCHC_DIR}/${NETWORK_SCENARIO}-rules-${COAP_SERVER}.json"
+                SCHC_RULES="${SCHC_RULES} ${DNS_SERVER}=${SCHC_DIR}/${NETWORK_SCENARIO}-rules-${DNS_SERVER}.json"
+            fi
+        else
+            SCHC_RULES="${SERVER_NAME}=${SCHC_DIR}/${NETWORK_SCENARIO}-rules-${SERVER_NAME}.json"
+        fi
+    else
+        SCHC_RULES="${SCHC_DIR}/${NETWORK_SCENARIO}-rules.json"
+    fi
 
     if [ "${SERVER_NAME}" = "server" ] || [ "${SERVER_NAME}" = "coap-server" ] || [ "${SERVER_NAME}" = "proxy" ]; then
         rm -f "${ROUTE_FILE}"
@@ -45,10 +64,12 @@ if [ -n "${SCHC_IP_ADDR}" ]; then
     if [ -f "${ROUTE_FILE}" ]; then
         sed -i "#${SCHC_IP_ADDR}#d" "${ROUTE_FILE}"
     fi
-    echo "${SCHC_IP_ADDR}=${SCHC_DEV_ADDR}" >> "${ROUTE_FILE}"
+    echo "${HOST} ${SCHC_IP_ADDR} ${SCHC_DEV_ADDR}" >> "${ROUTE_FILE}"
 
-    "${SCHC_DIR}"/schc.py --north "${NORTH_IFACE}" ${ADDITIONAL_SCHC_ARGS} \
-        "${SOUTH_IFACE}" "${SCHC_DIR}"/"${SCHC_RULES}" ${SCHC_PEER_ADDRS} \
+    SERVER_NAME="${SERVER_NAME}" "${SCHC_DIR}"/schc.py \
+        --north "${NORTH_IFACE}" ${ADDITIONAL_SCHC_ARGS} \
+        "${SOUTH_IFACE}" ${SCHC_PEER_ADDRS} \
+        --rule-config ${SCHC_RULES} \
         --ipv6-address "${SCHC_IP_ADDR}" --route-file "${ROUTE_FILE}" \
         > "${SCHC_LOGFILE}" 2> "${SCHC_LOGFILE%.log}.stderr.log" \
         &

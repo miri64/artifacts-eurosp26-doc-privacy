@@ -45,8 +45,6 @@ services:
     depends_on:
       coap-server-global:
         condition: service_started
-    volumes:
-      - schc_route:/schc/route/
   coap-client:
     extends:
       file: coap/coap_client.yaml
@@ -64,8 +62,6 @@ services:
       NETWORK_SCENARIO: "coap-schc-p1"
       SCHC_IP_ADDR: "${SCHC_PREFIX}3/${SCHC_PREFIX_LEN}"
       SCHC_PEER_ADDRS: "${SCHC_PREFIX}1/${SCHC_PREFIX_LEN}"
-    volumes:
-      - schc_route:/schc/route/
   sniffer-wpan:
     extends:
       file: sniffer/sniffer.yaml
@@ -90,6 +86,3 @@ services:
     depends_on:
       coap-server-global:
         condition: service_started
-
-volumes:
-  schc_route:

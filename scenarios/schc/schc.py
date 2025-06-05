@@ -17,6 +17,7 @@ import logging
 import pathlib
 import psutil
 import os
+import re
 import socket
 import struct
 import sys
@@ -317,8 +318,7 @@ class IoTSCHCScheduler:
         return self.loop.time()
 
     def add_event(self, time_in_sec, event_function, event_args, session_id=None):
-        # self.system.log(
-        print(
+        self.system.log(
             canon_name(type(self)),
             f"Add event: call {canon_name(event_function)} with {event_args} "
             f"in {time_in_sec} sec",
@@ -360,11 +360,13 @@ class IoTSCHCUpperLayer:
         system: IoTSCHCSystem,
         north_iface: NorthInterface,
         is_device: bool = True,
+        peer_based_rules: bool = False,
         route_file: pathlib.Path = None,
     ):
         self.north_iface = north_iface
         self.system = system
         self.is_device = is_device
+        self.peer_based_rules = peer_based_rules
         self._protocol = None
         self._route_file = route_file
         self._routes = {}
@@ -374,12 +376,12 @@ class IoTSCHCUpperLayer:
         if self._route_file is not None and self._route_file.exists():
             with open(self._route_file) as f:
                 for line in f:
-                    ip_addr_str, mac_str = line.strip().split("=")
+                    host, ip_addr_str, mac_str = line.strip().split(" ")
                     ip_addr_str = ip_addr_str.split("/")[0]
                     ip_addr = ipaddress.ip_address(ip_addr_str).packed
                     mac_addr = bytes.fromhex(mac_str.strip())
                     self._routes[ip_addr] = mac_addr
-                    yield ip_addr_str, ip_addr, mac_addr
+                    yield host, ip_addr_str, ip_addr, mac_addr
 
     def route(self, l3_addr):  # pylint: disable=unused-argument
         if l3_addr in self._routes:
@@ -388,7 +390,7 @@ class IoTSCHCUpperLayer:
         if self._route_file is None:
             return None
 
-        for _, ip_addr, mac_addr in self.iterate_route_file():
+        for _, _, ip_addr, mac_addr in self.iterate_route_file():
             if ip_addr == l3_addr:
                 return mac_addr
         return None
@@ -422,6 +424,10 @@ class IoTSCHCUpperLayer:
             kwargs = {"core_id": address, "device_id": self.address}
         else:
             kwargs = {"device_id": address, "core_id": self.address}
+        if self.peer_based_rules:
+            kwargs["device_id"] = bytes(
+                a ^ b for a, b in zip(kwargs["device_id"], kwargs["core_id"])
+            )
         self.system.log(
             canon_name(type(self)),
             f"Using {kwargs} to send over SCHC",
@@ -435,11 +441,9 @@ class IoTSCHCUpperLayer:
                 # drop ICMPv6 packets
                 self.system.log(canon_name(type(self)), f"Dropped ICMPv6 packet")
                 continue
-            # self.system.log(
-            print(
+            self.system.log(
                 canon_name(type(self)), f"Received {IPv6(data)!r} from {addr} from north"
             )
-            print(canon_name(type(self)), f"data: {data}")
             self.system.log(canon_name(type(self)), f"data: {data}")
             await self.send_packet(data)
 
@@ -449,12 +453,14 @@ class IoTSCHCLowerLayer:
         self,
         system: IoTSCHCSystem,
         south_iface: SCHCEncInterface,
-        is_device: bool = False
+        is_device: bool = False,
+        peer_based_rules: bool = False,
     ):
         self.south_iface = south_iface
         self.system = system
         self.protocol = None
         self.is_device = is_device
+        self.peer_based_rules = peer_based_rules
         self._north = None
 
     def _set_protocol(self, prot):
@@ -474,6 +480,10 @@ class IoTSCHCLowerLayer:
             f"send_packet to packet={packet.hex()} other_address={other_address} "
             f"transmit_callback={canon_name(transmit_callback)}",
         )
+        if self.peer_based_rules and not self.is_device:
+            other_address = bytes(
+                a ^ b for a, b in zip(other_address, self._north.address)
+            )
         self.system.scheduler.loop.create_task(
             self.south_iface.send(other_address, bytes(packet))
         )
@@ -488,6 +498,10 @@ class IoTSCHCLowerLayer:
             kwargs = {"core_id": src_l2_addr, "device_id": dst_l2_addr}
         else:
             kwargs = {"device_id": src_l2_addr, "core_id": dst_l2_addr}
+        if self.peer_based_rules:
+            kwargs["device_id"] = bytes(
+                a ^ b for a, b in zip(kwargs["device_id"], kwargs["core_id"])
+            )
         self.system.log(
             canon_name(type(self)),
             f"Using {kwargs} to send over SCHC",
@@ -499,6 +513,10 @@ class IoTSCHCLowerLayer:
         )
         schc_addr, schc_data = res if res else (None, None)
         if schc_data:
+            if schc_addr and self.peer_based_rules:
+                schc_addr = bytes(
+                    a ^ b for a, b in zip(schc_addr, self._north.address)
+                )
             await self.north.send_north(schc_addr, bytes(schc_data))
 
     async def handle_south(self):
@@ -518,6 +536,32 @@ def hex_int_argument(parser, value):
     if not value.startswith("0x"):
         parser.error("Value must start with 0x")
     return int(value[2:], base=16)
+
+
+class RuleConfig(argparse.Action):
+    def __call__(self, parser, namespace, values, option_string):
+        pairs = [v.split("=") for v in values]
+        if all(len(p) == 2 for p in pairs):
+            mapping = dict(pairs)
+            legal_hostname = re.compile(r"(?!-)[A-Z\d-]{1,63}(?<!-)$", re.IGNORECASE)
+            for hostname in mapping.keys():
+                if not legal_hostname.match(hostname):
+                    parser.error(f"Keys for {option_string} must be legal hostname")
+                mapping[hostname] = pathlib.Path(mapping[hostname])
+                if not mapping[hostname].exists():
+                    parser.error(f"{mapping[hostname]} does not exist")
+            setattr(namespace, self.dest, mapping)
+        elif len(values) == 1 and all(len(p) == 1 for p in pairs):
+            values[0] = pathlib.Path(values[0])
+            if not values[0].exists():
+                parser.error(f"{values[0]} does not exist")
+            setattr(namespace, self.dest, values[0])
+        else:
+            parser.error(
+                f"Unexpected formatting of {option_string}. "
+                "Require either a single name of an existing rules JSON file "
+                "or at least one <hostname>=<rules JSON file> pair."
+            )
 
 
 async def main():
@@ -574,9 +618,13 @@ async def main():
         help="South interface name",
     )
     parser.add_argument(
-        "rule_config",
+        "-R",
+        "--rule-config",
         help="SCHC rule configuration "
         "(see https://openschc.github.io/openschc/Source/gen_rulemanager.html)",
+        nargs="+",
+        required=True,
+        action=RuleConfig,
     )
     parser.add_argument(
         "peer_addresses",
@@ -609,12 +657,18 @@ async def main():
     ):
         for addr in args.ipv6_addresses:
             await north.add_addr(addr)
-        lower = IoTSCHCLowerLayer(system, south, is_device=args.client)
+        lower = IoTSCHCLowerLayer(
+            system,
+            south,
+            is_device=args.client,
+            peer_based_rules=isinstance(args.rule_config, dict),
+        )
         upper = IoTSCHCUpperLayer(
             system,
             north,
             route_file=args.route_file,
-            is_device=args.client
+            is_device=args.client,
+            peer_based_rules=isinstance(args.rule_config, dict),
         )
         lower.north = upper
         prot = openschc_loader.get_protocol(
@@ -635,28 +689,62 @@ async def main():
         rule_manager = openschc_loader.get_rule_manager()
         added_devices = set()
         peer_addresses = [a.split("/")[0] for a in args.peer_addresses]
-        for _ in range(60 // 5):
-            for ip_addr, _, mac_addr in upper.iterate_route_file():
-                if args.client:
-                    ip_candidate = ip_addr not in peer_addresses
-                else:
-                    ip_candidate = ip_addr in peer_addresses
-                if (
-                    ip_candidate and ip_addr not in added_devices
+        for _ in range(60 // 1):
+            if isinstance(args.rule_config, pathlib.Path):
+                for _, ip_addr, _, mac_addr in upper.iterate_route_file():
+                    if args.client:
+                        ip_candidate = ip_addr not in peer_addresses
+                    else:
+                        ip_candidate = ip_addr in peer_addresses
+                    if (
+                        ip_candidate and ip_addr not in added_devices
+                    ):
+                        rule_manager.Add(
+                            device=mac_addr, file=args.rule_config
+                        )
+                        added_devices.add(ip_addr)
+                    elif ip_addr in [a.split("/")[0] for a in args.ipv6_addresses]:
+                        upper.address = mac_addr
+            else:
+                assert isinstance(args.rule_config, dict)
+                hosts = {}
+                peer_macs = set()
+                for host, ip_addr, _, mac_addr in upper.iterate_route_file():
+                    hosts[mac_addr] = host
+                    if args.client:
+                        ip_candidate = ip_addr not in peer_addresses
+                    else:
+                        ip_candidate = ip_addr in peer_addresses
+                    if (
+                        ip_candidate and ip_addr not in added_devices
+                    ):
+                        added_devices.add(ip_addr)
+                    if ip_addr in peer_addresses:
+                        peer_macs.add(mac_addr)
+                    elif ip_addr in [a.split("/")[0] for a in args.ipv6_addresses]:
+                        upper.address = mac_addr
+                if not all(
+                    host in hosts.values()
+                    for host in args.rule_config
                 ):
+                    await asyncio.sleep(1)
+                    continue
+                for peer in peer_macs:
+                    device_id = bytes(a ^ b for a, b in zip(peer, upper.address))
+                    if args.client:
+                        host = hosts[peer]
+                    else:
+                        host = os.environ["SERVER_NAME"]
                     rule_manager.Add(
-                        device=mac_addr, file=args.rule_config
+                        device=device_id, file=args.rule_config[host]
                     )
-                    added_devices.add(ip_addr)
-                elif ip_addr in [a.split("/")[0] for a in args.ipv6_addresses]:
-                    upper.address = mac_addr
             if args.client:
                 if len(added_devices) >= 1 and upper.address:
                     break
             else:
                 if len(added_devices) >= len(args.peer_addresses) and upper.address:
                     break
-            await asyncio.sleep(5)
+            await asyncio.sleep(1)
         if (
             (not args.client and len(added_devices) < len(args.peer_addresses))
             or (args.client and len(added_devices) == 0)

@@ -56,7 +56,11 @@ elif [ "${SECURITY}" = "oscore" ] || [ "${SECURITY}" = "oscore-base" ]; then
     chown -R root: /creds/oscore
 fi
 
-LOGFILE="/dumps/${NETWORK_SCENARIO}_${DATA_FORMAT_LOG}_${DNS_FORMAT_LOG}${BLOCK_SIZE_LOG}.client.log"
+if [ -n "${SCHC_RULES_MODE}" ]; then
+    SCHC_RULES_LOG="-${SCHC_RULES_MODE}"
+fi
+
+LOGFILE="/dumps/${NETWORK_SCENARIO}${SCHC_RULES_LOG}_${DATA_FORMAT_LOG}_${DNS_FORMAT_LOG}${BLOCK_SIZE_LOG}.client.log"
 
 ADDITIONAL_SCHC_ARGS="--client"
 SCHC_DIR="${SCRIPT_DIR}/../schc"
@@ -78,8 +82,7 @@ fi
 chown_logs() {
     if [ -n "${SCHC_PID}" ]; then
         kill "${SCHC_PID}"
-        rm -f "${ROUTE_FILE}"
-        chown user: "${SCHC_LOGFILE}" "${SCHC_LOGFILE%.log}.stderr.log"
+        chown user: "${SCHC_LOGFILE}" "${SCHC_LOGFILE%.log}.stderr.log" "${ROUTE_FILE}"
     fi
     if [ -n "${TSHARK_PID}" ]; then
         kill "${TSHARK_PID}"
