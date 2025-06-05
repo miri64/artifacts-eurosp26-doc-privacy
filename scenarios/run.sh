@@ -99,11 +99,11 @@ trap kill_docker HUP TERM INT QUIT ABRT
 if [ "$1" = "--build" ] || ! docker image ls | grep -q "pivot-eval/"; then
     docker system prune -f
 
-    for l2 in "${LINK_LAYERS[@]}"; do
-        PREFIX_HINT_1=6
-        for prot in "${PROTOCOLS[@]}"; do
-            PREFIX_HINT_2=0
-            for setup in "${NETWORK_SETUPS[@]}"; do
+    PREFIX_HINT_1=6
+    for prot in "${PROTOCOLS[@]}"; do
+        PREFIX_HINT_2=0
+        for setup in "${NETWORK_SETUPS[@]}"; do
+            for l2 in "${LINK_LAYERS[@]}"; do
                 for l2_mode in "${LINK_LAYER_MODE[@]}"; do
                     ADDITIONAL_OPTS=""
 
@@ -148,8 +148,8 @@ if [ "$1" = "--build" ] || ! docker image ls | grep -q "pivot-eval/"; then
                     unset l2_iface
                 done
             done
-            PREFIX_HINT_1=$(( PREFIX_HINT_1 + 1 ))
         done
+        PREFIX_HINT_1=$(( PREFIX_HINT_1 + 1 ))
     done
 
     docker image prune -f
@@ -159,17 +159,17 @@ for data_env in "${DATA_ENVS[@]}"; do
     for dns_env in "${DNS_ENVS[@]}"; do
         for sec in "${SECURITIES[@]}"; do
             PREFIX_HINT_1=6
-            for l2 in "${LINK_LAYERS[@]}"; do
-                for prot in "${PROTOCOLS[@]}"; do
-                    if [[ "$prot" != "coap" && "$sec" != "transport" ]]; then
-                        continue
-                    fi
-                    for block in "${BLOCKWISE[@]}"; do
-                        ALL_SUCCESSFUL=0
-                        while [ ${ALL_SUCCESSFUL} -eq 0 ]; do
-                            PREFIX_HINT_2=0
-                            unset DOCKER_COMPOSE_PIDS
-                            for setup in "${NETWORK_SETUPS[@]}"; do
+            for prot in "${PROTOCOLS[@]}"; do
+                if [[ "$prot" != "coap" && "$sec" != "transport" ]]; then
+                    continue
+                fi
+                ALL_SUCCESSFUL=0
+                for block in "${BLOCKWISE[@]}"; do
+                    while [ ${ALL_SUCCESSFUL} -eq 0 ]; do
+                        PREFIX_HINT_2=0
+                        unset DOCKER_COMPOSE_PIDS
+                        for setup in "${NETWORK_SETUPS[@]}"; do
+                            for l2 in "${LINK_LAYERS[@]}"; do
                                 for l2_mode in "${LINK_LAYER_MODE[@]}"; do
                                     ADDITIONAL_OPTS=""
 
@@ -239,23 +239,23 @@ for data_env in "${DATA_ENVS[@]}"; do
                                     unset l2_iface
                                 done
                             done
-                            ALL_SUCCESSFUL=1
-                            server=$(docker ps | awk -v pattern="${prot}.*server" '$NF ~ pattern { print $NF }' | sort | head -n 1)
-                            for pid in ${DOCKER_COMPOSE_PIDS[@]}; do
-                                wait "${pid}"
-                                RESULT=$?
-                                if [ "$RESULT" -ne 0 ]; then
-                                    ALL_SUCCESSFUL=0
-                                fi
-                            done
-                            # set permissions of logs
-                            docker start "${server}" && \
-                            docker exec "${server}" chown "${HOST_UID}:${HOST_GID}" /dumps/*.log
-                            docker stop "${server}"
                         done
+                        ALL_SUCCESSFUL=1
+                        server=$(docker ps | awk -v pattern="${prot}.*server" '$NF ~ pattern { print $NF }' | sort | head -n 1)
+                        for pid in ${DOCKER_COMPOSE_PIDS[@]}; do
+                            wait "${pid}"
+                            RESULT=$?
+                            if [ "$RESULT" -ne 0 ]; then
+                                ALL_SUCCESSFUL=0
+                            fi
+                        done
+                        # set permissions of logs
+                        docker start "${server}" && \
+                        docker exec "${server}" chown "${HOST_UID}:${HOST_GID}" /dumps/*.log
+                        docker stop "${server}"
                     done
-                    PREFIX_HINT_1=$(( PREFIX_HINT_1 + 1 ))
                 done
+                PREFIX_HINT_1=$(( PREFIX_HINT_1 + 1 ))
             done
         done
     done
