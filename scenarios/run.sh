@@ -245,7 +245,6 @@ for data_env in "${DATA_ENVS[@]}"; do
                                 wait "${pid}"
                                 RESULT=$?
                                 if [ "$RESULT" -ne 0 ]; then
-                                    exit 1
                                     ALL_SUCCESSFUL=0
                                 fi
                             done
