@@ -108,7 +108,10 @@ if [ "$1" = "--build" ] || ! docker image ls | grep -q "pivot-eval/"; then
                 for l2_mode in "${LINK_LAYER_MODE[@]}"; do
                     ADDITIONAL_OPTS=""
 
-                    if [[ "${l2}" != "schc" && -n "${l2_mode}" ]]; then
+                    if [[ "${l2}" = "schc" && -z "${sec}" ]]; then
+                        PREFIX_HINT_2=$(( PREFIX_HINT_2 + 1 ))
+                        continue
+                    elif [[ "${l2}" != "schc" && -n "${l2_mode}" ]]; then
                         PREFIX_HINT_2=$(( PREFIX_HINT_2 + 1 ))
                         continue
                     elif [[ "${l2}" = "schc" && -n "${l2_mode}" &&
@@ -173,8 +176,10 @@ for data_env in "${DATA_ENVS[@]}"; do
                             for l2 in "${LINK_LAYERS[@]}"; do
                                 for l2_mode in "${LINK_LAYER_MODE[@]}"; do
                                     ADDITIONAL_OPTS=""
-
-                                    if [[ "${l2}" != "schc" && -n "${l2_mode}" ]]; then
+                                    if [[ "${l2}" = "schc" && -z "${sec}" ]]; then
+                                        PREFIX_HINT_2=$(( PREFIX_HINT_2 + 1 ))
+                                        continue
+                                    elif [[ "${l2}" != "schc" && -n "${l2_mode}" ]]; then
                                         PREFIX_HINT_2=$(( PREFIX_HINT_2 + 1 ))
                                         continue
                                     elif [[ "${l2}" = "schc" && -n "${l2_mode}" &&
