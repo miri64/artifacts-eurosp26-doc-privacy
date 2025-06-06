@@ -23,4 +23,5 @@ awk '
             print min, fn, length(timestamps[fn]), sum
         }
     }' "${OUTPUT_DATASETS}"/*.client.log | \
-        sort -n | awk '{print $3, $4, $2}'
+        sort -n | awk 'BEGIN {print "Requests", "Messages", "Log"} {print $3, $4, $2} END {print "#Logs:", NR}' |
+        column -t
