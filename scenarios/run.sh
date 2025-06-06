@@ -11,6 +11,7 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "$(realpath "$0")" )" &> /dev/null && pwd )
 if [ $# -eq 1 ]; then
     case $1 in
       coap|coaps|oscore|oscore-base|https) PROTOCOL="$1" ;;
+      --build) ;;
       *)  echo "usage: $0 [coap|coaps|oscore|oscore-base|https]"; exit 1 ;;
     esac
 fi
