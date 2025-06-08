@@ -28,6 +28,8 @@ if ! ls ${SCRIPT_DIR}/../jsons/*.sqlite3 &> /dev/null; then
     exit 1
 fi
 
+declare -A PREFIX_HINT_1_START=(["coap"]=6, ["http"]=7)
+
 MAIN_ENV="${SCRIPT_DIR}"/.env
 DATA_ENVS=(
     "${SCRIPT_DIR}"/.json.env
@@ -100,7 +102,7 @@ trap kill_docker HUP TERM INT QUIT ABRT
 if [ "$1" = "--build" ] || ! docker image ls | grep -q "pivot-eval/"; then
     docker system prune -f
 
-    PREFIX_HINT_1=6
+    PREFIX_HINT_1="${PREFIX_HINT_1_START[${PROTOCOLS[0]}]}"
     for prot in "${PROTOCOLS[@]}"; do
         PREFIX_HINT_2=0
         for setup in "${NETWORK_SETUPS[@]}"; do
@@ -165,7 +167,7 @@ fi
 for data_env in "${DATA_ENVS[@]}"; do
     for dns_env in "${DNS_ENVS[@]}"; do
         for sec in "${SECURITIES[@]}"; do
-            PREFIX_HINT_1=6
+            PREFIX_HINT_1="${PREFIX_HINT_1_START[${PROTOCOLS[0]}]}"
             for prot in "${PROTOCOLS[@]}"; do
                 if [[ "$prot" != "coap" && "$sec" != "transport" ]]; then
                     continue
