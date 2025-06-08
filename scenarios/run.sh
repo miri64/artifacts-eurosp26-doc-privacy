@@ -19,7 +19,7 @@ fi
 export HOST_GID=$(id -g)
 export HOST_UID=$(id -u)
 
-git -C ../ submodule update --init --recursive
+git -C "${SCRIPT_DIR}/../" submodule update --init --recursive
 chmod -R o+r ${SCRIPT_DIR}/database/ ${SCRIPT_DIR}/../jsons/
 chmod o+x ${SCRIPT_DIR}/database/ ${SCRIPT_DIR}/../jsons/
 
