@@ -7,6 +7,7 @@
 
 import argparse
 import asyncio
+import collections
 import os
 import re
 import ssl
@@ -23,6 +24,7 @@ from http_server import existing_path
 
 async def send_requests(client, args, parser):
     h2_next_stream_id = h2.connection.H2Connection.get_next_available_stream_id
+    h2_send_headers = h2.connection.H2Connection.send_headers
 
     with db.connect(args.db_uri) as conn:
         cur = conn.cursor()
@@ -50,10 +52,6 @@ async def send_requests(client, args, parser):
         dns_content_type = "application/dns+cbor"
     else:
         raise ValueError("Unexpected default data type {args.default_data_type}")
-
-    if args.proxy:
-        # TODO
-        pass
 
     with db.connect(args.db_uri) as conn:
         cur = conn.cursor()
@@ -127,15 +125,37 @@ async def send_requests(client, args, parser):
 
         h2.connection.H2Connection.get_next_available_stream_id = next_stream_id
 
+        # httpx proxy does not work properly with HTTPS and HTTP/2 and tornado,
+        # so we need to hack a little bit
+        def send_headers(self, stream_id, headers, *a, **kwargs):
+            new_headers = []
+            for header in headers:
+                if header[0] == b":authority":
+                    header = (header[0], args.dns_server.encode())
+                if header[0] == b":path":
+                    header = (header[0], b"/")
+                new_headers.append(header)
+            return h2_send_headers(self, stream_id, new_headers, *a, **kwargs)
+
+        if args.proxy:
+            h2.connection.H2Connection.send_headers = send_headers
+
         response = await client.request(
             "POST",
-            f"https://{args.dns_server}",
-            headers={
-                "content-type": dns_content_type,
-            },
+            f"https://{args.dns_server}"
+            if args.proxy is None
+            else f"https://{args.proxy}",
+            headers=collections.OrderedDict(
+                (
+                    ("content-type", dns_content_type),
+                )
+            ),
             data=dns_query,
         )
         response_timestamp = time.time()
+
+        h2.connection.H2Connection.send_headers = h2_send_headers
+
         with db.connect(args.db_uri) as conn:
             cur = conn.cursor()
             cur.execute(
@@ -179,27 +199,51 @@ async def send_requests(client, args, parser):
         data_type = 0
         headers = {}
         if query and (len(url) > 32):
-            code = "POST"
+            method = "POST"
             http_url = re.sub(
                 r"^https?://[^/]+", f"https://{args.http_server}",
                 url_wo_query
             )
             headers["content-type"] = args.default_data_type
         else:
-            code = "GET"
+            method = "GET"
             http_url = re.sub(
                 r"^https?://[^/]+", f"https://{args.http_server}",
                 url
             )
         if isinstance(query, str):
             query = query.encode()
+
+        h2.connection.H2Connection.get_next_available_stream_id = next_stream_id
+
+        # httpx proxy does not work properly with HTTPS and HTTP/2 and tornado,
+        # so we need to hack a little bit
+        def send_headers(self, stream_id, headers, *a, **kwargs):
+            url = httpx.URL(http_url)
+            new_headers = []
+            for header in headers:
+                if header[0] == b":authority":
+                    header = (header[0], args.http_server.encode())
+                if header[0] == b":path":
+                    header = (header[0], url.path.encode() + url.query)
+                new_headers.append(header)
+            return h2_send_headers(self, stream_id, new_headers, *a, **kwargs)
+
+        if args.proxy:
+            h2.connection.H2Connection.send_headers = send_headers
+
         response = await client.request(
-            code,
-            http_url,
+            method,
+            http_url
+            if args.proxy is None
+            else f"https://{args.proxy}",
             headers=headers,
             data=query or b"",
         )
         response_timestamp = time.time()
+
+        h2.connection.H2Connection.send_headers = h2_send_headers
+
         with db.connect(args.db_uri) as conn:
             cur = conn.cursor()
             cur.execute(
@@ -268,6 +312,7 @@ async def main():
         "--proxy",
         "-p",
         help="Proxy hostname to send requests over to the server(s)",
+        default=None
     )
     parser.add_argument(
         "db_uri",
@@ -314,7 +359,11 @@ async def main():
     ssl_ctx.set_alpn_protocols(["h2"])
     ssl_ctx.set_psk_client_callback(psk_client_callback)
 
-    async with httpx.AsyncClient(http1=False, http2=True, verify=ssl_ctx) as client:
+    async with httpx.AsyncClient(
+        http1=False,
+        http2=True,
+        verify=ssl_ctx,
+    ) as client:
         await send_requests(client, args, parser)
 
 

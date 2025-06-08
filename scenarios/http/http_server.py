@@ -23,21 +23,9 @@ import psycopg2.errors as db_errors
 import tornado
 
 
-class H2Server(tornado.tcpserver.TCPServer):
-    def __init__(self, database_uri, default_data_type, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.database_uri = database_uri
-        self.default_data_type = default_data_type
-
-    @tornado.gen.coroutine
-    def handle_stream(self, stream, address):
-        handler = ServerHandler(self.database_uri, self.default_data_type, stream)
-        yield handler.handle()
-
-
 class ServerHandler:
     # see https://python-hyper.org/projects/h2/en/stable/tornado-example.html
-    def __init__(self, database_uri, default_data_type, stream):
+    def __init__(self, database_uri, stream, default_data_type=None):
         self.database_uri = database_uri
         self.default_data_type = default_data_type
         self.stream = stream
@@ -45,14 +33,13 @@ class ServerHandler:
         config = h2.config.H2Configuration(client_side=False)
         self.conn = h2.connection.H2Connection(config=config)
 
-    @tornado.gen.coroutine
-    def handle(self):
+    async def handle(self):
         self.conn.initiate_connection()
-        yield self.stream.write(self.conn.data_to_send())
+        await self.stream.write(self.conn.data_to_send())
 
         while True:
             try:
-                data = yield self.stream.read_bytes(65535, partial=True)
+                data = await self.stream.read_bytes(65535, partial=True)
                 if not data:
                     break
 
@@ -63,7 +50,7 @@ class ServerHandler:
                     elif isinstance(event, h2.events.DataReceived):
                         self.conn.reset_stream(event.stream_id)
 
-                yield self.stream.write(self.conn.data_to_send())
+                await self.stream.write(self.conn.data_to_send())
 
             except tornado.iostream.StreamClosedError:
                 break
@@ -170,6 +157,22 @@ class ServerHandler:
         self._send_response(stream_id)
 
 
+class H2Server(tornado.tcpserver.TCPServer):
+    handler = ServerHandler
+
+    def __init__(self, database_uri, *args, default_data_type=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.database_uri = database_uri
+        self.default_data_type = default_data_type
+
+    async def handle_stream(self, stream, address):
+        handler = self.handler(
+            self.database_uri,
+            stream,
+            default_data_type=self.default_data_type
+        )
+        await handler.handle()
+
 
 def existing_path(parser, arg):
     path = pathlib.Path(arg)
@@ -239,7 +242,11 @@ async def main():
     ssl_ctx.set_alpn_protocols(["h2"])
     ssl_ctx.set_psk_server_callback(psk_server_callback, server_id)
 
-    server = H2Server(args.db_uri, args.default_data_type, ssl_options=ssl_ctx)
+    server = H2Server(
+        args.db_uri,
+        ssl_options=ssl_ctx,
+        default_data_type=args.default_data_type
+    )
     server.listen(address=args.bind[0], port=args.bind[1])
     await asyncio.Event().wait()
 

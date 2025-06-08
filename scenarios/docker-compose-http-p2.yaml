@@ -1,0 +1,106 @@
+include:
+  - networks/database_backend.yaml
+  - networks/wpan_simulation.yaml
+  - networks/upstream.yaml
+
+name: http-p2
+
+services:
+  db:
+    extends:
+      file: database/database.yaml
+      service: db-base
+  http-server-global:
+    extends:
+      file: http/http_server.yaml
+      service: http-server-base
+    networks:
+      upstream:
+        aliases:
+          # need to trick docker-compose to use the hostname over this network instead of
+          # database_backend
+          - http-server
+    environment:
+      BIND_PREFIX: "${UPSTREAM_PREFIX}"
+      SERVER_CREDENTIALS: "${DATA_SERVER_CREDENTIALS:-}"
+      NETWORK_SCENARIO: "http-p2"
+      SERVER_NAME: "http-server"
+    depends_on:
+      db:
+        condition: service_healthy
+  dns-server-global:
+    extends:
+      file: http/http_server.yaml
+      service: http-server-base
+    networks:
+      upstream:
+        aliases:
+          # need to trick docker-compose to use the hostname over this network instead of
+          # database_backend
+          - dns-server
+    environment:
+      BIND_PREFIX: "${UPSTREAM_PREFIX}"
+      SERVER_CREDENTIALS: "${DNS_SERVER_CREDENTIALS:-}"
+      NETWORK_SCENARIO: "http-p2"
+      SERVER_NAME: "dns-server"
+    depends_on:
+      db:
+        condition: service_healthy
+  http-proxy-global:
+    extends:
+      file: http/http_proxy.yaml
+      service: http-proxy-base
+    networks:
+      upstream:
+      wpan_simulation:
+        aliases:
+          # need to trick docker-compose to use the hostname over this network instead of
+          # database_backend
+          - http-proxy
+    environment:
+      BIND_PREFIX: "${WPAN_SIMULATION_PREFIX}"
+      NETWORK_SCENARIO: "http-p2"
+    depends_on:
+      http-server-global:
+        condition: service_started
+      dns-server-global:
+        condition: service_started
+  http-client:
+    extends:
+      file: http/http_client.yaml
+      service: http-client-base
+    depends_on:
+      sniffer-wpan:
+        condition: service_started
+    environment:
+      CLIENT_PROXY_CREDENTIALS: "${CLIENT_PROXY_CREDENTIALS:-}"
+      PROXY: "http-proxy"
+      COAP_SERVER: "http-server"
+      DNS_SERVER: "dns-server"
+      NETWORK_SCENARIO: "http-p2"
+  sniffer-wpan:
+    extends:
+      file: sniffer/sniffer.yaml
+      service: sniffer-base
+    environment:
+      SNIFFER_IFACE: "${WPAN_SIMULATION_IFACE}"
+      SNIFFER_LOGNAME: wpan
+      SNIFFER_FILTER: "tcp port 443"
+      NETWORK_SCENARIO: "http-p2"
+    depends_on:
+      http-proxy-global:
+        condition: service_started
+  sniffer-upstream:
+    extends:
+      file: sniffer/sniffer.yaml
+      service: sniffer-base
+    environment:
+      SNIFFER_IFACE: "${UPSTREAM_IFACE}"
+      SNIFFER_LOGNAME: upstream
+      SNIFFER_FILTER: "tcp port 443"
+      NETWORK_SCENARIO: "http-p2"
+    depends_on:
+      http-server-global:
+        condition: service_started
+      dns-server-global:
+        condition: service_started

@@ -1,0 +1,24 @@
+include:
+  - ../networks/database_backend.yaml
+
+services:
+  http-proxy-base:
+    extends:
+      file: http.yaml
+      service: http-base
+    networks:
+      - database_backend
+    volumes:
+      - ../../jsons:/jsons
+      - ../../output_dataset:/dumps
+    environment:
+      BLOCK_SIZE: "${BLOCK_SIZE:-}"
+      SECURITY: "${SECURITY:-}"
+      PROXY_CREDENTIALS: "${PROXY_CREDENTIALS:-}"
+      DATABASE_URI: "${DATABASE_URI}"
+      DATA_FORMAT: "${DATA_FORMAT}"
+      DNS_FORMAT: "${DNS_FORMAT}"
+      WPAN_SIMULATION_PREFIX: "${WPAN_SIMULATION_PREFIX}"
+      SERVER_NAME: "${SERVER_NAME:-proxy}"
+    command: |
+      /app/http/http_proxy.sh
