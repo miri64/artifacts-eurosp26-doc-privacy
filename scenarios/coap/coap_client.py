@@ -397,7 +397,7 @@ async def main():
         "-d",
         type=float,
         default=0,
-        help="Client ID used for synchronization",
+        help="Delay between data requests",
     )
     parser.add_argument(
         "--bind",
