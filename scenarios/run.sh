@@ -46,7 +46,7 @@ if [ -z "${PROTOCOL}" ]; then
     )
     PROTOCOLS=(
         "coap"
-        # "http"
+        "http"
     )
 elif [ "${PROTOCOL}" = "coap" ]; then
     SECURITIES=("")
@@ -108,7 +108,7 @@ if [ "$1" = "--build" ] || ! docker image ls | grep -q "pivot-eval/"; then
                 for l2_mode in "${LINK_LAYER_MODE[@]}"; do
                     ADDITIONAL_OPTS=""
 
-                    if [[ "${l2}" = "schc" && -z "${sec}" ]]; then
+                    if [[ "${l2}" = "schc" && ( -z "${sec}" || "${prot}" == "http" ) ]]; then
                         PREFIX_HINT_2=$(( PREFIX_HINT_2 + 1 ))
                         continue
                     elif [[ "${l2}" != "schc" && -n "${l2_mode}" ]]; then
@@ -131,6 +131,9 @@ if [ "$1" = "--build" ] || ! docker image ls | grep -q "pivot-eval/"; then
                         if [ -n "${l2_mode}" ]; then
                             l2_name="${l2_name}-${l2_mode}"
                         fi
+                    fi
+                    if [ "${prot}" == "http" ] && [ "${sec}" == "transport" ]; then
+                        ADDITIONAL_OPTS="${ADDITIONAL_OPTS} --env-file "${SCRIPT_DIR}"/.tls.env"
                     fi
                     PREFIX_HINT_1_HEX="$(printf "%x" "${PREFIX_HINT_1}")"
                     PREFIX_HINT_2_HEX="$(printf "%02x" "${PREFIX_HINT_2}")"
@@ -176,7 +179,7 @@ for data_env in "${DATA_ENVS[@]}"; do
                             for l2 in "${LINK_LAYERS[@]}"; do
                                 for l2_mode in "${LINK_LAYER_MODE[@]}"; do
                                     ADDITIONAL_OPTS=""
-                                    if [[ "${l2}" = "schc" && -z "${sec}" ]]; then
+                                    if [[ "${l2}" = "schc" && ( -z "${sec}" || "${prot}" == "http" ) ]]; then
                                         PREFIX_HINT_2=$(( PREFIX_HINT_2 + 1 ))
                                         continue
                                     elif [[ "${l2}" != "schc" && -n "${l2_mode}" ]]; then
@@ -213,7 +216,11 @@ for data_env in "${DATA_ENVS[@]}"; do
                                         continue
                                     fi
                                     if [ "${sec}" = "transport" ]; then
-                                        ADDITIONAL_OPTS="${ADDITIONAL_OPTS} --env-file "${SCRIPT_DIR}"/.dtls.env"
+                                        if [ "${prot}" == "http" ]; then
+                                            ADDITIONAL_OPTS="${ADDITIONAL_OPTS} --env-file "${SCRIPT_DIR}"/.tls.env"
+                                        elif [ "${prot}" == "coap" ]; then
+                                            ADDITIONAL_OPTS="${ADDITIONAL_OPTS} --env-file "${SCRIPT_DIR}"/.dtls.env"
+                                        fi
                                     elif [ "${sec}" = "object" ]; then
                                         ADDITIONAL_OPTS="${ADDITIONAL_OPTS} --env-file "${SCRIPT_DIR}"/.oscore.env"
                                     elif [ "${sec}" = "object-base" ]; then
