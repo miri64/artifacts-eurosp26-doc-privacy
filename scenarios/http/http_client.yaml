@@ -1,0 +1,25 @@
+include:
+  - ../networks/database_backend.yaml
+  - ../networks/wpan_simulation.yaml
+
+services:
+  http-client-base:
+    extends:
+      file: http.yaml
+      service: http-base
+    networks:
+      - database_backend
+      - wpan_simulation
+    volumes:
+      - ../../jsons:/jsons
+      - ../../output_dataset:/dumps
+    environment:
+      SECURITY: "${SECURITY:-}"
+      CLIENT_CREDENTIALS: "${CLIENT_CREDENTIALS:-}"
+      DATA_FORMAT: "${DATA_FORMAT}"
+      DNS_FORMAT: "${DNS_FORMAT}"
+      DATABASE_URI: "${DATABASE_URI}"
+      UPSTREAM_PREFIX: "${UPSTREAM_PREFIX}"
+      WPAN_SIMULATION_PREFIX: "${WPAN_SIMULATION_PREFIX}"
+    command: |
+      /app/http/http_client.sh

@@ -1,0 +1,22 @@
+include:
+  - ../networks/database_backend.yaml
+
+services:
+  http-server-base:
+    extends:
+      file: http.yaml
+      service: http-base
+    networks:
+      - database_backend
+    volumes:
+      - ../../jsons:/jsons
+      - ../../output_dataset:/dumps
+    environment:
+      BIND_PREFIX: "${WPAN_SIMULATION_PREFIX}"
+      SECURITY: "${SECURITY:-}"
+      DATA_FORMAT: "${DATA_FORMAT}"
+      DNS_FORMAT: "${DNS_FORMAT}"
+      DATABASE_URI: "${DATABASE_URI}"
+      SERVER_NAME: "${SERVER_NAME:-server}"
+    command: |
+      /app/http/http_server.sh

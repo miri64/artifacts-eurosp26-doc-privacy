@@ -19,6 +19,8 @@ elif [ "${SECURITY}" = "oscore" ]; then
     NETWORK_SCENARIO="$(echo "${NETWORK_SCENARIO}" | sed 's/coap/oscore/g')"
 elif [ "${SECURITY}" = "oscore-base" ]; then
     NETWORK_SCENARIO="$(echo "${NETWORK_SCENARIO}" | sed 's/coap/oscore-base/g')"
+elif [ "${SECURITY}" = "tls" ]; then
+    NETWORK_SCENARIO="$(echo "${NETWORK_SCENARIO}" | sed 's/http/https/g')"
 fi
 
 su - user -c "\

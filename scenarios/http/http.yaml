@@ -1,0 +1,17 @@
+services:
+  http-base:
+    build:
+      args:
+        HOST_GID: "${HOST_GID}"
+        HOST_UID: "${HOST_UID}"
+      context: .
+      dockerfile: Dockerfile
+      target: http-base
+    sysctls:
+      net.ipv6.auto_flowlabels: 0
+    image:
+      pivot-eval/http
+    tmpfs:
+      - /creds
+    volumes:
+      - ../:/app

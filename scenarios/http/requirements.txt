@@ -1,0 +1,6 @@
+cbor-diag
+cbor2
+h2
+httpx[http2]
+psycopg2
+tornado

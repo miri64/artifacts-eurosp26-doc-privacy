@@ -1,0 +1,52 @@
+include:
+  - networks/database_backend.yaml
+  - networks/wpan_simulation.yaml
+
+name: http-d1
+
+services:
+  db:
+    extends:
+      file: database/database.yaml
+      service: db-base
+  http-server-global:
+    extends:
+      file: http/http_server.yaml
+      service: http-server-base
+    networks:
+      wpan_simulation:
+        aliases:
+          - dns-server
+          # need to trick docker-compose to use the hostname over this network instead of
+          # database_backend
+          - http-server
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      NETWORK_SCENARIO: "http-d1"
+      SERVER_CREDENTIALS: "${DATA_SERVER_CREDENTIALS:-}"
+      SERVER_NAME: "server"
+  http-client:
+    extends:
+      file: http/http_client.yaml
+      service: http-client-base
+    depends_on:
+      sniffer:
+        condition: service_started
+    environment:
+      COAP_SERVER: "http-server"
+      DNS_SERVER: "http-server"
+      NETWORK_SCENARIO: "http-d1"
+  sniffer:
+    extends:
+      file: sniffer/sniffer.yaml
+      service: sniffer-base
+    environment:
+      SNIFFER_IFACE: "${WPAN_SIMULATION_IFACE}"
+      SNIFFER_LOGNAME: wpan
+      SNIFFER_FILTER: "tcp port 443"
+      NETWORK_SCENARIO: "http-d1"
+    depends_on:
+      http-server-global:
+        condition: service_started

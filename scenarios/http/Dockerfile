@@ -1,0 +1,13 @@
+FROM python:3.13.2-alpine3.21 AS base
+
+WORKDIR /app
+
+ARG HOST_UID
+ARG HOST_GID
+RUN adduser -Ds /bin/sh user -u "$HOST_UID" -g "$HOST_GID"
+
+FROM base AS http-base
+RUN apk --update --no-cache add postgresql-dev
+
+COPY requirements.txt ./
+RUN pip --no-cache-dir install --upgrade -r requirements.txt
