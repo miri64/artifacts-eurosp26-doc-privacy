@@ -28,7 +28,7 @@ if ! ls ${SCRIPT_DIR}/../jsons/*.sqlite3 &> /dev/null; then
     exit 1
 fi
 
-declare -A PREFIX_HINT_1_START=(["coap"]=6, ["http"]=7)
+declare -A PREFIX_HINT_1_START=(["coap"]=6 ["http"]=7)
 
 MAIN_ENV="${SCRIPT_DIR}"/.env
 DATA_ENVS=(
