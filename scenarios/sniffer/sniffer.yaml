@@ -19,6 +19,7 @@ services:
       DNS_FORMAT: "${DNS_FORMAT}"
       BLOCK_SIZE: "${BLOCK_SIZE:-}"
       SECURITY: "${SECURITY:-}"
+      SCHC_RULES_MODE: "${SCHC_RULES_MODE:-}"
     command: |
       /app/sniffer.sh
     healthcheck:
