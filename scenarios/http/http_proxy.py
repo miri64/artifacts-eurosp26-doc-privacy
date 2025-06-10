@@ -78,6 +78,9 @@ class ForwardProxyHandler:
 
         self.conn.send_headers(stream_id, list(response_headers.items()))
         self.conn.send_data(stream_id, response.content, end_stream=True)
+        self.upstream_headers = None
+        self.upstream_method = None
+        self.upstream_url = None
 
     async def data_received(self, data, stream_id):
         await self.get_response_from_upstream(stream_id, data)
@@ -100,8 +103,9 @@ class ForwardProxyHandler:
                         if self.upstream_headers and int(
                             self.upstream_headers.get("content-length", 0)
                         ) > 0:
+                            fc_length = event.flow_controlled_length
+                            self.conn.acknowledge_received_data(fc_length, event.stream_id)
                             await self.data_received(event.data, event.stream_id)
-                        self.conn.reset_stream(event.stream_id)
 
                 await self.stream.write(self.conn.data_to_send())
 

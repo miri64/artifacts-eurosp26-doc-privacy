@@ -48,12 +48,18 @@ class ServerHandler:
                     if isinstance(event, h2.events.RequestReceived):
                         self.request_received(event.headers, event.stream_id)
                     elif isinstance(event, h2.events.DataReceived):
-                        self.conn.reset_stream(event.stream_id)
+                        amount = event.flow_controlled_length
+                        self.conn.acknowledge_received_data(amount, event.stream_id)
 
                 await self.stream.write(self.conn.data_to_send())
 
             except tornado.iostream.StreamClosedError:
                 break
+
+    def _send_http2_response(self, headers, stream_id, data=None):
+        self.conn.send_headers(stream_id, headers, end_stream=not data)
+        if data:
+            self.conn.send_data(stream_id, data, end_stream=True)
 
     def _get_obj(self, stream_id):
         with db.connect(self.database_uri) as conn:
@@ -114,8 +120,7 @@ class ServerHandler:
             (":status", status),
             ("content-type", self.default_data_type),
         )
-        self.conn.send_headers(stream_id, response_headers)
-        self.conn.send_data(stream_id, obj, end_stream=True)
+        self._send_http2_response(response_headers, stream_id, obj)
 
     def _respond_dns(self, headers, stream_id):
         if "accept" in headers and headers["accept"] != "*/*":
@@ -130,8 +135,7 @@ class ServerHandler:
             (":status", "200" if resp is not None else "404"),
             ("content-type", resp_content_format),
         )
-        self.conn.send_headers(stream_id, response_headers)
-        self.conn.send_data(stream_id, resp or b"", end_stream=True)
+        self._send_http2_response(response_headers, stream_id, resp)
 
     def request_received(self, headers, stream_id):
         headers = collections.OrderedDict(
@@ -146,14 +150,12 @@ class ServerHandler:
                 response_headers = (
                     ":status", "415",
                 )
-                self.conn.send_headers(stream_id, response_headers)
-                self.conn.send_data(stream_id, b"", end_stream=True)
+                self._send_http2_response(response_headers, stream_id)
             if headers["accept"] == "application/dns+cbor;packed=1":
                 response_headers = (
                     ":status", "501",
                 )
-                self.conn.send_headers(stream_id, response_headers)
-                self.conn.send_data(stream_id, b"", end_stream=True)
+                self._send_http2_response(response_headers, stream_id)
         self._send_response(stream_id)
 
 
