@@ -167,13 +167,16 @@ fi
 for data_env in "${DATA_ENVS[@]}"; do
     for dns_env in "${DNS_ENVS[@]}"; do
         for sec in "${SECURITIES[@]}"; do
-            PREFIX_HINT_1="${PREFIX_HINT_1_START[${PROTOCOLS[0]}]}"
-            for prot in "${PROTOCOLS[@]}"; do
-                if [[ "$prot" != "coap" && "$sec" != "transport" ]]; then
-                    continue
-                fi
-                ALL_SUCCESSFUL=0
-                for block in "${BLOCKWISE[@]}"; do
+            for block in "${BLOCKWISE[@]}"; do
+                PREFIX_HINT_1="${PREFIX_HINT_1_START[${PROTOCOLS[0]}]}"
+                for prot in "${PROTOCOLS[@]}"; do
+                    if [[ "$prot" != "coap" && "$sec" != "transport" ]]; then
+                        continue
+                    fi
+                    if [ "$prot" != "coap" -a -n "$block" ]; then
+                        continue
+                    fi
+                    ALL_SUCCESSFUL=0
                     while [ ${ALL_SUCCESSFUL} -eq 0 ]; do
                         PREFIX_HINT_2=0
                         unset DOCKER_COMPOSE_PIDS
@@ -214,9 +217,6 @@ for data_env in "${DATA_ENVS[@]}"; do
                                     export UPSTREAM_IFACE="${prot}${l2_iface}${setup}_ups"
                                     export UPSTREAM_PREFIX="fdd8:${PREFIX_HINT_1_HEX}b${PREFIX_HINT_2_HEX}:ecc0::"
 
-                                    if [ "$prot" != "coap" -a -n "$block" ]; then
-                                        continue
-                                    fi
                                     if [ "${sec}" = "transport" ]; then
                                         if [ "${prot}" == "http" ]; then
                                             ADDITIONAL_OPTS="${ADDITIONAL_OPTS} --env-file "${SCRIPT_DIR}"/.tls.env"
@@ -241,7 +241,7 @@ for data_env in "${DATA_ENVS[@]}"; do
                                     source "${dns_env}"
                                     DATA_NAME="$(echo "${DATA_FORMAT}" | sed 's#application/##g')"
                                     DNS_NAME="$(echo "${DNS_FORMAT}" | sed 's#application/##g')"
-                                    script -efq "${SCRIPT_DIR}/../output_dataset/docker-compose-${prot}${l2_dash}-${setup}-${sec}-${DATA_NAME}-${DNS_NAME}.log" -c \
+                                    script -efq "${SCRIPT_DIR}/../output_dataset/docker-compose-${prot}${l2_dash}-${setup}-${sec}-${block}-${DATA_NAME}-${DNS_NAME}.log" -c \
                                     "COMPOSE_BAKE=true docker compose -p '${prot}${l2_name}-${setup}' \
                                         --env-file '${MAIN_ENV}' ${ADDITIONAL_OPTS} \
                                         --env-file '${data_env}' --env-file '${dns_env}' \
@@ -269,8 +269,8 @@ for data_env in "${DATA_ENVS[@]}"; do
                         docker exec "${server}" chown "${HOST_UID}:${HOST_GID}" /dumps/*.log
                         docker stop "${server}"
                     done
+                    PREFIX_HINT_1=$(( PREFIX_HINT_1 + 1 ))
                 done
-                PREFIX_HINT_1=$(( PREFIX_HINT_1 + 1 ))
             done
         done
     done
