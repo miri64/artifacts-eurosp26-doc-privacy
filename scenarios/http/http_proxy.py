@@ -10,6 +10,7 @@ import asyncio
 import collections
 import ssl
 import sys
+import urllib.parse
 
 import cbor_diag
 import cbor2
@@ -120,7 +121,7 @@ class ForwardProxyHandler:
         self.upstream_method = headers.pop(":method")
         scheme = headers.pop(":scheme")
         authority = headers.pop(":authority")
-        path = headers.pop(":path")
+        path = urllib.parse.quote(headers.pop(":path"))
         self.upstream_url = f"{scheme}://{authority}{path}"
         self.upstream_headers = headers
         if int(self.upstream_headers.get("content-length", 0)) == 0:
