@@ -21,7 +21,9 @@ extract_from_pcap() {
     if ! echo "$PCAP" | grep -Eq ".*\.upstream.pcapng"; then
         "${SCRIPT_DIR}/extract_eth.sh" "${PCAP}" > "${PCAP%.pcapng}".eth.csv
     fi
-    if echo "${PCAP}" | grep -Eq -e "-schc-" && ! echo "$PCAP" | grep -Eq ".*\.upstream.pcapng"; then
+    if echo "${PCAP}" | grep -q "^https-" && ! echo "$PCAP" | grep -Eq ".*\.upstream.pcapng"; then
+        "${SCRIPT_DIR}/extract_http.sh" "${PCAP}" > "${PCAP%.pcapng}".http.csv
+    elif echo "${PCAP}" | grep -Eq -e "-schc-" && ! echo "$PCAP" | grep -Eq ".*\.upstream.pcapng"; then
         "${SCRIPT_DIR}/extract_schc.py" "${PCAP%.pcapng}".eth.csv | \
              text2pcap -l 101 -t "%s.%f" -q - - 2>/dev/null | \
              "${SCRIPT_DIR}/extract_coap.sh" - > "${PCAP%.pcapng}".coap.csv
