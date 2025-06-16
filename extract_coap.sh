@@ -14,7 +14,7 @@ fi
 PCAP="$1"
 
 FIELDS="frame.number frame.time_epoch frame.protocols"
-FIELDS="${FIELDS} coap.code coap.request_first_in coap.mid coap.token coap.opt.ctype coap.opt.block_number coap.opt.block_mflag coap.opt.block_size"
+FIELDS="${FIELDS} coap.code coap.request_first_in coap.mid coap.token coap.opt.ctype coap.opt.block_number coap.opt.block_mflag coap.opt.block_size coap.block coap.block.reassembled.in"
 
 if echo "$PCAP" | grep -q "oscore"; then
     FIELDS="${FIELDS} oscore.code oscore.opt.ctype oscore.opt.block_number oscore.opt.block_mflag oscore.opt.block_size"
