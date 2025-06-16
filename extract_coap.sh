@@ -1,6 +1,6 @@
 #! /bin/sh
 #
-# extract_eth.sh
+# extract_coap.sh
 # Copyright (C) 2025 TU Dresden
 #
 # Distributed under terms of the MIT license.
