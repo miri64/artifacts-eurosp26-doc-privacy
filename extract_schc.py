@@ -172,6 +172,10 @@ def read_csv(csvfile, device_table, rules):
                 dump_pkt(pkt)
             print(row["frame.time_epoch"])
             dump_pkt(pkt)
+            if from_device:
+                core_protocol.session_manager.session_table.clear()
+            else:
+                device_protocol.session_manager.session_table.clear()
             del fragment_rows[:]
 
         core_protocol.layer2.reset_mock()
