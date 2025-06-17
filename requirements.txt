@@ -10,5 +10,6 @@ nbclassic
 notebook
 pandas
 polars-u64-idx
+scapy
 scikit-learn
 seaborn
