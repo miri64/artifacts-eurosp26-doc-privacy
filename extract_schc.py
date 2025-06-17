@@ -118,19 +118,15 @@ def read_csv(csvfile, device_table, rules):
     for device_id, rules_file in rules.items():
         rule_manager.Add(device=device_id, file=str(rules_file))
     peer_based = len(rules) > 1
-    core_protocol = openschc_loader.get_protocol(
-        layer2=unittest.mock.MagicMock(),
-        system=unittest.mock.MagicMock(),
-        role="core",
-    )
-    core_protocol.set_rulemanager(rule_manager)
-    device_protocol = openschc_loader.get_protocol(
-        layer2=unittest.mock.MagicMock(),
-        system=unittest.mock.MagicMock(),
-        role="device",
-    )
-    device_protocol.set_rulemanager(rule_manager)
-    fragment_rows = []
+    protocol = {}
+    for key in device_table:
+        protocol[key] = openschc_loader.get_protocol(
+            layer2=unittest.mock.MagicMock(),
+            system=unittest.mock.MagicMock(),
+            role="device" if device_table[key] == "client" else "core",
+        )
+        protocol[key].set_rulemanager(rule_manager)
+    fragment_rows = {k: [] for k in device_table}
     prev_frame_num = 0
     for i, row in enumerate(reader):
         convert_columns(row, ETH_COL_TYPES)
@@ -155,32 +151,22 @@ def read_csv(csvfile, device_table, rules):
             kwargs["device_id"] = bytes(a ^ b for a, b in zip(src, dst))
 
         with DevNull():
-            if from_device:
-                device_id, pkt = core_protocol.schc_recv(row["eth.payload"], **kwargs)
-            else:
-                device_id, pkt = device_protocol.schc_recv(row["eth.payload"], **kwargs)
+            device_id, pkt = protocol[dst].schc_recv(row["eth.payload"], **kwargs)
 
         assert device_id
 
         if pkt is None:
-            fragment_rows.append((i, row))
+            fragment_rows[dst].append((i, row))
         else:
             pkt = bytes(pkt)
-            for j, fragment_row in fragment_rows:
+            for j, fragment_row in fragment_rows[dst]:
                 print(fragment_row["frame.time_epoch"])
                 dump_pkt(pkt)
             print(row["frame.time_epoch"])
             dump_pkt(pkt)
-            if from_device:
-                core_protocol.session_manager.session_table.clear()
-            else:
-                device_protocol.session_manager.session_table.clear()
-            del fragment_rows[:]
-
-        core_protocol.layer2.reset_mock()
-        core_protocol.system.reset_mock()
-        device_protocol.layer2.reset_mock()
-        device_protocol.system.reset_mock()
+            del fragment_rows[dst][:]
+        protocol[dst].layer2.reset_mock()
+        protocol[dst].system.reset_mock()
 
 
 def main():
