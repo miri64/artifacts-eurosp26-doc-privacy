@@ -126,7 +126,6 @@ def read_csv(csvfile, device_table, rules):
     core_protocol.set_rulemanager(rule_manager)
     device_protocol = openschc_loader.get_protocol(
         layer2=unittest.mock.MagicMock(),
-        layer3=unittest.mock.MagicMock(),
         system=unittest.mock.MagicMock(),
         role="device",
     )
