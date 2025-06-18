@@ -28,8 +28,8 @@ if [ -n "${SCHC_RULES_MODE}" ]; then
 fi
 
 su - user -c "\
-   /usr/bin/tshark \
+   /usr/bin/tcpdump \
    -i '${SNIFFER_IFACE}' \
-   -f '${SNIFFER_FILTER}' \
-   -w '/dumps/${NETWORK_SCENARIO}${SCHC_RULES_LOG}_${DATA_FORMAT}_${DNS_FORMAT}${BLOCK_SIZE}.${SNIFFER_LOGNAME}.pcapng' \
+   -w '/dumps/${NETWORK_SCENARIO}${SCHC_RULES_LOG}_${DATA_FORMAT}_${DNS_FORMAT}${BLOCK_SIZE}.${SNIFFER_LOGNAME}.pcap' \
+   '${SNIFFER_FILTER}'
 "

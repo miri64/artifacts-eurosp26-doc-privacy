@@ -23,7 +23,7 @@ services:
     command: |
       /app/sniffer.sh
     healthcheck:
-      test: ["CMD", "pgrep", "tshark"]
+      test: ["CMD", "pgrep", "tcpdump"]
       interval: 10m
       timeout: 10s
       retries: 60
