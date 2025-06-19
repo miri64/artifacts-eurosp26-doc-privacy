@@ -1,9 +1,11 @@
 *.coap.csv
 *.eth.csv
+*.http.csv
 *.merged.csv
 *.routes.txt
 *.training.csv
 *.training.csv.gz
 *.log
 *.vector.parquet
+*.pcap
 *.pcapng
