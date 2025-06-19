@@ -13,7 +13,7 @@ fi
 
 PCAP="$1"
 
-FIELDS="frame.number frame.time_epoch frame.protocols"
+FIELDS="frame.number frame.time_epoch frame.protocols dtls.record.content_type"
 FIELDS="${FIELDS} coap.code coap.request_first_in coap.mid coap.token coap.opt.ctype coap.opt.block_number coap.opt.block_mflag coap.opt.block_size coap.block coap.block.reassembled.in"
 
 if echo "$PCAP" | grep -q "oscore" || [ "$2" = "oscore" ]; then

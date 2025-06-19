@@ -13,7 +13,7 @@ fi
 
 PCAP="$1"
 
-FIELDS="frame.number frame.time_epoch frame.protocols"
+FIELDS="frame.number frame.time_epoch frame.protocols tls.record.content_type"
 FIELDS="${FIELDS} tcp.analysis.acks_frame tcp.analysis.duplicate_ack_frame tcp.analysis.rto_frame tcp.reassembled_in tcp.segment"
 FIELDS="${FIELDS} http2.headers.method http2.streamid http2.request_in http2.body.reassembled.in http2.headers.content_type"
 
