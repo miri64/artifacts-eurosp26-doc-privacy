@@ -70,7 +70,7 @@ async def send_requests(client, args, parser):
         "url",
         "media_type",
         "response_status",
-        "obj_id",
+        "stream_id",
         "response_payload",
         sep="\t",
     )
