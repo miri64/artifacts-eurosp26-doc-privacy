@@ -22,6 +22,9 @@ import psycopg2 as db
 from http_server import existing_path
 
 
+stream_id_offset = 0
+
+
 async def send_requests(client, args, parser):
     h2_next_stream_id = h2.connection.H2Connection.get_next_available_stream_id
     h2_send_headers = h2.connection.H2Connection.send_headers
@@ -100,11 +103,15 @@ async def send_requests(client, args, parser):
                 dns_query = dns_query.tobytes()
 
         def next_stream_id(self):
+            global stream_id_offset  # ensures that stream id stay unique even in d2 case
             stream_id = h2_next_stream_id(self)
+            if args.dns_server != args.http_server and not args.proxy:
+                stream_id += stream_id_offset
             if data_type == 0:
                 _id = data_id
             else:
                 _id = dns_id
+                stream_id_offset += 2
             with db.connect(args.db_uri) as conn:
                 cur = conn.cursor()
                 cur.execute(
