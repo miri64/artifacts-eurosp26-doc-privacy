@@ -16,18 +16,35 @@ import numpy
 import polars
 import polars.exceptions
 
-# prevent OpenBLAS to crash when using sklearn's KNN
-os.environ['OPENBLAS_NUM_THREADS'] = "64"
-os.environ['MKL_NUM_THREADS'] = "64"
-os.environ['OMP_NUM_THREADS'] = "64"
+try:
+    from cuml import ensemble as sk_ensemble
+    # from cuml.exceptions import ConvergenceWarning
+    from cuml import model_selection as sk_model_selection
+    from cuml import linear_model as sk_linear_model
+    from cuml import neighbors as sk_neighbors
+    from cuml import preprocessing as sk_pp
+    from cuml import svm as sk_svm
+    using_cuml = True
+except ImportError as exc:
+    print("Unable to import cuML falling back to sklearn", file=sys.stderr)
+    traceback.print_exc()
 
-from sklearn import ensemble as sk_ensemble
-from sklearn import exceptions as sk_exceptions
-from sklearn import model_selection as sk_model_selection
-from sklearn import linear_model as sk_linear_model
-from sklearn import naive_bayes as sk_nb
-from sklearn import neighbors as sk_neighbors
-from sklearn import preprocessing as sk_pp
+    # prevent OpenBLAS to crash when using sklearn's KNN
+    os.environ['OPENBLAS_NUM_THREADS'] = "64"
+    os.environ['MKL_NUM_THREADS'] = "64"
+    os.environ['OMP_NUM_THREADS'] = "64"
+
+    from sklearn import ensemble as sk_ensemble
+    from sklearn.exceptions import ConvergenceWarning
+    from sklearn import model_selection as sk_model_selection
+    from sklearn import linear_model as sk_linear_model
+    from sklearn import naive_bayes as sk_nb
+    from sklearn import neighbors as sk_neighbors
+    from sklearn import preprocessing as sk_pp
+    from sklearn import svm as sk_svm
+    using_cuml = False
+
+
 from sklearn.metrics import (
     confusion_matrix,
     ConfusionMatrixDisplay,
@@ -36,7 +53,7 @@ from sklearn.metrics import (
     recall_score,
     f1_score,
 )
-from sklearn import svm as sk_svm
+from sklearn import naive_bayes as sk_nb  # cuML version of naive bayes crashed in our setup
 from sklearn import tree as sk_tree
 
 
@@ -157,7 +174,6 @@ def train_knn(x_train, y_train):
 
 @contextlib.contextmanager
 def train_svm(x_train, y_train):
-    print(x_train.shape, y_train.shape)
     svm = sk_svm.LinearSVC(**CLASSIFIER_ARGS["svm"])
     svm.fit(x_train, numpy.ravel(y_train))
     try:
@@ -216,6 +232,11 @@ def str_classifier_args(classifier):
 
 
 def main():
+    if using_cuml:
+        CLASSIFIERS.insert(3, "svm")
+        CLASSIFIER_ARGS["lr"]["max_iter"] = 5000
+        del CLASSIFIER_ARGS["knn"]["n_jobs"]
+        print("Using cuML")
     for data in DATA_FORMATS:
         for dns in DNS_FORMATS:
             for l2 in LINK_LAYERS:
