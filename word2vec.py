@@ -5,6 +5,7 @@
 #
 # Distributed under terms of the MIT license
 
+import argparse
 import multiprocessing
 import os
 import pathlib
@@ -85,11 +86,24 @@ def scenario2vec(scenario):
 
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "-p",
+        "--protocol",
+        help="Protocol to train for (default: all)",
+        nargs="+",
+        default=None,
+        choices=PROTOCOLS,
+    )
+    args = parser.parse_args()
+
     scenarios = []
     for data in DATA_FORMATS:
         for dns in DNS_FORMATS:
             for l2 in LINK_LAYERS:
                 for prot in PROTOCOLS:
+                    if args.protocol is not None and prot not in args.protocol:
+                        continue
                     for blk in BLOCKWISE:
                         for stp in NETWORK_SETUPS:
                             scenario = f"{prot}{l2}-{stp}_{data}_{dns}{blk}"
