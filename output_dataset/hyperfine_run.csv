@@ -1,6 +1,8 @@
-protocol,abs,user,system,logs
-coaps,196576.833,162.796,45.911,80
-coap,161058.231,46.167,13.508,32
-https,,,16
-oscore,258904.354,144.432,35.898,80
-oscore-base,266003.627,194.873,48.446,88
+protocol,abs,user,system,logs,cores
+coaps,196576.833,162.796,45.911,80,24
+coap,161058.231,46.167,13.508,32,8
+https,,,16,8
+oscore,258904.354,144.432,35.898,80,8
+oscore-base,266003.627,194.873,48.446,88,8
+extract_from_pcap,4995.668,91350.091,3188.372,,24
+generate_training_data,6627.842,,,,1
