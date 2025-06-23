@@ -5,11 +5,14 @@
 #
 # Distributed under terms of the MIT license.
 
+import argparse
 import contextlib
 import csv
 import os
 import pathlib
 import multiprocessing
+import sys
+import traceback
 import warnings
 
 import numpy
@@ -232,6 +235,17 @@ def str_classifier_args(classifier):
 
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "-p",
+        "--protocol",
+        help="Protocol to train for (default: all)",
+        nargs="+",
+        default=None,
+        choices=PROTOCOLS,
+    )
+    args = parser.parse_args()
+
     if using_cuml:
         CLASSIFIERS.insert(3, "svm")
         CLASSIFIER_ARGS["lr"]["max_iter"] = 5000
@@ -241,6 +255,8 @@ def main():
         for dns in DNS_FORMATS:
             for l2 in LINK_LAYERS:
                 for prot in PROTOCOLS:
+                    if args.protocol is not None and prot not in args.protocol:
+                        continue
                     for blk in BLOCKWISE:
                         for stp in NETWORK_SETUPS:
                             scenario = f"{prot}{l2}-{stp}_{data}_{dns}{blk}"
