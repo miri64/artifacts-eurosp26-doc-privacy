@@ -394,6 +394,8 @@ def main():
                                         del conf_matrix
                                     del x_train_minmax
                                     del x_test_minmax
+                            else:
+                                print(f"Skipping since {file} does not exist.")
 
 
 if __name__ == "__main__":

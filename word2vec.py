@@ -111,6 +111,8 @@ def main():
                             vector_file = INPUT_PATH / f"{scenario}.vector.parquet"
                             if file.exists() and not vector_file.exists():
                                 scenarios.append(scenario)
+                            elif not file.exists():
+                                print(f"Skipping {file} since it does not exist")
                             elif vector_file.exists():
                                 print(f"Skipping {file} since {vector_file} exists")
 
