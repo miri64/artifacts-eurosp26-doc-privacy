@@ -2,6 +2,7 @@ cbor2
 git+https://github.com/netd-tud/cbor4dns
 dnspython
 gensim
+ipywidgets
 jupyter_server_fileid
 jupyter_server_ydoc
 jupyterlab
@@ -10,6 +11,8 @@ nbclassic
 notebook
 pandas
 polars-u64-idx
+pyarrow
 scapy
 scikit-learn
 seaborn
+tqdm
