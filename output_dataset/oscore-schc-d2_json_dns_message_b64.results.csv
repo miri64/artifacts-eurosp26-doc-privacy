@@ -1,0 +1,6 @@
+protocol,link_layer,blocksize,network_setup,data_format,dns_format,test_size,classifier,classifier_args,true_dns,false_dns,false_data,true_data,accuracy,precision,recall,f1_score
+oscore,schc,64,d2,json,dns_message,0.2,nb,,60716,6577,59536,75681,0.6735321712508024,0.5049063633037288,0.9022632368894239,0.647481937668293
+oscore,schc,64,d2,json,dns_message,0.2,lr,max_iter=5000,67293,0,0,135217,1.0,1.0,1.0,1.0
+oscore,schc,64,d2,json,dns_message,0.2,knn,algorithm=brute,67264,29,63,135154,0.9995457014468422,0.9990642684212871,0.9995690487866494,0.9993165948596048
+oscore,schc,64,d2,json,dns_message,0.2,dt,,67293,0,0,135217,1.0,1.0,1.0,1.0
+oscore,schc,64,d2,json,dns_message,0.2,rf,"n_estimators=250,max_depth=9",67293,0,0,135217,1.0,1.0,1.0,1.0
