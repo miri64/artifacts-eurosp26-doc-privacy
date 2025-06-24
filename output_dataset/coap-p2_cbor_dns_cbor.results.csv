@@ -1,6 +1,0 @@
-protocol,link_layer,blocksize,network_setup,data_format,dns_format,test_size,classifier,classifier_args,true_dns,false_dns,false_data,true_data,accuracy,precision,recall,f1_score
-coap,eth,1024,p2,cbor,dns_cbor,0.2,nb,,23638,659,14788,10039,0.6855508509079066,0.6151564045177744,0.9728773099559617,0.7537267031232562
-coap,eth,1024,p2,cbor,dns_cbor,0.2,lr,max_iter=2800,24117,1,4,25002,0.999898216757593,0.999834169395962,0.9999585371921387,0.9998963494268124
-coap,eth,1024,p2,cbor,dns_cbor,0.2,knn,"algorithm=brute,n_jobs=-1",24272,25,0,24827,0.9994910837879651,1.0,0.9989710663867967,0.9994852683810661
-coap,eth,1024,p2,cbor,dns_cbor,0.2,dt,,24297,0,0,24827,1.0,1.0,1.0,1.0
-coap,eth,1024,p2,cbor,dns_cbor,0.2,rf,"n_estimators=250,max_depth=9",24297,0,0,24827,1.0,1.0,1.0,1.0
