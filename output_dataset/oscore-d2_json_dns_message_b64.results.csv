@@ -2,3 +2,4 @@ protocol,link_layer,blocksize,network_setup,data_format,dns_format,test_size,cla
 oscore,eth,64,d2,json,dns_message,0.2,lr,max_iter=5000,67521,0,0,132743,1.0,1.0,1.0,1.0
 oscore,eth,64,d2,json,dns_message,0.2,knn,algorithm=brute,67521,0,0,132743,1.0,1.0,1.0,1.0
 oscore,eth,64,d2,json,dns_message,0.2,dt,,67521,0,0,132743,1.0,1.0,1.0,1.0
+oscore,eth,64,d2,json,dns_message,0.2,rf,"n_estimators=250,max_depth=9",67773,0,0,132491,1.0,1.0,1.0,1.0
