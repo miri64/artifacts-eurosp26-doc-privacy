@@ -24,6 +24,9 @@ import tornado
 from http_server import H2Server, hostportsplit_helper, existing_path
 
 
+last_stream_id = 0
+
+
 class ForwardProxyHandler:
     client = None
 
@@ -42,7 +45,13 @@ class ForwardProxyHandler:
         old_stream_id = stream_id
 
         def next_stream_id(inner):
+            # ensures that stream id stay unique even in p2 case
+            global last_stream_id
             new_stream_id = self.next_stream_id(inner)
+            if new_stream_id > 0:
+                while new_stream_id <= last_stream_id:
+                    new_stream_id += 2
+                last_stream_id = new_stream_id
             with db.connect(self.database_uri) as conn:
                 cur = conn.cursor()
                 cur.execute(
