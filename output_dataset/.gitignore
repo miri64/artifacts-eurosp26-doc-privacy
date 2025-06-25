@@ -2,6 +2,7 @@
 *.eth.csv
 *.http.csv
 *.merged.csv
+*.merged.csv.gz
 *.routes.txt
 *.training.csv
 *.training.csv.gz
