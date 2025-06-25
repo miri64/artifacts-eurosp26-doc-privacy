@@ -1,0 +1,17 @@
+
+services:
+  jupyter:
+    build:
+      args:
+        HOST_GID: "${HOST_GID}"
+        HOST_UID: "${HOST_UID}"
+      context: .
+      dockerfile: Dockerfile
+    image: pivot-eval/jupyter
+    volumes:
+      - .:/app
+    environment:
+      JUPYTER_PORT: ${JUPYTER_PORT:-8888}"
+    network_mode: host
+    command:
+      su - user -c "cd /app; jupyter lab --port ${JUPYTER_PORT:-8888}"
