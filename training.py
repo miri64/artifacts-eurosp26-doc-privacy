@@ -247,7 +247,6 @@ def main():
     args = parser.parse_args()
 
     if using_cuml:
-        CLASSIFIERS.insert(3, "svm")
         CLASSIFIER_ARGS["lr"]["max_iter"] = 5000
         del CLASSIFIER_ARGS["knn"]["n_jobs"]
         print("Using cuML")
@@ -303,11 +302,15 @@ def main():
                                 x = df_vec["vector"].to_numpy()
                                 y = df_vec["label"].to_numpy()
                                 del df_vec
-                                x_train, x_test, y_train, y_test = (
-                                    sk_model_selection.train_test_split(
-                                        x, y, test_size=TEST_SIZE
+                                try:
+                                    x_train, x_test, y_train, y_test = (
+                                        sk_model_selection.train_test_split(
+                                            x, y, test_size=TEST_SIZE
+                                        )
                                     )
-                                )
+                                except MemoryError:
+                                    traceback.print_exc(file=sys.stderr)
+                                    continue
                                 del x
                                 del y
                                 scaler = sk_pp.MinMaxScaler()
@@ -357,16 +360,20 @@ def main():
                                                 results_file.relative_to(INPUT_PATH),
                                             )
                                             continue
-                                        with TRAIN[cls](
-                                            x_train_minmax, y_train
-                                        ) as classifier:
-                                            (
-                                                conf_matrix,
-                                                accuracy,
-                                                precision,
-                                                recall,
-                                                f1score,
-                                            ) = test(classifier, x_test_minmax, y_test)
+                                        try:
+                                            with TRAIN[cls](
+                                                x_train_minmax, y_train
+                                            ) as classifier:
+                                                (
+                                                    conf_matrix,
+                                                    accuracy,
+                                                    precision,
+                                                    recall,
+                                                    f1score,
+                                                ) = test(classifier, x_test_minmax, y_test)
+                                        except (ValueError, MemoryError):
+                                            traceback.print_exc(file=sys.stderr)
+                                            continue
                                         writer.writerow(
                                             {
                                                 "protocol": prot,
@@ -394,6 +401,8 @@ def main():
                                         del conf_matrix
                                     del x_train_minmax
                                     del x_test_minmax
+                                    del y_train
+                                    del y_test
                             else:
                                 print(f"Skipping since {file} does not exist.")
 
