@@ -18,12 +18,12 @@ OUTPUT_DATASET="${OUTPUT_DATASET:-${SCRIPT_DIR}/output_dataset}"
 extract_from_pcap() {
     PCAP="$1"
 
-    if ! echo "$PCAP" | grep -Eq ".*\.upstream.pcap" && ! [ -f "${PCAP%.pcap}".eth.csv ]; then
+    if (! echo "$PCAP" | grep -Eq ".*\.upstream.pcap" || echo "${PCAP}" | grep -Eq "\<https-") && ! [ -f "${PCAP%.pcap}".eth.csv ]; then
         "${SCRIPT_DIR}/extract_eth.sh" "${PCAP}" > "${PCAP%.pcap}".eth.csv
     elif [ -f "${PCAP%.pcap}".eth.csv ]; then
         echo "\"${PCAP%.pcap}.eth.csv\" exists already" >&2
     fi
-    if echo "${PCAP}" | grep -Eq "\<https-" && ! echo "$PCAP" | grep -Eq ".*\.upstream.pcap" && ! [ -f "${PCAP%.pcap}".http.csv ]; then
+    if echo "${PCAP}" | grep -Eq "\<https-" && ! [ -f "${PCAP%.pcap}".http.csv ]; then
         "${SCRIPT_DIR}/extract_http.sh" "${PCAP}" > "${PCAP%.pcap}".http.csv
     elif echo "${PCAP}" | grep -Eq -e "-schc-" && ! echo "$PCAP" | grep -Eq ".*\.upstream.pcap" && ! [ -f "${PCAP%.pcap}".coap.csv ]; then
         if echo "$PCAP" | grep -q "oscore"; then
