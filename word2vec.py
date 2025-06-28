@@ -28,6 +28,7 @@ if WORKERS > 96:
 
 PROTOCOLS = ["https", "coap", "coaps", "oscore", "oscore-base"]
 LINK_LAYERS = ["", "-schc"]
+LINK_LAYER_MODES = ["", "-min-rules", "-peer-based"]
 BLOCKWISE = ["", "_b64"]
 NETWORK_SETUPS = ["d1", "d2", "p1", "p2"]
 DATA_FORMATS = ["json", "cbor"]
@@ -101,22 +102,27 @@ def main():
     for data in DATA_FORMATS:
         for dns in DNS_FORMATS:
             for l2 in LINK_LAYERS:
-                for prot in PROTOCOLS:
-                    if args.protocol is not None and prot not in args.protocol:
+                for l2_mode in LINK_LAYER_MODES:
+                    if l2_mode and not l2:
                         continue
-                    for blk in BLOCKWISE:
-                        for stp in NETWORK_SETUPS:
-                            scenario = f"{prot}{l2}-{stp}_{data}_{dns}{blk}"
-                            file = INPUT_PATH / f"{scenario}.training.csv.gz"
-                            vector_file = INPUT_PATH / f"{scenario}.vector.parquet"
-                            if file.exists() and not vector_file.exists():
-                                scenarios.append(scenario)
-                            elif not file.exists():
-                                print(f"Skipping {file} since it does not exist")
-                            elif vector_file.exists():
-                                print(f"Skipping {file} since {vector_file} exists")
+                    for prot in PROTOCOLS:
+                        if args.protocol is not None and prot not in args.protocol:
+                            continue
+                        for blk in BLOCKWISE:
+                            for stp in NETWORK_SETUPS:
+                                scenario = f"{prot}{l2}-{stp}{l2_mode}_{data}_{dns}{blk}"
+                                file = INPUT_PATH / f"{scenario}.training.csv.gz"
+                                vector_file = INPUT_PATH / f"{scenario}.vector.parquet"
+                                if file.exists() and not vector_file.exists():
+                                    scenarios.append(scenario)
+                                elif not file.exists():
+                                    print(f"Skipping {file} since it does not exist")
+                                    continue
+                                elif vector_file.exists():
+                                    print(f"Skipping {file} since {vector_file} exists")
+                                    continue
 
-    with multiprocessing.Pool(8 if WORKERS > 8 else WORKERS) as pool:
+    with multiprocessing.Pool(4 if WORKERS > 4 else WORKERS) as pool:
         pool.map(scenario2vec, scenarios)
 
 
