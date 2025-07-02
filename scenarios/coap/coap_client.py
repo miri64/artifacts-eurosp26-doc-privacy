@@ -145,7 +145,8 @@ async def send_requests(context, args, parser):
             # exclude queries that are larger than 1000 as they cause
             # requests outside of our initial specs (len(obj_str) <= 1000,
             # see ../jsons/collect_jsons_and_dns.py)
-            "WHERE LENGTH(json_query) <= 1000"
+            "WHERE LENGTH(json_query) <= 1000 "
+            "ORDER BY id ASC;"
         )
         rows = cur.fetchall()
     print(
