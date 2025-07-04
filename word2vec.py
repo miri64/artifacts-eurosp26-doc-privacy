@@ -6,6 +6,7 @@
 # Distributed under terms of the MIT license
 
 import argparse
+import concurrent.futures
 import multiprocessing
 import os
 import pathlib
@@ -16,6 +17,9 @@ from gensim.models import word2vec
 import numpy
 import polars
 
+import list_scenarios
+
+
 EVALUATION_DIR = pathlib.Path.cwd()
 INPUT_PATH = pathlib.Path(
     os.environ.get("INPUT_PATH", EVALUATION_DIR / "output_dataset")
@@ -23,16 +27,8 @@ INPUT_PATH = pathlib.Path(
 VECTOR_SIZE = 16
 WORKERS = multiprocessing.cpu_count()
 
-if WORKERS > 96:
-    WORKERS //= 2
-
-PROTOCOLS = ["https", "coap", "coaps", "oscore", "oscore-base"]
-LINK_LAYERS = ["", "-schc"]
-LINK_LAYER_MODES = ["", "-min-rules", "-peer-based"]
-BLOCKWISE = ["", "_b64"]
-NETWORK_SETUPS = ["d1", "d2", "p1", "p2"]
-DATA_FORMATS = ["json", "cbor"]
-DNS_FORMATS = ["dns_message", "dns_cbor"]
+if WORKERS > 4:
+    WORKERS = 4
 
 
 def scenario2vec(scenario):
@@ -74,11 +70,11 @@ def scenario2vec(scenario):
             ),
         )[["vector", "label"]]
         df_vec.write_parquet(
-            INPUT_PATH / f"{scenario}.vector.parquet",
+            INPUT_PATH / f"{scenario}.word2vec.parquet",
             compression="zstd",
             compression_level=10,
         )
-        print("Created", str(INPUT_PATH / f"{scenario}.vector.parquet"))
+        print("Created", str(INPUT_PATH / f"{scenario}.word2vec.parquet"))
         del df
         del df_vec
     except Exception:
@@ -89,41 +85,12 @@ def scenario2vec(scenario):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "-p",
-        "--protocol",
-        help="Protocol to train for (default: all)",
-        nargs="+",
-        default=None,
-        choices=PROTOCOLS,
+        "scenario",
+        help="Name of the scenario to train for",
     )
     args = parser.parse_args()
 
-    scenarios = []
-    for data in DATA_FORMATS:
-        for dns in DNS_FORMATS:
-            for l2 in LINK_LAYERS:
-                for l2_mode in LINK_LAYER_MODES:
-                    if l2_mode and not l2:
-                        continue
-                    for prot in PROTOCOLS:
-                        if args.protocol is not None and prot not in args.protocol:
-                            continue
-                        for blk in BLOCKWISE:
-                            for stp in NETWORK_SETUPS:
-                                scenario = f"{prot}{l2}-{stp}{l2_mode}_{data}_{dns}{blk}"
-                                file = INPUT_PATH / f"{scenario}.training.csv.gz"
-                                vector_file = INPUT_PATH / f"{scenario}.vector.parquet"
-                                if file.exists() and not vector_file.exists():
-                                    scenarios.append(scenario)
-                                elif not file.exists():
-                                    print(f"Skipping {file} since it does not exist")
-                                    continue
-                                elif vector_file.exists():
-                                    print(f"Skipping {file} since {vector_file} exists")
-                                    continue
-
-    with multiprocessing.Pool(4 if WORKERS > 4 else WORKERS) as pool:
-        pool.map(scenario2vec, scenarios)
+    scenario2vec(args.scenario)
 
 
 if __name__ == "__main__":
