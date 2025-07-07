@@ -1,0 +1,13 @@
+protocol,link_layer,link_layer_mode,blocksize,network_setup,data_format,dns_format,vector_type,run,test_size,classifier,classifier_args,true_dns,false_dns,false_data,true_data,accuracy,precision,recall,f1_score
+oscore-base,eth,,1024,d2,json,dns_cbor,binvec,1,0.2,nb,,8851,1109,4454,5749,0.724098596439022,0.665238632093198,0.8886546184738956,0.7608854502471524
+oscore-base,eth,,1024,d2,json,dns_cbor,binvec,1,0.2,lr,max_iter=5000,9960,0,0,10203,1.0,1.0,1.0,1.0
+oscore-base,eth,,1024,d2,json,dns_cbor,binvec,1,0.2,knn,algorithm=brute,9813,147,416,9787,0.9720775678222486,0.9593313129338156,0.9852409638554217,0.9721135271682599
+oscore-base,eth,,1024,d2,json,dns_cbor,binvec,1,0.2,svm,C=0.01,9960,0,0,10203,1.0,1.0,1.0,1.0
+oscore-base,eth,,1024,d2,json,dns_cbor,binvec,1,0.2,dt,,9960,0,0,10203,1.0,1.0,1.0,1.0
+oscore-base,eth,,1024,d2,json,dns_cbor,binvec,1,0.2,rf,"n_estimators=250,max_depth=9",9880,80,974,9229,0.9477260328324159,0.9102634973281739,0.9919678714859438,0.9493610070145094
+oscore-base,eth,,1024,d2,json,dns_cbor,binvec,1,0.2,nb,,9105,1050,4389,5619,0.730248474929326,0.674744330813695,0.896602658788774,0.7700114169732335
+oscore-base,eth,,1024,d2,json,dns_cbor,binvec,1,0.2,lr,max_iter=5000,10155,0,0,10008,1.0,1.0,1.0,1.0
+oscore-base,eth,,1024,d2,json,dns_cbor,binvec,1,0.2,knn,algorithm=brute,10001,154,403,9605,0.9723751425879086,0.9612648981161092,0.9848350566223535,0.9729072425701639
+oscore-base,eth,,1024,d2,json,dns_cbor,binvec,1,0.2,svm,C=0.01,10155,0,0,10008,1.0,1.0,1.0,1.0
+oscore-base,eth,,1024,d2,json,dns_cbor,binvec,1,0.2,dt,,10155,0,0,10008,1.0,1.0,1.0,1.0
+oscore-base,eth,,1024,d2,json,dns_cbor,binvec,1,0.2,rf,"n_estimators=250,max_depth=9",10077,78,1021,8987,0.9454942220899668,0.9080014417012074,0.9923190546528804,0.948289653225427

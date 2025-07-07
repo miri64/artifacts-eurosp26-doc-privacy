@@ -1,0 +1,13 @@
+protocol,link_layer,link_layer_mode,blocksize,network_setup,data_format,dns_format,vector_type,run,test_size,classifier,classifier_args,true_dns,false_dns,false_data,true_data,accuracy,precision,recall,f1_score
+coaps,eth,,1024,d2,json,dns_message,word2vec,1,0.2,nb,,9831,335,4498,5500,0.760315413608411,0.6860911438341825,0.967047019476687,0.8026944274341702
+coaps,eth,,1024,d2,json,dns_message,word2vec,1,0.2,lr,max_iter=5000,10166,0,0,9998,1.0,1.0,1.0,1.0
+coaps,eth,,1024,d2,json,dns_message,word2vec,1,0.2,knn,algorithm=brute,10165,1,0,9998,0.9999504066653442,1.0,0.9999016328939603,0.9999508140278393
+coaps,eth,,1024,d2,json,dns_message,word2vec,1,0.2,svm,C=0.01,10166,0,0,9998,1.0,1.0,1.0,1.0
+coaps,eth,,1024,d2,json,dns_message,word2vec,1,0.2,dt,,10166,0,0,9998,1.0,1.0,1.0,1.0
+coaps,eth,,1024,d2,json,dns_message,word2vec,1,0.2,rf,"n_estimators=250,max_depth=9",10166,0,0,9998,1.0,1.0,1.0,1.0
+coaps,eth,,1024,d2,json,dns_message,word2vec,1,0.2,nb,,9792,363,4568,5441,0.7554552668121405,0.6818941504178273,0.9642540620384047,0.7988578421374669
+coaps,eth,,1024,d2,json,dns_message,word2vec,1,0.2,lr,max_iter=5000,10155,0,0,10009,1.0,1.0,1.0,1.0
+coaps,eth,,1024,d2,json,dns_message,word2vec,1,0.2,knn,algorithm=brute,10154,1,0,10009,0.9999504066653442,1.0,0.9999015263417036,0.999950760746467
+coaps,eth,,1024,d2,json,dns_message,word2vec,1,0.2,svm,C=0.01,10155,0,0,10009,1.0,1.0,1.0,1.0
+coaps,eth,,1024,d2,json,dns_message,word2vec,1,0.2,dt,,10155,0,0,10009,1.0,1.0,1.0,1.0
+coaps,eth,,1024,d2,json,dns_message,word2vec,1,0.2,rf,"n_estimators=250,max_depth=9",10155,0,0,10009,1.0,1.0,1.0,1.0

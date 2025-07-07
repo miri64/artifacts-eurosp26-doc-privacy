@@ -1,0 +1,7 @@
+protocol,link_layer,link_layer_mode,blocksize,network_setup,data_format,dns_format,vector_type,run,test_size,classifier,classifier_args,true_dns,false_dns,false_data,true_data,accuracy,precision,recall,f1_score
+oscore,eth,,1024,d2,cbor,dns_cbor,binvec,1,0.2,nb,,8893,1214,4102,5955,0.7363618329696489,0.684340130819546,0.8798852280597605,0.7698900528092806
+oscore,eth,,1024,d2,cbor,dns_cbor,binvec,1,0.2,lr,max_iter=5000,10107,0,0,10057,1.0,1.0,1.0,1.0
+oscore,eth,,1024,d2,cbor,dns_cbor,binvec,1,0.2,knn,algorithm=brute,9801,306,642,9415,0.9529855187462805,0.9385234128124103,0.9697239536954586,0.9538686131386861
+oscore,eth,,1024,d2,cbor,dns_cbor,binvec,1,0.2,svm,C=0.01,10107,0,0,10057,1.0,1.0,1.0,1.0
+oscore,eth,,1024,d2,cbor,dns_cbor,binvec,1,0.2,dt,,10107,0,0,10057,1.0,1.0,1.0,1.0
+oscore,eth,,1024,d2,cbor,dns_cbor,binvec,1,0.2,rf,"n_estimators=250,max_depth=9",9948,159,1334,8723,0.9259571513588574,0.8817585534479703,0.9842683288809736,0.9301977652064145

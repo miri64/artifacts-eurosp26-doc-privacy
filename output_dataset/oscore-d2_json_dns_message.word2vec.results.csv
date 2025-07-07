@@ -1,0 +1,13 @@
+protocol,link_layer,link_layer_mode,blocksize,network_setup,data_format,dns_format,vector_type,run,test_size,classifier,classifier_args,true_dns,false_dns,false_data,true_data,accuracy,precision,recall,f1_score
+oscore,eth,,1024,d2,json,dns_message,word2vec,1,0.2,nb,,9736,264,2489,7674,0.8634627783563954,0.79640081799591,0.9736,0.8761304836895388
+oscore,eth,,1024,d2,json,dns_message,word2vec,1,0.2,lr,max_iter=5000,10000,0,0,10163,1.0,1.0,1.0,1.0
+oscore,eth,,1024,d2,json,dns_message,word2vec,1,0.2,knn,algorithm=brute,10000,0,0,10163,1.0,1.0,1.0,1.0
+oscore,eth,,1024,d2,json,dns_message,word2vec,1,0.2,svm,C=0.01,10000,0,0,10163,1.0,1.0,1.0,1.0
+oscore,eth,,1024,d2,json,dns_message,word2vec,1,0.2,dt,,10000,0,0,10163,1.0,1.0,1.0,1.0
+oscore,eth,,1024,d2,json,dns_message,word2vec,1,0.2,rf,"n_estimators=250,max_depth=9",10000,0,0,10163,1.0,1.0,1.0,1.0
+oscore,eth,,1024,d2,json,dns_message,word2vec,1,0.2,nb,,9814,250,2450,7649,0.8660913554530576,0.8002283105022832,0.9751589825119237,0.8790756001433178
+oscore,eth,,1024,d2,json,dns_message,word2vec,1,0.2,lr,max_iter=5000,10064,0,0,10099,1.0,1.0,1.0,1.0
+oscore,eth,,1024,d2,json,dns_message,word2vec,1,0.2,knn,algorithm=brute,10064,0,0,10099,1.0,1.0,1.0,1.0
+oscore,eth,,1024,d2,json,dns_message,word2vec,1,0.2,svm,C=0.01,10064,0,0,10099,1.0,1.0,1.0,1.0
+oscore,eth,,1024,d2,json,dns_message,word2vec,1,0.2,dt,,10064,0,0,10099,1.0,1.0,1.0,1.0
+oscore,eth,,1024,d2,json,dns_message,word2vec,1,0.2,rf,"n_estimators=250,max_depth=9",10064,0,0,10099,1.0,1.0,1.0,1.0
