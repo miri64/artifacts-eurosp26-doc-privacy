@@ -17,7 +17,7 @@ DATA_FORMATS = ["json", "cbor"]
 DNS_FORMATS = ["dns_message", "dns_cbor"]
 
 
-def list_scenarios(filter_protocol=None):
+def list_scenarios_full(filter_protocol=None):
     for data in DATA_FORMATS:
         for dns in DNS_FORMATS:
             for l2 in LINK_LAYERS:
@@ -41,7 +41,21 @@ def list_scenarios(filter_protocol=None):
                                         continue
                                 if l2_mode == "-peer-based" and stp != "d2":
                                     continue
-                                yield f"{prot}{l2}-{stp}{l2_mode}_{data}_{dns}{blk}"
+                                yield (
+                                    f"{prot}{l2}-{stp}{l2_mode}_{data}_{dns}{blk}",
+                                    prot,
+                                    l2,
+                                    stp,
+                                    l2_mode,
+                                    data,
+                                    dns,
+                                    blk,
+                                )
+
+
+def list_scenarios(filter_protocol=None):
+    for scenario, _, _, _, _, _, _, _ in list_scenarios(filter_protocol):
+        yield scenario
 
 
 def main():
