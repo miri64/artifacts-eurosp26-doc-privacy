@@ -54,7 +54,7 @@ def list_scenarios_full(filter_protocol=None):
 
 
 def list_scenarios(filter_protocol=None):
-    for scenario, _, _, _, _, _, _, _ in list_scenarios(filter_protocol):
+    for scenario, _, _, _, _, _, _, _ in list_scenarios_full(filter_protocol):
         yield scenario
 
 
