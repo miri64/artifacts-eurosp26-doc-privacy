@@ -11,3 +11,9 @@ oscore,eth,,64,d2,json,dns_message,binvec,1,0.2,knn,algorithm=brute,26105,1470,5
 oscore,eth,,64,d2,json,dns_message,binvec,1,0.2,svm,C=0.01,27575,0,0,62077,1.0,1.0,1.0,1.0
 oscore,eth,,64,d2,json,dns_message,binvec,1,0.2,dt,,27575,0,0,62077,1.0,1.0,1.0,1.0
 oscore,eth,,64,d2,json,dns_message,binvec,1,0.2,rf,"n_estimators=250,max_depth=9",25720,1855,415,61662,0.974679873287824,0.9841209106562081,0.9327289211242067,0.9577359895736361
+oscore,eth,,64,d2,json,dns_message,binvec,1,0.2,nb,,26771,922,5726,56233,0.9258466068799357,0.8237991199187618,0.9667063878958582,0.8895497590961954
+oscore,eth,,64,d2,json,dns_message,binvec,1,0.2,lr,max_iter=5000,27693,0,0,61959,1.0,1.0,1.0,1.0
+oscore,eth,,64,d2,json,dns_message,binvec,1,0.2,knn,algorithm=brute,26135,1558,551,61408,0.9764757060634454,0.9793524694596417,0.9437402953815044,0.9612166461317788
+oscore,eth,,64,d2,json,dns_message,binvec,1,0.2,svm,C=0.01,27693,0,0,61959,1.0,1.0,1.0,1.0
+oscore,eth,,64,d2,json,dns_message,binvec,1,0.2,dt,,27693,0,0,61959,1.0,1.0,1.0,1.0
+oscore,eth,,64,d2,json,dns_message,binvec,1,0.2,rf,"n_estimators=250,max_depth=9",25741,1952,409,61550,0.9736648373711685,0.9843594646271511,0.9295128732892789,0.9561502888026299

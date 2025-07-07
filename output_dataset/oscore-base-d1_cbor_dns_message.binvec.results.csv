@@ -5,3 +5,15 @@ oscore-base,eth,,1024,d1,cbor,dns_message,binvec,1,0.2,knn,algorithm=brute,9719,
 oscore-base,eth,,1024,d1,cbor,dns_message,binvec,1,0.2,svm,C=0.01,10113,1,0,10049,0.9999504042057233,1.0,0.9999011271504845,0.9999505611311613
 oscore-base,eth,,1024,d1,cbor,dns_message,binvec,1,0.2,dt,,10114,0,0,10049,1.0,1.0,1.0,1.0
 oscore-base,eth,,1024,d1,cbor,dns_message,binvec,1,0.2,rf,"n_estimators=250,max_depth=9",9797,317,2022,8027,0.8839954371869265,0.8289195363397919,0.9686573067035792,0.8933570419003328
+oscore-base,eth,,1024,d1,cbor,dns_message,binvec,1,0.2,nb,,9307,796,3998,6062,0.7622377622377622,0.699511461856445,0.9212115213302979,0.7951982228298018
+oscore-base,eth,,1024,d1,cbor,dns_message,binvec,1,0.2,lr,max_iter=5000,10103,0,0,10060,1.0,1.0,1.0,1.0
+oscore-base,eth,,1024,d1,cbor,dns_message,binvec,1,0.2,knn,algorithm=brute,9695,408,1219,8841,0.919307642711898,0.8883085944658237,0.9596159556567356,0.9225864776133607
+oscore-base,eth,,1024,d1,cbor,dns_message,binvec,1,0.2,svm,C=0.01,10103,0,0,10060,1.0,1.0,1.0,1.0
+oscore-base,eth,,1024,d1,cbor,dns_message,binvec,1,0.2,dt,,10103,0,0,10060,1.0,1.0,1.0,1.0
+oscore-base,eth,,1024,d1,cbor,dns_message,binvec,1,0.2,rf,"n_estimators=250,max_depth=9",9818,285,1955,8105,0.8889054208203144,0.8339420708400578,0.9717905572602198,0.8976046809288718
+oscore-base,eth,,1024,d1,cbor,dns_message,binvec,1,0.2,nb,,9156,756,4067,6184,0.7607994842037396,0.6924298570672314,0.923728813559322,0.7915279878971255
+oscore-base,eth,,1024,d1,cbor,dns_message,binvec,1,0.2,lr,max_iter=5000,9912,0,0,10251,1.0,1.0,1.0,1.0
+oscore-base,eth,,1024,d1,cbor,dns_message,binvec,1,0.2,knn,algorithm=brute,9487,425,1233,9018,0.9177701730893221,0.8849813432835821,0.9571226795803067,0.9196393951143854
+oscore-base,eth,,1024,d1,cbor,dns_message,binvec,1,0.2,svm,C=0.01,9912,0,0,10251,1.0,1.0,1.0,1.0
+oscore-base,eth,,1024,d1,cbor,dns_message,binvec,1,0.2,dt,,9912,0,0,10251,1.0,1.0,1.0,1.0
+oscore-base,eth,,1024,d1,cbor,dns_message,binvec,1,0.2,rf,"n_estimators=250,max_depth=9",9579,333,2151,8100,0.876804047016813,0.8166240409207162,0.9664043583535109,0.8852231771555309

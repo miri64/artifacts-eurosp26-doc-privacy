@@ -5,3 +5,15 @@ oscore-base,eth,,64,d2,cbor,dns_message,binvec,1,0.2,knn,algorithm=brute,26214,1
 oscore-base,eth,,64,d2,cbor,dns_message,binvec,1,0.2,svm,C=0.01,27912,0,0,53564,1.0,1.0,1.0,1.0
 oscore-base,eth,,64,d2,cbor,dns_message,binvec,1,0.2,dt,,27912,0,0,53564,1.0,1.0,1.0,1.0
 oscore-base,eth,,64,d2,cbor,dns_message,binvec,1,0.2,rf,"n_estimators=250,max_depth=9",25956,1956,87,53477,0.9749251313270165,0.9966593710402027,0.9299226139294927,0.9621351125938282
+oscore-base,eth,,64,d2,cbor,dns_message,binvec,1,0.2,nb,,26567,1010,5777,48122,0.916699396141195,0.8213888201830324,0.9633752764985314,0.8867342000300396
+oscore-base,eth,,64,d2,cbor,dns_message,binvec,1,0.2,lr,max_iter=5000,27577,0,0,53899,1.0,1.0,1.0,1.0
+oscore-base,eth,,64,d2,cbor,dns_message,binvec,1,0.2,knn,algorithm=brute,25947,1630,642,53257,0.9721144877018999,0.9758546767460228,0.9408927729629764,0.9580548683676107
+oscore-base,eth,,64,d2,cbor,dns_message,binvec,1,0.2,svm,C=0.01,27577,0,0,53899,1.0,1.0,1.0,1.0
+oscore-base,eth,,64,d2,cbor,dns_message,binvec,1,0.2,dt,,27577,0,0,53899,1.0,1.0,1.0,1.0
+oscore-base,eth,,64,d2,cbor,dns_message,binvec,1,0.2,rf,"n_estimators=250,max_depth=9",25600,1977,88,53811,0.9746551131621581,0.9965742759265026,0.9283098234035609,0.9612315779592603
+oscore-base,eth,,64,d2,cbor,dns_message,binvec,1,0.2,nb,,26785,920,5525,48246,0.9208969512494477,0.8290003095017022,0.9667929976538531,0.8926101807881363
+oscore-base,eth,,64,d2,cbor,dns_message,binvec,1,0.2,lr,max_iter=5000,27705,0,0,53771,1.0,1.0,1.0,1.0
+oscore-base,eth,,64,d2,cbor,dns_message,binvec,1,0.2,knn,algorithm=brute,25970,1735,604,53167,0.9712921596543768,0.9772710167833221,0.937375924923299,0.9569078280734723
+oscore-base,eth,,64,d2,cbor,dns_message,binvec,1,0.2,svm,C=0.01,27705,0,0,53771,1.0,1.0,1.0,1.0
+oscore-base,eth,,64,d2,cbor,dns_message,binvec,1,0.2,dt,,27705,0,0,53771,1.0,1.0,1.0,1.0
+oscore-base,eth,,64,d2,cbor,dns_message,binvec,1,0.2,rf,"n_estimators=250,max_depth=9",25681,2024,114,53657,0.9737591437969464,0.9955805388641209,0.9269445948384768,0.9600373831775701
