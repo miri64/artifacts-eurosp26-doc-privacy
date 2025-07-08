@@ -4,3 +4,8 @@ coaps,eth,,64,d2,cbor,dns_message,word2vec,1,0.2,knn,algorithm=brute,25258,0,0,3
 coaps,eth,,64,d2,cbor,dns_message,word2vec,1,0.2,svm,C=0.01,25258,0,2,37131,0.9999679440945008,0.9999208234362629,1.0,0.9999604101508374
 coaps,eth,,64,d2,cbor,dns_message,word2vec,1,0.2,dt,,25258,0,0,37133,1.0,1.0,1.0,1.0
 coaps,eth,,64,d2,cbor,dns_message,word2vec,1,0.2,rf,"n_estimators=250,max_depth=9",25258,0,0,37133,1.0,1.0,1.0,1.0
+coaps,eth,,64,d2,cbor,dns_message,word2vec,1,0.2,lr,max_iter=5000,25053,0,0,37338,1.0,1.0,1.0,1.0
+coaps,eth,,64,d2,cbor,dns_message,word2vec,1,0.2,knn,algorithm=brute,25053,0,0,37338,1.0,1.0,1.0,1.0
+coaps,eth,,64,d2,cbor,dns_message,word2vec,1,0.2,svm,C=0.01,25053,0,0,37338,1.0,1.0,1.0,1.0
+coaps,eth,,64,d2,cbor,dns_message,word2vec,1,0.2,dt,,25053,0,0,37338,1.0,1.0,1.0,1.0
+coaps,eth,,64,d2,cbor,dns_message,word2vec,1,0.2,rf,"n_estimators=250,max_depth=9",25053,0,0,37338,1.0,1.0,1.0,1.0

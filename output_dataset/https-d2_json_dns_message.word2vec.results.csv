@@ -11,3 +11,9 @@ https,eth,,1024,d2,json,dns_message,word2vec,1,0.2,knn,algorithm=brute,20113,0,0
 https,eth,,1024,d2,json,dns_message,word2vec,1,0.2,svm,C=0.01,20113,0,0,20215,1.0,1.0,1.0,1.0
 https,eth,,1024,d2,json,dns_message,word2vec,1,0.2,dt,,20113,0,0,20215,1.0,1.0,1.0,1.0
 https,eth,,1024,d2,json,dns_message,word2vec,1,0.2,rf,"n_estimators=250,max_depth=9",20113,0,0,20215,1.0,1.0,1.0,1.0
+https,eth,,1024,d2,json,dns_message,word2vec,1,0.2,nb,,20241,14,0,20073,0.9996528466574093,1.0,0.9993088126388546,0.9996542868431451
+https,eth,,1024,d2,json,dns_message,word2vec,1,0.2,lr,max_iter=5000,20255,0,0,20073,1.0,1.0,1.0,1.0
+https,eth,,1024,d2,json,dns_message,word2vec,1,0.2,knn,algorithm=brute,20255,0,0,20073,1.0,1.0,1.0,1.0
+https,eth,,1024,d2,json,dns_message,word2vec,1,0.2,svm,C=0.01,20255,0,0,20073,1.0,1.0,1.0,1.0
+https,eth,,1024,d2,json,dns_message,word2vec,1,0.2,dt,,20255,0,0,20073,1.0,1.0,1.0,1.0
+https,eth,,1024,d2,json,dns_message,word2vec,1,0.2,rf,"n_estimators=250,max_depth=9",20255,0,0,20073,1.0,1.0,1.0,1.0

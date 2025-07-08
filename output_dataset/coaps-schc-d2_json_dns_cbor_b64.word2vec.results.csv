@@ -5,3 +5,9 @@ coaps,schc,,64,d2,json,dns_cbor,word2vec,1,0.2,knn,algorithm=brute,17441,6,5,487
 coaps,schc,,64,d2,json,dns_cbor,word2vec,1,0.2,svm,C=0.01,17445,2,0,48788,0.9999698044840342,1.0,0.9998853671118244,0.9999426802705491
 coaps,schc,,64,d2,json,dns_cbor,word2vec,1,0.2,dt,,17445,2,1,48787,0.9999547067260511,0.9999426802705491,0.9998853671118244,0.9999140228699166
 coaps,schc,,64,d2,json,dns_cbor,word2vec,1,0.2,rf,"n_estimators=250,max_depth=9",17445,2,0,48788,0.9999698044840342,1.0,0.9998853671118244,0.9999426802705491
+coaps,schc,,64,d2,json,dns_cbor,word2vec,1,0.2,nb,,16756,707,417,48355,0.9830301200271759,0.9757176963838584,0.9595144018782569,0.9675482157292989
+coaps,schc,,64,d2,json,dns_cbor,word2vec,1,0.2,lr,max_iter=5000,17463,0,0,48772,1.0,1.0,1.0,1.0
+coaps,schc,,64,d2,json,dns_cbor,word2vec,1,0.2,knn,algorithm=brute,17463,0,4,48768,0.9999396089680682,0.9997709967367034,1.0,0.9998854852562268
+coaps,schc,,64,d2,json,dns_cbor,word2vec,1,0.2,svm,C=0.01,17463,0,0,48772,1.0,1.0,1.0,1.0
+coaps,schc,,64,d2,json,dns_cbor,word2vec,1,0.2,dt,,17463,0,0,48772,1.0,1.0,1.0,1.0
+coaps,schc,,64,d2,json,dns_cbor,word2vec,1,0.2,rf,"n_estimators=250,max_depth=9",17463,0,0,48772,1.0,1.0,1.0,1.0

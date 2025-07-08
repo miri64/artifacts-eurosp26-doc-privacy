@@ -1,0 +1,7 @@
+protocol,link_layer,link_layer_mode,blocksize,network_setup,data_format,dns_format,vector_type,run,test_size,classifier,classifier_args,true_dns,false_dns,false_data,true_data,accuracy,precision,recall,f1_score
+oscore-base,schc,min_rules,64,p2,json,dns_message,word2vec,1,0.2,nb,,23730,1315,29869,18274,0.5739192217303383,0.4427321405250098,0.9474945098822121,0.6034789685163522
+oscore-base,schc,min_rules,64,p2,json,dns_message,word2vec,1,0.2,lr,max_iter=5000,22164,2881,2283,45860,0.9294419850248674,0.906614308504111,0.8849670592932721,0.8956599046310515
+oscore-base,schc,min_rules,64,p2,json,dns_message,word2vec,1,0.2,knn,algorithm=brute,22105,2940,2667,45476,0.9233890801770782,0.8923381236880349,0.8826112996606109,0.8874480598992311
+oscore-base,schc,min_rules,64,p2,json,dns_message,word2vec,1,0.2,svm,C=0.01,21937,3108,2175,45968,0.927816035415642,0.9097959522229595,0.8759033739269315,0.8925280224586529
+oscore-base,schc,min_rules,64,p2,json,dns_message,word2vec,1,0.2,dt,,22767,2278,2267,45876,0.9378996556812592,0.9094431573060637,0.909043721301657,0.9092433954352124
+oscore-base,schc,min_rules,64,p2,json,dns_message,word2vec,1,0.2,rf,"n_estimators=250,max_depth=9",21448,3597,1839,46304,0.9257255287752091,0.9210289002447718,0.8563785186664005,0.8875279318050153

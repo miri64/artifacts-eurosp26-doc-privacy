@@ -1,0 +1,7 @@
+protocol,link_layer,link_layer_mode,blocksize,network_setup,data_format,dns_format,vector_type,run,test_size,classifier,classifier_args,true_dns,false_dns,false_data,true_data,accuracy,precision,recall,f1_score
+coap,eth,,64,p2,json,dns_cbor,word2vec,1,0.2,nb,,17205,191,9449,33351,0.8398564688683633,0.6454941097021085,0.9890204644745919,0.7811577752553917
+coap,eth,,64,p2,json,dns_cbor,word2vec,1,0.2,lr,max_iter=5000,17390,6,0,42800,0.9999003256030301,1.0,0.9996550931248563,0.9998275168171104
+coap,eth,,64,p2,json,dns_cbor,word2vec,1,0.2,knn,algorithm=brute,17332,64,3,42797,0.9988869692338361,0.9998269397173348,0.9963209933318005,0.9980708876795946
+coap,eth,,64,p2,json,dns_cbor,word2vec,1,0.2,svm,C=0.01,17386,10,0,42800,0.9998338760050501,1.0,0.9994251552080938,0.999712494968662
+coap,eth,,64,p2,json,dns_cbor,word2vec,1,0.2,dt,,17396,0,0,42800,1.0,1.0,1.0,1.0
+coap,eth,,64,p2,json,dns_cbor,word2vec,1,0.2,rf,"n_estimators=250,max_depth=9",17374,22,0,42800,0.9996345272111103,1.0,0.9987353414578064,0.9993672706356054

@@ -1,0 +1,7 @@
+protocol,link_layer,link_layer_mode,blocksize,network_setup,data_format,dns_format,vector_type,run,test_size,classifier,classifier_args,true_dns,false_dns,false_data,true_data,accuracy,precision,recall,f1_score
+coap,eth,,1024,d1,cbor,dns_message,word2vec,1,0.2,nb,,9840,222,6283,3818,0.6773793582304221,0.6103082552874776,0.9779367918902803,0.7515753293870536
+coap,eth,,1024,d1,cbor,dns_message,word2vec,1,0.2,lr,max_iter=5000,10062,0,0,10101,1.0,1.0,1.0,1.0
+coap,eth,,1024,d1,cbor,dns_message,word2vec,1,0.2,knn,algorithm=brute,10062,0,0,10101,1.0,1.0,1.0,1.0
+coap,eth,,1024,d1,cbor,dns_message,word2vec,1,0.2,svm,C=0.01,10062,0,0,10101,1.0,1.0,1.0,1.0
+coap,eth,,1024,d1,cbor,dns_message,word2vec,1,0.2,dt,,10062,0,1,10100,0.9999504042057233,0.9999006260558482,1.0,0.9999503105590062
+coap,eth,,1024,d1,cbor,dns_message,word2vec,1,0.2,rf,"n_estimators=250,max_depth=9",10062,0,0,10101,1.0,1.0,1.0,1.0

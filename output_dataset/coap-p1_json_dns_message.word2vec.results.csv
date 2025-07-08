@@ -5,3 +5,15 @@ coap,eth,,1024,p1,json,dns_message,word2vec,1,0.2,knn,algorithm=brute,10046,0,0,
 coap,eth,,1024,p1,json,dns_message,word2vec,1,0.2,svm,C=0.01,10046,0,0,10117,1.0,1.0,1.0,1.0
 coap,eth,,1024,p1,json,dns_message,word2vec,1,0.2,dt,,10045,1,0,10117,0.9999504042057233,1.0,0.999900457893689,0.9999502264695634
 coap,eth,,1024,p1,json,dns_message,word2vec,1,0.2,rf,"n_estimators=250,max_depth=9",10046,0,0,10117,1.0,1.0,1.0,1.0
+coap,eth,,1024,p1,json,dns_message,word2vec,1,0.2,nb,,10008,6,6304,3845,0.6870505381143679,0.6135360470819029,0.9994008388256441,0.7603129985565601
+coap,eth,,1024,p1,json,dns_message,word2vec,1,0.2,lr,max_iter=5000,10014,0,0,10149,1.0,1.0,1.0,1.0
+coap,eth,,1024,p1,json,dns_message,word2vec,1,0.2,knn,algorithm=brute,10014,0,0,10149,1.0,1.0,1.0,1.0
+coap,eth,,1024,p1,json,dns_message,word2vec,1,0.2,svm,C=0.01,10014,0,0,10149,1.0,1.0,1.0,1.0
+coap,eth,,1024,p1,json,dns_message,word2vec,1,0.2,dt,,10014,0,0,10149,1.0,1.0,1.0,1.0
+coap,eth,,1024,p1,json,dns_message,word2vec,1,0.2,rf,"n_estimators=250,max_depth=9",10014,0,0,10149,1.0,1.0,1.0,1.0
+coap,eth,,1024,p1,json,dns_message,word2vec,1,0.2,nb,,10035,4,6089,4035,0.6978128254724,0.6223641776234186,0.9996015539396355,0.7671138630890952
+coap,eth,,1024,p1,json,dns_message,word2vec,1,0.2,lr,max_iter=5000,10039,0,0,10124,1.0,1.0,1.0,1.0
+coap,eth,,1024,p1,json,dns_message,word2vec,1,0.2,knn,algorithm=brute,10039,0,0,10124,1.0,1.0,1.0,1.0
+coap,eth,,1024,p1,json,dns_message,word2vec,1,0.2,svm,C=0.01,10039,0,0,10124,1.0,1.0,1.0,1.0
+coap,eth,,1024,p1,json,dns_message,word2vec,1,0.2,dt,,10039,0,0,10124,1.0,1.0,1.0,1.0
+coap,eth,,1024,p1,json,dns_message,word2vec,1,0.2,rf,"n_estimators=250,max_depth=9",10039,0,0,10124,1.0,1.0,1.0,1.0
