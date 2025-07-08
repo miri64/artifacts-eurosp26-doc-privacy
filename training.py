@@ -254,8 +254,8 @@ def main():
     parser.add_argument(
         "-v",
         "--vector-type",
-        help="Vector type to train for (default: \"word2vec\")",
-        default="word2vec",
+        help="Vector type to train for (default: \"binvec\")",
+        default="binvec",
         choices=["binvec", "word2vec"],
     )
     parser.add_argument(
