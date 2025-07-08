@@ -5,3 +5,9 @@ coap,eth,,64,d2,json,dns_cbor,binvec,1,0.2,knn,algorithm=brute,17625,139,0,61796
 coap,eth,,64,d2,json,dns_cbor,binvec,1,0.2,svm,C=0.01,17764,0,0,61796,1.0,1.0,1.0,1.0
 coap,eth,,64,d2,json,dns_cbor,binvec,1,0.2,dt,,17764,0,0,61796,1.0,1.0,1.0,1.0
 coap,eth,,64,d2,json,dns_cbor,binvec,1,0.2,rf,"n_estimators=250,max_depth=9",17526,238,0,61796,0.997008547008547,1.0,0.9866021166403963,0.9932558798526495
+coap,eth,,64,d2,json,dns_cbor,binvec,2,0.2,nb,,13729,3945,2083,59803,0.9242332830568125,0.8682646091576018,0.7767907660970917,0.81998447112226
+coap,eth,,64,d2,json,dns_cbor,binvec,2,0.2,lr,max_iter=5000,17674,0,0,61886,1.0,1.0,1.0,1.0
+coap,eth,,64,d2,json,dns_cbor,binvec,2,0.2,knn,algorithm=brute,17528,146,0,61886,0.9981649069884364,1.0,0.9917392780355324,0.9958525083802057
+coap,eth,,64,d2,json,dns_cbor,binvec,2,0.2,svm,C=0.01,17674,0,0,61886,1.0,1.0,1.0,1.0
+coap,eth,,64,d2,json,dns_cbor,binvec,2,0.2,dt,,17674,0,0,61886,1.0,1.0,1.0,1.0
+coap,eth,,64,d2,json,dns_cbor,binvec,2,0.2,rf,"n_estimators=250,max_depth=9",17460,214,0,61886,0.9973102061337356,1.0,0.987891818490438,0.9939090339841749

@@ -11,3 +11,9 @@ coap,eth,,1024,p1,json,dns_message,binvec,1,0.2,knn,algorithm=brute,10096,1,0,10
 coap,eth,,1024,p1,json,dns_message,binvec,1,0.2,svm,C=0.01,10097,0,0,10066,1.0,1.0,1.0,1.0
 coap,eth,,1024,p1,json,dns_message,binvec,1,0.2,dt,,10097,0,0,10066,1.0,1.0,1.0,1.0
 coap,eth,,1024,p1,json,dns_message,binvec,1,0.2,rf,"n_estimators=250,max_depth=9",10097,0,0,10066,1.0,1.0,1.0,1.0
+coap,eth,,1024,p1,json,dns_message,binvec,2,0.2,nb,,9669,362,177,9955,0.9732678668848882,0.982023156611822,0.9639118731931013,0.9728832318760376
+coap,eth,,1024,p1,json,dns_message,binvec,2,0.2,lr,max_iter=5000,10031,0,0,10132,1.0,1.0,1.0,1.0
+coap,eth,,1024,p1,json,dns_message,binvec,2,0.2,knn,algorithm=brute,10029,2,0,10132,0.9999008084114467,1.0,0.9998006180839398,0.999900299102692
+coap,eth,,1024,p1,json,dns_message,binvec,2,0.2,svm,C=0.01,10031,0,0,10132,1.0,1.0,1.0,1.0
+coap,eth,,1024,p1,json,dns_message,binvec,2,0.2,dt,,10031,0,0,10132,1.0,1.0,1.0,1.0
+coap,eth,,1024,p1,json,dns_message,binvec,2,0.2,rf,"n_estimators=250,max_depth=9",10031,0,0,10132,1.0,1.0,1.0,1.0

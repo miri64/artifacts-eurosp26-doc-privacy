@@ -17,3 +17,9 @@ oscore-base,eth,,64,d2,cbor,dns_cbor,binvec,1,0.2,knn,algorithm=brute,15305,2470
 oscore-base,eth,,64,d2,cbor,dns_cbor,binvec,1,0.2,svm,C=0.01,17775,0,0,53610,1.0,1.0,1.0,1.0
 oscore-base,eth,,64,d2,cbor,dns_cbor,binvec,1,0.2,dt,,17775,0,0,53610,1.0,1.0,1.0,1.0
 oscore-base,eth,,64,d2,cbor,dns_cbor,binvec,1,0.2,rf,"n_estimators=250,max_depth=9",13155,4620,1003,52607,0.9212299502696645,0.9291566605452748,0.740084388185654,0.8239125669370244
+oscore-base,eth,,64,d2,cbor,dns_cbor,binvec,2,0.2,nb,,17314,215,5914,47942,0.9141416263920992,0.7453934906147752,0.9877346112156997,0.849620924013053
+oscore-base,eth,,64,d2,cbor,dns_cbor,binvec,2,0.2,lr,max_iter=5000,17529,0,0,53856,1.0,1.0,1.0,1.0
+oscore-base,eth,,64,d2,cbor,dns_cbor,binvec,2,0.2,knn,algorithm=brute,15025,2504,580,53276,0.9567976465644042,0.962832425504646,0.8571510069028467,0.9069234019436229
+oscore-base,eth,,64,d2,cbor,dns_cbor,binvec,2,0.2,svm,C=0.01,17529,0,0,53856,1.0,1.0,1.0,1.0
+oscore-base,eth,,64,d2,cbor,dns_cbor,binvec,2,0.2,dt,,17529,0,0,53856,1.0,1.0,1.0,1.0
+oscore-base,eth,,64,d2,cbor,dns_cbor,binvec,2,0.2,rf,"n_estimators=250,max_depth=9",12916,4613,810,53046,0.9240316593121805,0.9409879061634854,0.7368361001768498,0.8264917613181891
