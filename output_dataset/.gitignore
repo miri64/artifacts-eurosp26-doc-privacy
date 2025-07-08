@@ -7,6 +7,6 @@
 *.training.csv
 *.training.csv.gz
 *.log
-*.vector.parquet
+*.*vec.parquet
 *.pcap
 *.pcapng
