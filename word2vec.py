@@ -34,6 +34,13 @@ if WORKERS > 4:
 def scenario2vec(scenario):
     try:
         file = INPUT_PATH / f"{scenario}.training.csv.gz" 
+        vector_file = INPUT_PATH / f"{scenario}.word2vec.parquet"
+        if not file.exists():
+            print(f"Skipping since {file} does not exist")
+            return
+        if vector_file.exists():
+            print(f"Skipping since {vector_file} already exists")
+            return
         print("Processing", str(file))
         df = polars.read_csv(file, separator=";")
         nibbles, byte_size = df["eth.payload"].str.len_chars().max(), 2
@@ -70,7 +77,7 @@ def scenario2vec(scenario):
             ),
         )[["vector", "label"]]
         df_vec.write_parquet(
-            INPUT_PATH / f"{scenario}.word2vec.parquet",
+            vector_file,
             compression="zstd",
             compression_level=10,
         )
