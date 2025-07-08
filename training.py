@@ -281,7 +281,9 @@ def main():
 
         if results_file.exists():
             try:
-                df = polars.read_csv(results_file)
+                df = polars.read_csv(results_file).with_columns(
+                    (polars.col("link_layer_mode")).fill_null("")
+                )
                 if set(
                     tuple(d.values())
                     for d in df.filter(
