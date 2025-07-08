@@ -267,7 +267,8 @@ def main():
     )
     args = parser.parse_args()
 
-    args.protocol = list(functools.reduce(lambda x, y: x + y, args.protocol, []))
+    if args.protocol is not None:
+        args.protocol = list(functools.reduce(lambda x, y: x + y, args.protocol, []))
     if using_cuml:
         CLASSIFIERS.insert(3, "svm")
         CLASSIFIER_ARGS["lr"]["max_iter"] = 5000
