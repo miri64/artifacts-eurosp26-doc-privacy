@@ -12,6 +12,7 @@
 *.log
 *.log.gz
 *.*vec.parquet
+stats.parquet
 *.pcap
 *.pcap.gz
 *.pcapng
