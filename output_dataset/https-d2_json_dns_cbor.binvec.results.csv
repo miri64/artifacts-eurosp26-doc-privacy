@@ -41,3 +41,9 @@ https,eth,,1024,d2,json,dns_cbor,binvec,7,0.2,knn,algorithm=brute,20245,1,0,2008
 https,eth,,1024,d2,json,dns_cbor,binvec,7,0.2,svm,C=0.01,20246,0,0,20082,1.0,1.0,1.0,1.0
 https,eth,,1024,d2,json,dns_cbor,binvec,7,0.2,dt,,20246,0,0,20082,1.0,1.0,1.0,1.0
 https,eth,,1024,d2,json,dns_cbor,binvec,7,0.2,rf,"n_estimators=250,max_depth=9",20246,0,0,20082,1.0,1.0,1.0,1.0
+https,eth,,1024,d2,json,dns_cbor,binvec,8,0.2,nb,,20054,67,0,20207,0.99833862328903,1.0,0.996670145619005,0.998332296204107
+https,eth,,1024,d2,json,dns_cbor,binvec,8,0.2,lr,max_iter=5000,20121,0,0,20207,1.0,1.0,1.0,1.0
+https,eth,,1024,d2,json,dns_cbor,binvec,8,0.2,knn,algorithm=brute,20119,2,0,20207,0.9999504066653442,1.0,0.9999006013617614,0.9999502982107356
+https,eth,,1024,d2,json,dns_cbor,binvec,8,0.2,svm,C=0.01,20121,0,0,20207,1.0,1.0,1.0,1.0
+https,eth,,1024,d2,json,dns_cbor,binvec,8,0.2,dt,,20121,0,0,20207,1.0,1.0,1.0,1.0
+https,eth,,1024,d2,json,dns_cbor,binvec,8,0.2,rf,"n_estimators=250,max_depth=9",20121,0,0,20207,1.0,1.0,1.0,1.0

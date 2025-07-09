@@ -41,3 +41,9 @@ https,eth,,1024,d2,cbor,dns_cbor,binvec,7,0.2,knn,algorithm=brute,20244,2,0,2008
 https,eth,,1024,d2,cbor,dns_cbor,binvec,7,0.2,svm,C=0.01,20246,0,0,20082,1.0,1.0,1.0,1.0
 https,eth,,1024,d2,cbor,dns_cbor,binvec,7,0.2,dt,,20246,0,0,20082,1.0,1.0,1.0,1.0
 https,eth,,1024,d2,cbor,dns_cbor,binvec,7,0.2,rf,"n_estimators=250,max_depth=9",20246,0,0,20082,1.0,1.0,1.0,1.0
+https,eth,,1024,d2,cbor,dns_cbor,binvec,8,0.2,nb,,20091,0,0,20237,1.0,1.0,1.0,1.0
+https,eth,,1024,d2,cbor,dns_cbor,binvec,8,0.2,lr,max_iter=5000,20091,0,0,20237,1.0,1.0,1.0,1.0
+https,eth,,1024,d2,cbor,dns_cbor,binvec,8,0.2,knn,algorithm=brute,20090,1,0,20237,0.9999752033326721,1.0,0.9999502264695634,0.9999751126154153
+https,eth,,1024,d2,cbor,dns_cbor,binvec,8,0.2,svm,C=0.01,20091,0,0,20237,1.0,1.0,1.0,1.0
+https,eth,,1024,d2,cbor,dns_cbor,binvec,8,0.2,dt,,20091,0,0,20237,1.0,1.0,1.0,1.0
+https,eth,,1024,d2,cbor,dns_cbor,binvec,8,0.2,rf,"n_estimators=250,max_depth=9",20091,0,0,20237,1.0,1.0,1.0,1.0
