@@ -1,0 +1,35 @@
+axes.titlepad : 3
+axes.titlesize : medium
+axes.labelpad : 0.25
+axes.labelsize : x-small
+figure.facecolor : none
+# @ textwidth, textwidth / phi / 2
+figure.figsize : 5.47807, 1.692816726375568
+figure.subplot.hspace : 0.005
+figure.subplot.wspace : 0.005
+font.family : serif
+font.serif : "Linux Libertine O"
+font.size : 9.0
+grid.linestyle : solid
+grid.linewidth : 0.5
+grid.alpha : 0.6
+hatch.linewidth : 0.25
+legend.columnspacing : 0.6
+legend.fontsize : xx-small
+legend.handlelength : 1.0
+legend.handletextpad : 0.4
+legend.title_fontsize : small
+lines.linewidth : 0.5
+lines.markeredgewidth : 0.5
+lines.markersize : 3
+patch.linewidth : 0.5
+pgf.rcfonts : True
+pgf.texsystem : xelatex
+text.usetex : True
+text.latex.preamble : "\usepackage[tt=false]{libertine}"
+xtick.labelsize : xx-small
+xtick.major.pad : 1
+xtick.minor.pad : 1
+ytick.labelsize : xx-small
+ytick.major.pad : 1
+ytick.minor.pad : 1
