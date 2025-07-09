@@ -1,6 +1,6 @@
 # Dockerfile to run traffic classification on a slurm-based cluster
 
-FROM python:3.13.2-bookworm
+FROM python:3.13.5-bookworm
 
 WORKDIR /app
 
