@@ -9,11 +9,13 @@ import argparse
 import binascii
 import csv
 import datetime
+import gzip
 import io
 import pathlib
 import re
 import sys
 import unittest.mock
+import warnings
 
 
 from scenarios.schc.schc import OpenSCHCLoader
@@ -39,7 +41,7 @@ def convert_columns(row, conversion_map):
 
 
 def get_device_table(csvpath):
-    routes_path = csvpath.parent / csvpath.name.replace(".wpan.eth.csv", ".routes.txt")
+    routes_path = csvpath.parent / csvpath.name.replace(".wpan.eth.csv.gz", ".routes.txt")
     device_table = {}
     with routes_path.open() as routes_file:
         reader = csv.DictReader(
@@ -113,6 +115,7 @@ def dump_pkt(pkt):
 def read_csv(csvfile, device_table, rules):
     reader = csv.DictReader(csvfile, delimiter="\t")
     openschc_loader = OpenSCHCLoader(OPENSCHC_PATH)
+    warnings.filterwarnings("ignore")
 
     rule_manager = openschc_loader.get_rule_manager()
     for device_id, rules_file in rules.items():
@@ -186,7 +189,7 @@ def main():
 
     device_table = get_device_table(args.eth_csv)
     rules = get_rules(args.eth_csv, device_table)
-    with args.eth_csv.open() as csvfile:
+    with gzip.open(args.eth_csv, "rt") as csvfile:
         read_csv(csvfile, device_table, rules)
 
 
