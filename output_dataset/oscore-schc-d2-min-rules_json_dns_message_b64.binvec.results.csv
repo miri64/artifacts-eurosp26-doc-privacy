@@ -47,3 +47,15 @@ oscore,schc,min_rules,64,d2,json,dns_message,binvec,8,0.2,knn,algorithm=brute,24
 oscore,schc,min_rules,64,d2,json,dns_message,binvec,8,0.2,svm,C=0.01,27825,0,0,63916,1.0,1.0,1.0,1.0
 oscore,schc,min_rules,64,d2,json,dns_message,binvec,8,0.2,dt,,27825,0,0,63916,1.0,1.0,1.0,1.0
 oscore,schc,min_rules,64,d2,json,dns_message,binvec,8,0.2,rf,"n_estimators=250,max_depth=9",23429,4396,300,63616,0.9488124175668458,0.9873572421930971,0.8420125786163521,0.9089110447297979
+oscore,schc,min_rules,64,d2,json,dns_message,binvec,9,0.2,nb,,21938,5834,0,63969,0.9364079310232066,1.0,0.7899323059196313,0.8826393079863206
+oscore,schc,min_rules,64,d2,json,dns_message,binvec,9,0.2,lr,max_iter=5000,27772,0,0,63969,1.0,1.0,1.0,1.0
+oscore,schc,min_rules,64,d2,json,dns_message,binvec,9,0.2,knn,algorithm=brute,24113,3659,1236,62733,0.9466432674594784,0.951240680105724,0.8682485957079072,0.907851885318424
+oscore,schc,min_rules,64,d2,json,dns_message,binvec,9,0.2,svm,C=0.01,27772,0,0,63969,1.0,1.0,1.0,1.0
+oscore,schc,min_rules,64,d2,json,dns_message,binvec,9,0.2,dt,,27772,0,0,63969,1.0,1.0,1.0,1.0
+oscore,schc,min_rules,64,d2,json,dns_message,binvec,9,0.2,rf,"n_estimators=250,max_depth=9",23355,4417,313,63656,0.948441809005788,0.9867753929356092,0.8409549186230736,0.9080482115085536
+oscore,schc,min_rules,64,d2,json,dns_message,binvec,10,0.2,nb,,21764,5877,0,64100,0.9359392201959865,1.0,0.7873810643609132,0.8810444287015484
+oscore,schc,min_rules,64,d2,json,dns_message,binvec,10,0.2,lr,max_iter=5000,27641,0,0,64100,1.0,1.0,1.0,1.0
+oscore,schc,min_rules,64,d2,json,dns_message,binvec,10,0.2,knn,algorithm=brute,23903,3738,1231,62869,0.9458366488265879,0.9510225192965703,0.8647661083173547,0.9058455708195168
+oscore,schc,min_rules,64,d2,json,dns_message,binvec,10,0.2,svm,C=0.01,27641,0,0,64100,1.0,1.0,1.0,1.0
+oscore,schc,min_rules,64,d2,json,dns_message,binvec,10,0.2,dt,,27641,0,0,64100,1.0,1.0,1.0,1.0
+oscore,schc,min_rules,64,d2,json,dns_message,binvec,10,0.2,rf,"n_estimators=250,max_depth=9",22990,4651,320,63780,0.9458148483229962,0.9862719862719863,0.8317354654317861,0.9024356734902161

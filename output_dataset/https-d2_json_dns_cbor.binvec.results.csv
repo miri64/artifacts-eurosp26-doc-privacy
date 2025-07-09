@@ -47,3 +47,15 @@ https,eth,,1024,d2,json,dns_cbor,binvec,8,0.2,knn,algorithm=brute,20119,2,0,2020
 https,eth,,1024,d2,json,dns_cbor,binvec,8,0.2,svm,C=0.01,20121,0,0,20207,1.0,1.0,1.0,1.0
 https,eth,,1024,d2,json,dns_cbor,binvec,8,0.2,dt,,20121,0,0,20207,1.0,1.0,1.0,1.0
 https,eth,,1024,d2,json,dns_cbor,binvec,8,0.2,rf,"n_estimators=250,max_depth=9",20121,0,0,20207,1.0,1.0,1.0,1.0
+https,eth,,1024,d2,json,dns_cbor,binvec,9,0.2,nb,,20101,76,0,20151,0.9981154532830787,1.0,0.9962333349853794,0.9981131138586822
+https,eth,,1024,d2,json,dns_cbor,binvec,9,0.2,lr,max_iter=5000,20177,0,0,20151,1.0,1.0,1.0,1.0
+https,eth,,1024,d2,json,dns_cbor,binvec,9,0.2,knn,algorithm=brute,20177,0,0,20151,1.0,1.0,1.0,1.0
+https,eth,,1024,d2,json,dns_cbor,binvec,9,0.2,svm,C=0.01,20177,0,0,20151,1.0,1.0,1.0,1.0
+https,eth,,1024,d2,json,dns_cbor,binvec,9,0.2,dt,,20177,0,0,20151,1.0,1.0,1.0,1.0
+https,eth,,1024,d2,json,dns_cbor,binvec,9,0.2,rf,"n_estimators=250,max_depth=9",20177,0,0,20151,1.0,1.0,1.0,1.0
+https,eth,,1024,d2,json,dns_cbor,binvec,10,0.2,nb,,20142,68,0,20118,0.9983138266217021,1.0,0.9966353290450272,0.9983148295003965
+https,eth,,1024,d2,json,dns_cbor,binvec,10,0.2,lr,max_iter=5000,20210,0,0,20118,1.0,1.0,1.0,1.0
+https,eth,,1024,d2,json,dns_cbor,binvec,10,0.2,knn,algorithm=brute,20208,2,0,20118,0.9999504066653442,1.0,0.9999010390895596,0.9999505170963432
+https,eth,,1024,d2,json,dns_cbor,binvec,10,0.2,svm,C=0.01,20210,0,0,20118,1.0,1.0,1.0,1.0
+https,eth,,1024,d2,json,dns_cbor,binvec,10,0.2,dt,,20210,0,0,20118,1.0,1.0,1.0,1.0
+https,eth,,1024,d2,json,dns_cbor,binvec,10,0.2,rf,"n_estimators=250,max_depth=9",20210,0,0,20118,1.0,1.0,1.0,1.0

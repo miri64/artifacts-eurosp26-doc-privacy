@@ -47,3 +47,15 @@ coap,eth,,1024,p2,json,dns_message,binvec,8,0.2,knn,algorithm=brute,10113,1,0,10
 coap,eth,,1024,p2,json,dns_message,binvec,8,0.2,svm,C=0.01,10114,0,0,10049,1.0,1.0,1.0,1.0
 coap,eth,,1024,p2,json,dns_message,binvec,8,0.2,dt,,10114,0,0,10049,1.0,1.0,1.0,1.0
 coap,eth,,1024,p2,json,dns_message,binvec,8,0.2,rf,"n_estimators=250,max_depth=9",10114,0,0,10049,1.0,1.0,1.0,1.0
+coap,eth,,1024,p2,json,dns_message,binvec,9,0.2,nb,,9678,461,430,9594,0.955810147299509,0.9574594380688564,0.954532005128711,0.9559934805156319
+coap,eth,,1024,p2,json,dns_message,binvec,9,0.2,lr,max_iter=5000,10139,0,0,10024,1.0,1.0,1.0,1.0
+coap,eth,,1024,p2,json,dns_message,binvec,9,0.2,knn,algorithm=brute,10139,0,0,10024,1.0,1.0,1.0,1.0
+coap,eth,,1024,p2,json,dns_message,binvec,9,0.2,svm,C=0.01,10139,0,0,10024,1.0,1.0,1.0,1.0
+coap,eth,,1024,p2,json,dns_message,binvec,9,0.2,dt,,10139,0,0,10024,1.0,1.0,1.0,1.0
+coap,eth,,1024,p2,json,dns_message,binvec,9,0.2,rf,"n_estimators=250,max_depth=9",10139,0,0,10024,1.0,1.0,1.0,1.0
+coap,eth,,1024,p2,json,dns_message,binvec,10,0.2,nb,,9540,454,446,9723,0.9553637851510192,0.9553374724614461,0.9545727436461877,0.954954954954955
+coap,eth,,1024,p2,json,dns_message,binvec,10,0.2,lr,max_iter=5000,9994,0,0,10169,1.0,1.0,1.0,1.0
+coap,eth,,1024,p2,json,dns_message,binvec,10,0.2,knn,algorithm=brute,9993,1,0,10169,0.9999504042057233,1.0,0.9998999399639784,0.9999499674788612
+coap,eth,,1024,p2,json,dns_message,binvec,10,0.2,svm,C=0.01,9994,0,0,10169,1.0,1.0,1.0,1.0
+coap,eth,,1024,p2,json,dns_message,binvec,10,0.2,dt,,9994,0,0,10169,1.0,1.0,1.0,1.0
+coap,eth,,1024,p2,json,dns_message,binvec,10,0.2,rf,"n_estimators=250,max_depth=9",9994,0,0,10169,1.0,1.0,1.0,1.0

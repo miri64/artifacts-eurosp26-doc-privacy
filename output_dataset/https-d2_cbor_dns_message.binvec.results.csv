@@ -47,3 +47,15 @@ https,eth,,1024,d2,cbor,dns_message,binvec,8,0.2,knn,algorithm=brute,20214,2,0,2
 https,eth,,1024,d2,cbor,dns_message,binvec,8,0.2,svm,C=0.01,20216,0,0,20112,1.0,1.0,1.0,1.0
 https,eth,,1024,d2,cbor,dns_message,binvec,8,0.2,dt,,20216,0,0,20112,1.0,1.0,1.0,1.0
 https,eth,,1024,d2,cbor,dns_message,binvec,8,0.2,rf,"n_estimators=250,max_depth=9",20216,0,0,20112,1.0,1.0,1.0,1.0
+https,eth,,1024,d2,cbor,dns_message,binvec,9,0.2,nb,,20214,0,0,20114,1.0,1.0,1.0,1.0
+https,eth,,1024,d2,cbor,dns_message,binvec,9,0.2,lr,max_iter=5000,20214,0,0,20114,1.0,1.0,1.0,1.0
+https,eth,,1024,d2,cbor,dns_message,binvec,9,0.2,knn,algorithm=brute,20214,0,0,20114,1.0,1.0,1.0,1.0
+https,eth,,1024,d2,cbor,dns_message,binvec,9,0.2,svm,C=0.01,20214,0,0,20114,1.0,1.0,1.0,1.0
+https,eth,,1024,d2,cbor,dns_message,binvec,9,0.2,dt,,20214,0,0,20114,1.0,1.0,1.0,1.0
+https,eth,,1024,d2,cbor,dns_message,binvec,9,0.2,rf,"n_estimators=250,max_depth=9",20214,0,0,20114,1.0,1.0,1.0,1.0
+https,eth,,1024,d2,cbor,dns_message,binvec,10,0.2,nb,,19978,0,0,20350,1.0,1.0,1.0,1.0
+https,eth,,1024,d2,cbor,dns_message,binvec,10,0.2,lr,max_iter=5000,19978,0,0,20350,1.0,1.0,1.0,1.0
+https,eth,,1024,d2,cbor,dns_message,binvec,10,0.2,knn,algorithm=brute,19976,2,0,20350,0.9999504066653442,1.0,0.9998998898788668,0.9999499424337989
+https,eth,,1024,d2,cbor,dns_message,binvec,10,0.2,svm,C=0.01,19978,0,0,20350,1.0,1.0,1.0,1.0
+https,eth,,1024,d2,cbor,dns_message,binvec,10,0.2,dt,,19978,0,0,20350,1.0,1.0,1.0,1.0
+https,eth,,1024,d2,cbor,dns_message,binvec,10,0.2,rf,"n_estimators=250,max_depth=9",19978,0,0,20350,1.0,1.0,1.0,1.0

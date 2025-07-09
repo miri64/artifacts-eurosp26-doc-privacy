@@ -47,3 +47,15 @@ oscore-base,schc,min_rules,64,d2,cbor,dns_message,binvec,8,0.2,knn,algorithm=bru
 oscore-base,schc,min_rules,64,d2,cbor,dns_message,binvec,8,0.2,svm,C=0.01,27471,0,0,55985,1.0,1.0,1.0,1.0
 oscore-base,schc,min_rules,64,d2,cbor,dns_message,binvec,8,0.2,dt,,27471,0,0,55985,1.0,1.0,1.0,1.0
 oscore-base,schc,min_rules,64,d2,cbor,dns_message,binvec,8,0.2,rf,"n_estimators=250,max_depth=9",22911,4560,385,55600,0.9407472200920245,0.9834735576923077,0.8340067707764551,0.9025942048968818
+oscore-base,schc,min_rules,64,d2,cbor,dns_message,binvec,9,0.2,nb,,21835,5790,0,55831,0.9306221242331288,1.0,0.7904072398190045,0.8829357056207036
+oscore-base,schc,min_rules,64,d2,cbor,dns_message,binvec,9,0.2,lr,max_iter=5000,27625,0,0,55831,1.0,1.0,1.0,1.0
+oscore-base,schc,min_rules,64,d2,cbor,dns_message,binvec,9,0.2,knn,algorithm=brute,24167,3458,1197,54634,0.9442221050613497,0.9528071282132156,0.8748235294117647,0.9121515786295269
+oscore-base,schc,min_rules,64,d2,cbor,dns_message,binvec,9,0.2,svm,C=0.01,27625,0,0,55831,1.0,1.0,1.0,1.0
+oscore-base,schc,min_rules,64,d2,cbor,dns_message,binvec,9,0.2,dt,,27625,0,0,55831,1.0,1.0,1.0,1.0
+oscore-base,schc,min_rules,64,d2,cbor,dns_message,binvec,9,0.2,rf,"n_estimators=250,max_depth=9",23767,3858,346,55485,0.9496261503067485,0.9856508937087878,0.8603438914027149,0.9187444431559009
+oscore-base,schc,min_rules,64,d2,cbor,dns_message,binvec,10,0.2,nb,,21839,5864,0,55753,0.9297354294478528,1.0,0.788326174060571,0.8816357837794195
+oscore-base,schc,min_rules,64,d2,cbor,dns_message,binvec,10,0.2,lr,max_iter=5000,27703,0,0,55753,1.0,1.0,1.0,1.0
+oscore-base,schc,min_rules,64,d2,cbor,dns_message,binvec,10,0.2,knn,algorithm=brute,24073,3630,1212,54541,0.9419814033742331,0.9520664425548744,0.8689672598635527,0.9086208198082585
+oscore-base,schc,min_rules,64,d2,cbor,dns_message,binvec,10,0.2,svm,C=0.01,27703,0,0,55753,1.0,1.0,1.0,1.0
+oscore-base,schc,min_rules,64,d2,cbor,dns_message,binvec,10,0.2,dt,,27703,0,0,55753,1.0,1.0,1.0,1.0
+oscore-base,schc,min_rules,64,d2,cbor,dns_message,binvec,10,0.2,rf,"n_estimators=250,max_depth=9",23326,4377,348,55405,0.9433833397239264,0.9853003294753738,0.8420026711908457,0.9080327773128053

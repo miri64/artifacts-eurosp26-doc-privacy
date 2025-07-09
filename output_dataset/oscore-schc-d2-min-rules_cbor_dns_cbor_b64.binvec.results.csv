@@ -47,3 +47,15 @@ oscore,schc,min_rules,64,d2,cbor,dns_cbor,binvec,8,0.2,knn,algorithm=brute,13481
 oscore,schc,min_rules,64,d2,cbor,dns_cbor,binvec,8,0.2,svm,C=0.01,17631,0,0,55738,1.0,1.0,1.0,1.0
 oscore,schc,min_rules,64,d2,cbor,dns_cbor,binvec,8,0.2,dt,,17631,0,0,55738,1.0,1.0,1.0,1.0
 oscore,schc,min_rules,64,d2,cbor,dns_cbor,binvec,8,0.2,rf,"n_estimators=250,max_depth=9",11633,5998,116,55622,0.9166678024778857,0.9901268193037706,0.659803754750156,0.7918992511912866
+oscore,schc,min_rules,64,d2,cbor,dns_cbor,binvec,9,0.2,nb,,10274,7563,1412,54120,0.8776731317041258,0.8791716583946603,0.5759937209171946,0.6959997290248281
+oscore,schc,min_rules,64,d2,cbor,dns_cbor,binvec,9,0.2,lr,max_iter=5000,17837,0,0,55532,1.0,1.0,1.0,1.0
+oscore,schc,min_rules,64,d2,cbor,dns_cbor,binvec,9,0.2,knn,algorithm=brute,13494,4343,1354,54178,0.9223514018182066,0.9088092672413793,0.7565173515725738,0.8256998623221661
+oscore,schc,min_rules,64,d2,cbor,dns_cbor,binvec,9,0.2,svm,C=0.01,17837,0,0,55532,1.0,1.0,1.0,1.0
+oscore,schc,min_rules,64,d2,cbor,dns_cbor,binvec,9,0.2,dt,,17837,0,0,55532,1.0,1.0,1.0,1.0
+oscore,schc,min_rules,64,d2,cbor,dns_cbor,binvec,9,0.2,rf,"n_estimators=250,max_depth=9",12218,5619,70,55462,0.9224604396952392,0.9943033854166666,0.6849806581824298,0.8111535269709543
+oscore,schc,min_rules,64,d2,cbor,dns_cbor,binvec,10,0.2,nb,,10154,7566,1473,54176,0.8768008286878655,0.8733121183452309,0.5730248306997743,0.6919957746958804
+oscore,schc,min_rules,64,d2,cbor,dns_cbor,binvec,10,0.2,lr,max_iter=5000,17720,0,0,55649,1.0,1.0,1.0,1.0
+oscore,schc,min_rules,64,d2,cbor,dns_cbor,binvec,10,0.2,knn,algorithm=brute,13390,4330,1401,54248,0.9218879908408183,0.905280237982557,0.7556433408577878,0.8237212020546891
+oscore,schc,min_rules,64,d2,cbor,dns_cbor,binvec,10,0.2,svm,C=0.01,17720,0,0,55649,1.0,1.0,1.0,1.0
+oscore,schc,min_rules,64,d2,cbor,dns_cbor,binvec,10,0.2,dt,,17720,0,0,55649,1.0,1.0,1.0,1.0
+oscore,schc,min_rules,64,d2,cbor,dns_cbor,binvec,10,0.2,rf,"n_estimators=250,max_depth=9",11529,6191,126,55523,0.9139009663481852,0.9891891891891892,0.6506207674943567,0.7849531914893617

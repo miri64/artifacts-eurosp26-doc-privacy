@@ -47,3 +47,15 @@ oscore-base,schc,min_rules,64,d2,json,dns_message,binvec,8,0.2,knn,algorithm=bru
 oscore-base,schc,min_rules,64,d2,json,dns_message,binvec,8,0.2,svm,C=0.01,27855,0,0,63878,1.0,1.0,1.0,1.0
 oscore-base,schc,min_rules,64,d2,json,dns_message,binvec,8,0.2,dt,,27855,0,0,63878,1.0,1.0,1.0,1.0
 oscore-base,schc,min_rules,64,d2,json,dns_message,binvec,8,0.2,rf,"n_estimators=250,max_depth=9",22305,5550,375,63503,0.9354103757644469,0.9834656084656085,0.8007539041464729,0.8827545265657465
+oscore-base,schc,min_rules,64,d2,json,dns_message,binvec,9,0.2,nb,,21922,5857,0,63954,0.9361516575278254,1.0,0.7891572770798085,0.8821552886259834
+oscore-base,schc,min_rules,64,d2,json,dns_message,binvec,9,0.2,lr,max_iter=5000,27779,0,0,63954,1.0,1.0,1.0,1.0
+oscore-base,schc,min_rules,64,d2,json,dns_message,binvec,9,0.2,knn,algorithm=brute,24155,3624,1129,62825,0.9481865849803234,0.9553472551811423,0.8695417401634328,0.9104272280119857
+oscore-base,schc,min_rules,64,d2,json,dns_message,binvec,9,0.2,svm,C=0.01,27779,0,0,63954,1.0,1.0,1.0,1.0
+oscore-base,schc,min_rules,64,d2,json,dns_message,binvec,9,0.2,dt,,27779,0,0,63954,1.0,1.0,1.0,1.0
+oscore-base,schc,min_rules,64,d2,json,dns_message,binvec,9,0.2,rf,"n_estimators=250,max_depth=9",22166,5613,348,63606,0.9350179324779523,0.9845429510526783,0.7979408906008135,0.8814745590837691
+oscore-base,schc,min_rules,64,d2,json,dns_message,binvec,10,0.2,nb,,21916,5720,0,64097,0.9376451222569849,1.0,0.7930235924156896,0.8845657087504036
+oscore-base,schc,min_rules,64,d2,json,dns_message,binvec,10,0.2,lr,max_iter=5000,27636,0,0,64097,1.0,1.0,1.0,1.0
+oscore-base,schc,min_rules,64,d2,json,dns_message,binvec,10,0.2,knn,algorithm=brute,24078,3558,1161,62936,0.9485572258620126,0.9539997622726732,0.8712548849326965,0.9107517730496454
+oscore-base,schc,min_rules,64,d2,json,dns_message,binvec,10,0.2,svm,C=0.01,27636,0,0,64097,1.0,1.0,1.0,1.0
+oscore-base,schc,min_rules,64,d2,json,dns_message,binvec,10,0.2,dt,,27636,0,0,64097,1.0,1.0,1.0,1.0
+oscore-base,schc,min_rules,64,d2,json,dns_message,binvec,10,0.2,rf,"n_estimators=250,max_depth=9",22082,5554,337,63760,0.9357810166461361,0.9849681074088943,0.7990302503980315,0.8823094595944461

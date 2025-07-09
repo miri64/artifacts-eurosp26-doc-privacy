@@ -47,3 +47,15 @@ oscore-base,schc,min_rules,64,d2,cbor,dns_cbor,binvec,8,0.2,knn,algorithm=brute,
 oscore-base,schc,min_rules,64,d2,cbor,dns_cbor,binvec,8,0.2,svm,C=0.01,17597,0,0,55761,1.0,1.0,1.0,1.0
 oscore-base,schc,min_rules,64,d2,cbor,dns_cbor,binvec,8,0.2,dt,,17597,0,0,55761,1.0,1.0,1.0,1.0
 oscore-base,schc,min_rules,64,d2,cbor,dns_cbor,binvec,8,0.2,rf,"n_estimators=250,max_depth=9",10817,6780,76,55685,0.9065405272771886,0.9930230423207564,0.6147070523384668,0.7593541593541594
+oscore-base,schc,min_rules,64,d2,cbor,dns_cbor,binvec,9,0.2,nb,,8737,8763,1580,54278,0.859006515990076,0.8468547058253368,0.49925714285714284,0.6281770140561527
+oscore-base,schc,min_rules,64,d2,cbor,dns_cbor,binvec,9,0.2,lr,max_iter=5000,17500,0,0,55858,1.0,1.0,1.0,1.0
+oscore-base,schc,min_rules,64,d2,cbor,dns_cbor,binvec,9,0.2,knn,algorithm=brute,13111,4389,1397,54461,0.9211265301671256,0.9037082988695891,0.7492,0.8192326918270433
+oscore-base,schc,min_rules,64,d2,cbor,dns_cbor,binvec,9,0.2,svm,C=0.01,17500,0,0,55858,1.0,1.0,1.0,1.0
+oscore-base,schc,min_rules,64,d2,cbor,dns_cbor,binvec,9,0.2,dt,,17500,0,0,55858,1.0,1.0,1.0,1.0
+oscore-base,schc,min_rules,64,d2,cbor,dns_cbor,binvec,9,0.2,rf,"n_estimators=250,max_depth=9",10721,6779,60,55798,0.9067722675100194,0.994434653557184,0.6126285714285714,0.7581768678618154
+oscore-base,schc,min_rules,64,d2,cbor,dns_cbor,binvec,10,0.2,nb,,8521,8981,1636,54220,0.85527140870798,0.8389288175642414,0.486858644726317,0.6161466430456632
+oscore-base,schc,min_rules,64,d2,cbor,dns_cbor,binvec,10,0.2,lr,max_iter=5000,17502,0,0,55856,1.0,1.0,1.0,1.0
+oscore-base,schc,min_rules,64,d2,cbor,dns_cbor,binvec,10,0.2,knn,algorithm=brute,13062,4440,1355,54501,0.9210038441615093,0.9060137337865021,0.746314706890641,0.8184466931921426
+oscore-base,schc,min_rules,64,d2,cbor,dns_cbor,binvec,10,0.2,svm,C=0.01,17502,0,0,55856,1.0,1.0,1.0,1.0
+oscore-base,schc,min_rules,64,d2,cbor,dns_cbor,binvec,10,0.2,dt,,17502,0,0,55856,1.0,1.0,1.0,1.0
+oscore-base,schc,min_rules,64,d2,cbor,dns_cbor,binvec,10,0.2,rf,"n_estimators=250,max_depth=9",10789,6713,105,55751,0.9070585348564574,0.9903616669726455,0.6164438349902869,0.7598957599661924

@@ -47,3 +47,15 @@ coap,eth,,1024,d2,cbor,dns_cbor,binvec,8,0.2,knn,algorithm=brute,10222,3,2,9937,
 coap,eth,,1024,d2,cbor,dns_cbor,binvec,8,0.2,svm,C=0.01,10225,0,0,9939,1.0,1.0,1.0,1.0
 coap,eth,,1024,d2,cbor,dns_cbor,binvec,8,0.2,dt,,10225,0,0,9939,1.0,1.0,1.0,1.0
 coap,eth,,1024,d2,cbor,dns_cbor,binvec,8,0.2,rf,"n_estimators=250,max_depth=9",10225,0,0,9939,1.0,1.0,1.0,1.0
+coap,eth,,1024,d2,cbor,dns_cbor,binvec,9,0.2,nb,,9031,1083,2029,8021,0.8456655425510812,0.8165461121157324,0.8929207039746886,0.8530272976291678
+coap,eth,,1024,d2,cbor,dns_cbor,binvec,9,0.2,lr,max_iter=5000,10114,0,0,10050,1.0,1.0,1.0,1.0
+coap,eth,,1024,d2,cbor,dns_cbor,binvec,9,0.2,knn,algorithm=brute,10108,6,2,10048,0.9996032533227535,0.9998021760633037,0.9994067629029069,0.9996044303797469
+coap,eth,,1024,d2,cbor,dns_cbor,binvec,9,0.2,svm,C=0.01,10114,0,0,10050,1.0,1.0,1.0,1.0
+coap,eth,,1024,d2,cbor,dns_cbor,binvec,9,0.2,dt,,10114,0,0,10050,1.0,1.0,1.0,1.0
+coap,eth,,1024,d2,cbor,dns_cbor,binvec,9,0.2,rf,"n_estimators=250,max_depth=9",10111,3,0,10050,0.9998512199960325,1.0,0.9997033814514534,0.9998516687268232
+coap,eth,,1024,d2,cbor,dns_cbor,binvec,10,0.2,nb,,8927,1047,2070,8120,0.845417575877802,0.8117668455033191,0.8950270703829958,0.8513661723332221
+coap,eth,,1024,d2,cbor,dns_cbor,binvec,10,0.2,lr,max_iter=5000,9974,0,0,10190,1.0,1.0,1.0,1.0
+coap,eth,,1024,d2,cbor,dns_cbor,binvec,10,0.2,knn,algorithm=brute,9969,5,0,10190,0.9997520333267209,1.0,0.9994986966111891,0.9997492854635712
+coap,eth,,1024,d2,cbor,dns_cbor,binvec,10,0.2,svm,C=0.01,9974,0,0,10190,1.0,1.0,1.0,1.0
+coap,eth,,1024,d2,cbor,dns_cbor,binvec,10,0.2,dt,,9974,0,0,10190,1.0,1.0,1.0,1.0
+coap,eth,,1024,d2,cbor,dns_cbor,binvec,10,0.2,rf,"n_estimators=250,max_depth=9",9974,0,0,10190,1.0,1.0,1.0,1.0

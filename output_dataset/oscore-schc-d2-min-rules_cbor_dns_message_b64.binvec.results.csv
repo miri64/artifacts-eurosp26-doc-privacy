@@ -47,3 +47,15 @@ oscore,schc,min_rules,64,d2,cbor,dns_message,binvec,8,0.2,knn,algorithm=brute,24
 oscore,schc,min_rules,64,d2,cbor,dns_message,binvec,8,0.2,svm,C=0.01,27775,0,0,55684,1.0,1.0,1.0,1.0
 oscore,schc,min_rules,64,d2,cbor,dns_message,binvec,8,0.2,dt,,27775,0,0,55684,1.0,1.0,1.0,1.0
 oscore,schc,min_rules,64,d2,cbor,dns_message,binvec,8,0.2,rf,"n_estimators=250,max_depth=9",23466,4309,372,55312,0.943912579829617,0.9843946639818777,0.8448604860486049,0.9093057950516342
+oscore,schc,min_rules,64,d2,cbor,dns_message,binvec,9,0.2,nb,,22119,5377,0,55963,0.9355731556812327,1.0,0.8044442828047716,0.8916255164768719
+oscore,schc,min_rules,64,d2,cbor,dns_message,binvec,9,0.2,lr,max_iter=5000,27496,0,0,55963,1.0,1.0,1.0,1.0
+oscore,schc,min_rules,64,d2,cbor,dns_message,binvec,9,0.2,knn,algorithm=brute,24000,3496,1315,54648,0.9423549287674188,0.9480545131345053,0.8728542333430317,0.9089015546003674
+oscore,schc,min_rules,64,d2,cbor,dns_message,binvec,9,0.2,svm,C=0.01,27496,0,0,55963,1.0,1.0,1.0,1.0
+oscore,schc,min_rules,64,d2,cbor,dns_message,binvec,9,0.2,dt,,27496,0,0,55963,1.0,1.0,1.0,1.0
+oscore,schc,min_rules,64,d2,cbor,dns_message,binvec,9,0.2,rf,"n_estimators=250,max_depth=9",23470,4026,397,55566,0.947003918091518,0.983366154103993,0.8535787023567064,0.9138874286938068
+oscore,schc,min_rules,64,d2,cbor,dns_message,binvec,10,0.2,nb,,22316,5391,0,55752,0.9354054086437652,1.0,0.8054282311329267,0.892229574395778
+oscore,schc,min_rules,64,d2,cbor,dns_message,binvec,10,0.2,lr,max_iter=5000,27707,0,0,55752,1.0,1.0,1.0,1.0
+oscore,schc,min_rules,64,d2,cbor,dns_message,binvec,10,0.2,knn,algorithm=brute,24189,3518,1251,54501,0.9428581698798212,0.9508254716981132,0.8730284765582704,0.9102677479443807
+oscore,schc,min_rules,64,d2,cbor,dns_message,binvec,10,0.2,svm,C=0.01,27707,0,0,55752,1.0,1.0,1.0,1.0
+oscore,schc,min_rules,64,d2,cbor,dns_message,binvec,10,0.2,dt,,27707,0,0,55752,1.0,1.0,1.0,1.0
+oscore,schc,min_rules,64,d2,cbor,dns_message,binvec,10,0.2,rf,"n_estimators=250,max_depth=9",23601,4106,392,55360,0.9461052732479421,0.9836619013879048,0.8518064027141156,0.9129980657640232

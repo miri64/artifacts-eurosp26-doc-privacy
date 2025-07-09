@@ -47,3 +47,15 @@ oscore-base,schc,min_rules,64,d2,json,dns_cbor,binvec,8,0.2,knn,algorithm=brute,
 oscore-base,schc,min_rules,64,d2,json,dns_cbor,binvec,8,0.2,svm,C=0.01,17721,0,0,63929,1.0,1.0,1.0,1.0
 oscore-base,schc,min_rules,64,d2,json,dns_cbor,binvec,8,0.2,dt,,17721,0,0,63929,1.0,1.0,1.0,1.0
 oscore-base,schc,min_rules,64,d2,json,dns_cbor,binvec,8,0.2,rf,"n_estimators=250,max_depth=9",11110,6611,149,63780,0.9172075933864053,0.9867661426414424,0.6269397889509621,0.766735679779158
+oscore-base,schc,min_rules,64,d2,json,dns_cbor,binvec,9,0.2,nb,,11077,6477,1631,62465,0.9006981016533987,0.8716556499842619,0.6310242679731115,0.7320732271495605
+oscore-base,schc,min_rules,64,d2,json,dns_cbor,binvec,9,0.2,lr,max_iter=5000,17554,0,0,64096,1.0,1.0,1.0,1.0
+oscore-base,schc,min_rules,64,d2,json,dns_cbor,binvec,9,0.2,knn,algorithm=brute,12614,4940,1106,62990,0.9259522351500307,0.9193877551020408,0.7185826592229692,0.8066764724691436
+oscore-base,schc,min_rules,64,d2,json,dns_cbor,binvec,9,0.2,svm,C=0.01,17554,0,0,64096,1.0,1.0,1.0,1.0
+oscore-base,schc,min_rules,64,d2,json,dns_cbor,binvec,9,0.2,dt,,17554,0,0,64096,1.0,1.0,1.0,1.0
+oscore-base,schc,min_rules,64,d2,json,dns_cbor,binvec,9,0.2,rf,"n_estimators=250,max_depth=9",11150,6404,131,63965,0.9199632578077158,0.988387554294832,0.635182864304432,0.7733657014045431
+oscore-base,schc,min_rules,64,d2,json,dns_cbor,binvec,10,0.2,nb,,10666,6987,1684,62313,0.8938028169014085,0.8636437246963563,0.6042032515719707,0.7109955671099557
+oscore-base,schc,min_rules,64,d2,json,dns_cbor,binvec,10,0.2,lr,max_iter=5000,17653,0,0,63997,1.0,1.0,1.0,1.0
+oscore-base,schc,min_rules,64,d2,json,dns_cbor,binvec,10,0.2,knn,algorithm=brute,12721,4932,1093,62904,0.9262094304960196,0.9208773707832634,0.7206140599331559,0.8085295706613277
+oscore-base,schc,min_rules,64,d2,json,dns_cbor,binvec,10,0.2,svm,C=0.01,17653,0,0,63997,1.0,1.0,1.0,1.0
+oscore-base,schc,min_rules,64,d2,json,dns_cbor,binvec,10,0.2,dt,,17653,0,0,63997,1.0,1.0,1.0,1.0
+oscore-base,schc,min_rules,64,d2,json,dns_cbor,binvec,10,0.2,rf,"n_estimators=250,max_depth=9",11023,6630,142,63855,0.9170606246172688,0.987281683833408,0.6244264430974905,0.7650079811229092

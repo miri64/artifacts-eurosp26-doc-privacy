@@ -47,3 +47,15 @@ oscore-base,eth,,64,d2,json,dns_message,binvec,8,0.2,knn,algorithm=brute,26157,1
 oscore-base,eth,,64,d2,json,dns_message,binvec,8,0.2,svm,C=0.01,27844,3,0,61805,0.9999665372774729,1.0,0.9998922684669803,0.9999461313318131
 oscore-base,eth,,64,d2,json,dns_message,binvec,8,0.2,dt,,27847,0,0,61805,1.0,1.0,1.0,1.0
 oscore-base,eth,,64,d2,json,dns_message,binvec,8,0.2,rf,"n_estimators=250,max_depth=9",25585,2262,171,61634,0.972861732030518,0.9933607703059482,0.918770424103135,0.9546107493983546
+oscore-base,eth,,64,d2,json,dns_message,binvec,9,0.2,nb,,26507,1271,8603,53271,0.8898630259224557,0.7549700939903161,0.9542443660450717,0.8429907136496629
+oscore-base,eth,,64,d2,json,dns_message,binvec,9,0.2,lr,max_iter=5000,27778,0,0,61874,1.0,1.0,1.0,1.0
+oscore-base,eth,,64,d2,json,dns_message,binvec,9,0.2,knn,algorithm=brute,26086,1692,693,61181,0.9733971355909516,0.974121513125957,0.9390884872921017,0.9562842531664131
+oscore-base,eth,,64,d2,json,dns_message,binvec,9,0.2,svm,C=0.01,27778,0,0,61874,1.0,1.0,1.0,1.0
+oscore-base,eth,,64,d2,json,dns_message,binvec,9,0.2,dt,,27778,0,0,61874,1.0,1.0,1.0,1.0
+oscore-base,eth,,64,d2,json,dns_message,binvec,9,0.2,rf,"n_estimators=250,max_depth=9",25317,2461,302,61572,0.9691808325525365,0.9882118739997658,0.9114047087623299,0.9482555199730321
+oscore-base,eth,,64,d2,json,dns_message,binvec,10,0.2,nb,,26355,1367,9182,52748,0.8823339133538571,0.741621408672651,0.9506889834788255,0.8332411198406551
+oscore-base,eth,,64,d2,json,dns_message,binvec,10,0.2,lr,max_iter=5000,27722,0,0,61930,1.0,1.0,1.0,1.0
+oscore-base,eth,,64,d2,json,dns_message,binvec,10,0.2,knn,algorithm=brute,26108,1614,623,61307,0.9750479632356222,0.976693726385096,0.9417790924175745,0.9589187005307329
+oscore-base,eth,,64,d2,json,dns_message,binvec,10,0.2,svm,C=0.01,27722,0,0,61930,1.0,1.0,1.0,1.0
+oscore-base,eth,,64,d2,json,dns_message,binvec,10,0.2,dt,,27722,0,0,61930,1.0,1.0,1.0,1.0
+oscore-base,eth,,64,d2,json,dns_message,binvec,10,0.2,rf,"n_estimators=250,max_depth=9",25467,2255,242,61688,0.9721478606166064,0.9905869539849858,0.9186566625784576,0.9532668301173476
