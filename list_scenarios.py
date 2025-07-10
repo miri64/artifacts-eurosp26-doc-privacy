@@ -17,9 +17,13 @@ DATA_FORMATS = ["json", "cbor"]
 DNS_FORMATS = ["dns_message", "dns_cbor"]
 
 
-def list_scenarios_full(filter_protocol=None):
+def list_scenarios_full(filter_protocol=None, filter_data=None, filter_dns=None):
     for data in DATA_FORMATS:
+        if filter_data is not None and data not in filter_data:
+            continue
         for dns in DNS_FORMATS:
+            if filter_dns is not None and data not in filter_dns:
+                continue
             for l2 in LINK_LAYERS:
                 for l2_mode in LINK_LAYER_MODES:
                     if l2_mode and not l2:
@@ -53,8 +57,12 @@ def list_scenarios_full(filter_protocol=None):
                                 )
 
 
-def list_scenarios(filter_protocol=None):
-    for scenario, _, _, _, _, _, _, _ in list_scenarios_full(filter_protocol):
+def list_scenarios(filter_protocol=None, filter_data=None, filter_dns=None):
+    for scenario, _, _, _, _, _, _, _ in list_scenarios_full(
+        filter_protocol=filter_protocol,
+        filter_data=filter_data,
+        filter_dns=filter_dns,
+    ):
         yield scenario
 
 
@@ -68,8 +76,28 @@ def main():
         default=None,
         choices=PROTOCOLS,
     )
+    parser.add_argument(
+        "-D",
+        "--data-formats",
+        help="Data format to train for (default: all)",
+        nargs="+",
+        default=None,
+        choices=DATA_FORMATS,
+    )
+    parser.add_argument(
+        "-d",
+        "--dns-formats",
+        help="DNS format to train for (default: all)",
+        nargs="+",
+        default=None,
+        choices=DNS_FORMATS,
+    )
     args = parser.parse_args()
-    for scenario in list_scenarios(args.protocol):
+    for scenario in list_scenarios(
+        args.protocol,
+        args.data_formats,
+        args.dns_formats,
+    ):
         print(scenario)
 
 

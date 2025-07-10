@@ -216,7 +216,7 @@ def test(classifier, x_test, y_test):
     y_test_predictions = classifier.predict(x_test)
     conf_matrix = confusion_matrix(y_test, y_test_predictions)
     accuracy = accuracy_score(y_test, y_test_predictions)
-    precision = precision_score(y_test, y_test_predictions)
+    precision = precision_score(y_test, y_test_predictions, zero_division=numpy.nan)
     recall = recall_score(y_test, y_test_predictions)
     f1score = f1_score(y_test, y_test_predictions)
     del y_test_predictions
@@ -238,6 +238,14 @@ def str_classifier_args(classifier):
     if args:
         return args
     return None
+
+
+def configure_cuml():
+    if using_cuml:
+        CLASSIFIERS.insert(3, "svm")
+        CLASSIFIER_ARGS["lr"]["max_iter"] = 5000
+        del CLASSIFIER_ARGS["knn"]["n_jobs"]
+        print("Using cuML")
 
 
 def main():
@@ -269,11 +277,7 @@ def main():
 
     if args.protocol is not None:
         args.protocol = list(functools.reduce(lambda x, y: x + y, args.protocol, []))
-    if using_cuml:
-        CLASSIFIERS.insert(3, "svm")
-        CLASSIFIER_ARGS["lr"]["max_iter"] = 5000
-        del CLASSIFIER_ARGS["knn"]["n_jobs"]
-        print("Using cuML")
+    configure_cuml()
     for scenario, prot, l2, stp, l2_mode, data, dns, blk in list_scenarios_full(args.protocol):
         print(f"# {scenario}")
         file = INPUT_PATH / f"{scenario}.{args.vector_type}.parquet"
