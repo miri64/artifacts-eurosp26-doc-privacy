@@ -1,4 +1,6 @@
-# Dockerfile to run traffic classification on a slurm-based cluster
+# Copyright (C) 2025 TU Dresden
+#
+# Distributed under terms of the MIT license.
 
 FROM python:3.13.5-bookworm
 

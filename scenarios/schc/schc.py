@@ -1,7 +1,7 @@
 #! /usr/bin/env python3
 # vim:fenc=utf-8
 #
-# Copyright © 2025 Martine S. Lenders <martine.lenders@tu-dresden.de>
+# Copyright (C) 2025 TU Dresden
 #
 # Distributed under terms of the MIT license.
 

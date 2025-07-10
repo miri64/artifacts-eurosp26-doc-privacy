@@ -1,7 +1,7 @@
 #! /bin/bash
 #
 # word2vec.sh
-# Copyright (C) 2025 Martine S. Lenders <martine.lenders@tu-dresden.de>
+# Copyright (C) 2025 TU Dresden
 #
 # Distributed under terms of the MIT license.
 #

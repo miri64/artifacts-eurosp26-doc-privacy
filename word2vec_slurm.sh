@@ -1,4 +1,10 @@
-#!/bin/bash
+# !/bin/bash
+#
+# word2vec_slurm.sh
+# Copyright (C) 2025 TU Dresden
+#
+# Distributed under terms of the MIT license.
+#
 
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=4

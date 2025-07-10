@@ -1,4 +1,10 @@
-#!/bin/bash
+# !/bin/bash
+#
+# word2vec_log.sh
+# Copyright (C) 2025 TU Dresden
+#
+# Distributed under terms of the MIT license.
+#
 
 name=$(echo "$*" | cut -d' ' -f2)
 
