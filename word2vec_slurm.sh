@@ -1,4 +1,4 @@
-# !/bin/bash
+#!/bin/bash
 #
 # word2vec_slurm.sh
 # Copyright (C) 2025 TU Dresden

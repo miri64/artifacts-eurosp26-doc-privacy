@@ -1,4 +1,4 @@
-# !/bin/bash
+#!/bin/bash
 #
 # ablation_tests_slurm.sh
 # Copyright (C) 2025 TU Dresden
