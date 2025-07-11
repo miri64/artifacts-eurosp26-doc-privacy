@@ -137,6 +137,7 @@ def main():
     for scenario, prot, l2, stp, l2_mode, data, dns, blk in list_scenarios_full(
         args.protocol, args.data_formats, args.dns_formats
     ):
+        step = args.step if not l2 else 1
         print(f"# {scenario}")
         file = INPUT_PATH / f"{scenario}.{args.vector_type}.parquet"
         results_file = INPUT_PATH / f"{scenario}.{args.vector_type}.ablation.csv"
@@ -181,7 +182,7 @@ def main():
                         ).select(
                             ["length"]
                         ).collect()[["length"]].rows()
-                    ) == range(args.step, max_length + args.step, args.step):
+                    ) == range(step, max_length + step, step):
                         print(
                             f" - Skipping since lengths with {args.classifier} "
                             f"are in {results_file.relative_to(INPUT_PATH)}"
@@ -203,7 +204,7 @@ def main():
             )
             if lf is None:
                 writer.writeheader()
-            for length in range(args.step, max_length + args.step, args.step):
+            for length in range(step, max_length + step, step):
                 if lf is not None and lf.filter(
                     (polars.col("protocol") == prot)
                     & (polars.col("link_layer") == LINK_LAYER_READABLE[l2])
