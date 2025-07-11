@@ -126,6 +126,14 @@ def main():
             f"{args.classifier} not supported for your module configuration. "
             "(It might work with cuML.)"
         )
+    import pprint
+    pprint.pp(
+        list(
+            list_scenarios_full(
+                args.protocol, args.data_formats, args.dns_formats
+            )
+        )
+    )
     for scenario, prot, l2, stp, l2_mode, data, dns, blk in list_scenarios_full(
         args.protocol, args.data_formats, args.dns_formats
     ):
@@ -142,9 +150,9 @@ def main():
                 (polars.col("link_layer_mode")).fill_null("")
             )
             try:
-                max_lengths = lf.select("max_len").collect()
-                if max_lengths.exists():
-                    max_length = max_lengths.last().item()
+                max_lengths = lf.select("max_length").collect()
+                if not max_lengths.is_empty():
+                    max_length = max_lengths["max_length"].last()
                     if sorted(
                         i[0]
                         for i in lf.filter(
@@ -154,7 +162,7 @@ def main():
                                 polars.col("link_layer_mode")
                                 == LINK_LAYER_MODE_READABLE[l2_mode]
                             )
-                            & (polars.col("blocksize") == BLOCKWISE_READABLE[blk])
+                            & (polars.col("blocksize") == int(BLOCKWISE_READABLE[blk]))
                             & (polars.col("network_setup") == stp)
                             & (polars.col("data_format") == data)
                             & (polars.col("dns_format") == dns)
@@ -200,7 +208,7 @@ def main():
                     (polars.col("protocol") == prot)
                     & (polars.col("link_layer") == LINK_LAYER_READABLE[l2])
                     & (polars.col("link_layer_mode") == LINK_LAYER_MODE_READABLE[l2_mode])
-                    & (polars.col("blocksize") == BLOCKWISE_READABLE[blk])
+                    & (polars.col("blocksize") == int(BLOCKWISE_READABLE[blk]))
                     & (polars.col("network_setup") == stp)
                     & (polars.col("data_format") == data)
                     & (polars.col("dns_format") == dns)
@@ -221,7 +229,7 @@ def main():
                     ["length"]
                 ).count().with_columns(
                     polars.col("length") > 0
-                ).collect().all():
+                ).collect().item():
                     print(
                         f" - Skipping since {length} is already in",
                         results_file.relative_to(INPUT_PATH),
