@@ -13,6 +13,7 @@
 *.log.gz
 *.*vec.parquet
 stats.parquet
+length_cdfs.parquet
 *.pcap
 *.pcap.gz
 *.pcapng
