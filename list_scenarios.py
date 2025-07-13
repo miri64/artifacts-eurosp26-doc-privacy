@@ -22,7 +22,7 @@ def list_scenarios_full(filter_protocol=None, filter_data=None, filter_dns=None)
         if filter_data is not None and data not in filter_data:
             continue
         for dns in DNS_FORMATS:
-            if filter_dns is not None and data not in filter_dns:
+            if filter_dns is not None and dns not in filter_dns:
                 continue
             for l2 in LINK_LAYERS:
                 for l2_mode in LINK_LAYER_MODES:
