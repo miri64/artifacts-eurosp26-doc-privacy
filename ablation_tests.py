@@ -18,6 +18,7 @@ from list_scenarios import (
     PROTOCOLS,
     DATA_FORMATS,
     DNS_FORMATS,
+    LINK_LAYERS,
 )
 from training import (
     CLASSIFIERS,
@@ -77,6 +78,7 @@ def main():
         "--data-formats",
         help="Data format to train for (default: all)",
         nargs="+",
+        action="append",
         default=None,
         choices=DATA_FORMATS,
     )
@@ -85,8 +87,18 @@ def main():
         "--dns-formats",
         help="DNS format to train for (default: all)",
         nargs="+",
+        action="append",
         default=None,
         choices=DNS_FORMATS,
+    )
+    parser.add_argument(
+        "-l",
+        "--link-layer",
+        help="Link layer to train for (default: all)",
+        nargs="+",
+        action="append",
+        default=None,
+        choices=LINK_LAYER_READABLE.values(),
     )
     parser.add_argument(
         "-c",
@@ -120,6 +132,16 @@ def main():
 
     if args.protocol is not None:
         args.protocol = list(functools.reduce(lambda x, y: x + y, args.protocol, []))
+    if args.data_formats is not None:
+        args.data_formats = list(functools.reduce(lambda x, y: x + y, args.data_formats, []))
+    if args.dns_formats is not None:
+        args.dns_formats = list(functools.reduce(lambda x, y: x + y, args.dns_formats, []))
+    if args.link_layer is not None:
+        args.link_layer = list(functools.reduce(lambda x, y: x + y, args.link_layer, []))
+        args.link_layer = [
+            {v: k for k, v in LINK_LAYER_READABLE.items()}[l]
+            for l in args.link_layer
+        ]
     configure_cuml()
     if args.classifier not in CLASSIFIERS:
         raise ValueError(
@@ -130,12 +152,12 @@ def main():
     pprint.pp(
         list(
             list_scenarios_full(
-                args.protocol, args.data_formats, args.dns_formats
+                args.protocol, args.data_formats, args.dns_formats, args.link_layer
             )
         )
     )
     for scenario, prot, l2, stp, l2_mode, data, dns, blk in list_scenarios_full(
-        args.protocol, args.data_formats, args.dns_formats
+        args.protocol, args.data_formats, args.dns_formats, args.link_layer,
     ):
         step = args.step if not l2 else 1
         print(f"# {scenario}")

@@ -17,7 +17,12 @@ DATA_FORMATS = ["json", "cbor"]
 DNS_FORMATS = ["dns_message", "dns_cbor"]
 
 
-def list_scenarios_full(filter_protocol=None, filter_data=None, filter_dns=None):
+def list_scenarios_full(
+    filter_protocol=None,
+    filter_data=None,
+    filter_dns=None,
+    filter_link_layer=None
+):
     for data in DATA_FORMATS:
         if filter_data is not None and data not in filter_data:
             continue
@@ -25,6 +30,8 @@ def list_scenarios_full(filter_protocol=None, filter_data=None, filter_dns=None)
             if filter_dns is not None and dns not in filter_dns:
                 continue
             for l2 in LINK_LAYERS:
+                if filter_link_layer is not None and l2 not in filter_link_layer:
+                    continue
                 for l2_mode in LINK_LAYER_MODES:
                     if l2_mode and not l2:
                         continue
@@ -57,11 +64,17 @@ def list_scenarios_full(filter_protocol=None, filter_data=None, filter_dns=None)
                                 )
 
 
-def list_scenarios(filter_protocol=None, filter_data=None, filter_dns=None):
+def list_scenarios(
+    filter_protocol=None,
+    filter_data=None,
+    filter_dns=None,
+    filter_link_layer=None,
+):
     for scenario, _, _, _, _, _, _, _ in list_scenarios_full(
         filter_protocol=filter_protocol,
         filter_data=filter_data,
         filter_dns=filter_dns,
+        filter_link_layer=filter_link_layer,
     ):
         yield scenario
 
