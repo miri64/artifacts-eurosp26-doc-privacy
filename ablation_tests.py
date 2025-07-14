@@ -262,7 +262,12 @@ def main():
                     polars.col("vector").list.slice(0, length)
                 ).cast(
                     {
-                        "vector": polars.Array(polars.Float32, length),
+                        "vector": polars.Array(
+                            polars.Int8
+                            if args.vector_type == "binvec"
+                            else polars.Float32,
+                            length
+                        ),
                     }
                 ).select("vector", "label").collect()
                 x = df_vec["vector"].to_numpy()
@@ -276,6 +281,8 @@ def main():
                     )
                 except MemoryError:
                     print(f"# {scenario}", file=sys.stderr)
+                    del x
+                    del y
                     traceback.print_exc(file=sys.stderr)
                     continue
                 del x

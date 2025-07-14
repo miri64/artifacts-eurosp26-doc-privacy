@@ -65,15 +65,15 @@
 #SBATCH --ntasks=1
 #SBATCH --nodes=1
 #SBATCH --cpus-per-task=1
-#SBATCH --mem-per-cpu=193250
-#SBATCH --gres=gpu:1
+#SBATCH --mem-per-cpu=386500
+#SBATCH --gres=gpu:2
 #SBATCH --time=48:00:00
 #SBATCH hetjob
 #SBATCH --ntasks=1
 #SBATCH --nodes=1
 #SBATCH --cpus-per-task=1
-#SBATCH --mem-per-cpu=193250
-#SBATCH --gres=gpu:1
+#SBATCH --mem-per-cpu=386500
+#SBATCH --gres=gpu:2
 #SBATCH --time=48:00:00
 
 module purge
