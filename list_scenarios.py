@@ -21,7 +21,8 @@ def list_scenarios_full(
     filter_protocol=None,
     filter_data=None,
     filter_dns=None,
-    filter_link_layer=None
+    filter_link_layer=None,
+    filter_network_setup=None,
 ):
     for data in DATA_FORMATS:
         if filter_data is not None and data not in filter_data:
@@ -44,6 +45,8 @@ def list_scenarios_full(
                             if prot == "https" and (blk or l2):
                                 continue
                             for stp in NETWORK_SETUPS:
+                                if stp is not None and stp not in filter_network_setup:
+                                    continue
                                 if l2_mode == "-min-rules":
                                     if not (
                                         stp == "d2"
@@ -69,12 +72,14 @@ def list_scenarios(
     filter_data=None,
     filter_dns=None,
     filter_link_layer=None,
+    filter_network_setup=None,
 ):
     for scenario, _, _, _, _, _, _, _ in list_scenarios_full(
         filter_protocol=filter_protocol,
         filter_data=filter_data,
         filter_dns=filter_dns,
         filter_link_layer=filter_link_layer,
+        filter_network_setup=filter_network_setup,
     ):
         yield scenario
 

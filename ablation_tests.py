@@ -19,6 +19,7 @@ from list_scenarios import (
     DATA_FORMATS,
     DNS_FORMATS,
     LINK_LAYERS,
+    NETWORK_SETUPS,
 )
 from training import (
     CLASSIFIERS,
@@ -101,6 +102,15 @@ def main():
         choices=LINK_LAYER_READABLE.values(),
     )
     parser.add_argument(
+        "-n",
+        "--network-setups",
+        help="Network setup to train for (default: all)",
+        nargs="+",
+        action="append",
+        default=None,
+        choices=NETWORK_SETUPS,
+    )
+    parser.add_argument(
         "-c",
         "--classifier",
         help="Classifier to use for training (default: \"dt\")",
@@ -130,6 +140,8 @@ def main():
     )
     args = parser.parse_args()
 
+    if args.network_setups is not None:
+        args.network_setups = list(functools.reduce(lambda x, y: x + y, args.network_setups, []))
     if args.protocol is not None:
         args.protocol = list(functools.reduce(lambda x, y: x + y, args.protocol, []))
     if args.data_formats is not None:
@@ -152,12 +164,20 @@ def main():
     pprint.pp(
         list(
             list_scenarios_full(
-                args.protocol, args.data_formats, args.dns_formats, args.link_layer
+                args.protocol, 
+                args.data_formats,
+                args.dns_formats,
+                args.link_layer,
+                args.network_setups,
             )
         )
     )
     for scenario, prot, l2, stp, l2_mode, data, dns, blk in list_scenarios_full(
-        args.protocol, args.data_formats, args.dns_formats, args.link_layer,
+        args.protocol,
+        args.data_formats,
+        args.dns_formats,
+        args.link_layer,
+        args.network_setups,
     ):
         step = args.step if not l2 else 1
         print(f"# {scenario}")
