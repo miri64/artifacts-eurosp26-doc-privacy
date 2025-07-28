@@ -45,7 +45,10 @@ def list_scenarios_full(
                             if prot == "https" and (blk or l2):
                                 continue
                             for stp in NETWORK_SETUPS:
-                                if stp is not None and stp not in filter_network_setup:
+                                if (
+                                    filter_network_setup is not None
+                                    and stp not in filter_network_setup
+                                ):
                                     continue
                                 if l2_mode == "-min-rules":
                                     if not (
