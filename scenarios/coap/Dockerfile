@@ -19,4 +19,5 @@ RUN setcap cap_net_raw,cap_net_admin+eip /usr/bin/dumpcap
 RUN chown root:wireshark /usr/bin/dumpcap && chmod u+s /usr/bin/dumpcap && chmod o-rx /usr/bin/dumpcap
 
 COPY requirements.txt ./
-RUN pip --no-cache-dir install --upgrade -r requirements.txt
+RUN pip --no-cache-dir install --upgrade uv
+RUN uv pip --no-cache-dir install --system --upgrade -r requirements.txt

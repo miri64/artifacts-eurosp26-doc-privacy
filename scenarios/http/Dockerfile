@@ -14,4 +14,5 @@ FROM base AS http-base
 RUN apk --update --no-cache add postgresql-dev
 
 COPY requirements.txt ./
-RUN pip --no-cache-dir install --upgrade -r requirements.txt
+RUN pip --no-cache-dir install --upgrade uv
+RUN uv pip --no-cache-dir install --system --upgrade -r requirements.txt

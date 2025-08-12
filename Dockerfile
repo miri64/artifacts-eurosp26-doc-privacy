@@ -16,4 +16,5 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     texlive-full tmux
 
 COPY requirements.txt ./
-RUN pip --no-cache-dir install --upgrade -r requirements.txt
+RUN pip --no-cache-dir install --upgrade uv
+RUN uv pip --no-cache-dir install --system --upgrade -r requirements.txt
