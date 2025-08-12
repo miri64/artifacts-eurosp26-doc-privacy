@@ -2,7 +2,7 @@
 #
 # Distributed under terms of the MIT license.
 
-FROM python:3.13.5-bookworm
+FROM python:3.12.11-bookworm
 
 WORKDIR /app
 
@@ -12,7 +12,8 @@ RUN addgroup --gid "$HOST_GID" user
 RUN adduser --disabled-password --shell /bin/sh user --uid "$HOST_UID" --gid "$HOST_GID"
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    gcc g++ gfortran hyperfine libopenblas-dev liblapack-dev pigz pkg-config tmux
+    gcc g++ gfortran hyperfine libopenblas-dev liblapack-dev pigz pkg-config \
+    texlive-full tmux
 
 COPY requirements.txt ./
 RUN pip --no-cache-dir install --upgrade -r requirements.txt

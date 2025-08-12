@@ -29,7 +29,7 @@ services:
         condition: service_healthy
     environment:
       NETWORK_SCENARIO: "http-d1"
-      SERVER_CREDENTIALS: "${DATA_SERVER_CREDENTIALS:-}"
+      SERVER_CREDENTIALS: "${DATA_SERVER_CREDENTIALS}"
       SERVER_NAME: "server"
   http-client:
     extends:

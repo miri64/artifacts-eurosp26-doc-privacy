@@ -26,7 +26,7 @@ services:
           - http-server
     environment:
       BIND_PREFIX: "${UPSTREAM_PREFIX}"
-      SERVER_CREDENTIALS: "${DATA_SERVER_CREDENTIALS:-}"
+      SERVER_CREDENTIALS: "${DATA_SERVER_CREDENTIALS}"
       NETWORK_SCENARIO: "http-p2"
       SERVER_NAME: "http-server"
     depends_on:

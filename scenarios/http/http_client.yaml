@@ -19,7 +19,7 @@ services:
       - ../../output_dataset:/dumps
     environment:
       SECURITY: "${SECURITY:-}"
-      CLIENT_CREDENTIALS: "${CLIENT_CREDENTIALS:-}"
+      CLIENT_CREDENTIALS: "${CLIENT_CREDENTIALS}"
       DATA_FORMAT: "${DATA_FORMAT}"
       DNS_FORMAT: "${DNS_FORMAT}"
       DATABASE_URI: "${DATABASE_URI}"

@@ -25,7 +25,7 @@ services:
           - http-server
     environment:
       BIND_PREFIX: "${WPAN_SIMULATION_PREFIX}"
-      SERVER_CREDENTIALS: "${DATA_SERVER_CREDENTIALS:-}"
+      SERVER_CREDENTIALS: "${DATA_SERVER_CREDENTIALS}"
       NETWORK_SCENARIO: "http-d2"
       SERVER_NAME: "http-server"
     depends_on:
@@ -43,7 +43,7 @@ services:
           - dns-server
     environment:
       BIND_PREFIX: "${WPAN_SIMULATION_PREFIX}"
-      SERVER_CREDENTIALS: "${DNS_SERVER_CREDENTIALS:-}"
+      SERVER_CREDENTIALS: "${DNS_SERVER_CREDENTIALS}"
       NETWORK_SCENARIO: "http-d2"
       SERVER_NAME: "dns-server"
     depends_on:
