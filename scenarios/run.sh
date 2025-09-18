@@ -6,6 +6,12 @@
 # Distributed under terms of the MIT license.
 #
 
+if [ -f /.dockerenv ]; then
+    echo "This script MUST not be run in a docker container." \
+         "Run this on your host system instead!" >&2
+    exit 1
+fi
+
 SCRIPT_DIR=$( cd -- "$( dirname -- "$(realpath "$0")" )" &> /dev/null && pwd )
 
 if [ $# -eq 1 ]; then
