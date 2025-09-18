@@ -45,4 +45,4 @@ export -f extract_from_pcap
 export SCRIPT_DIR
 
 find "${OUTPUT_DATASET}" -name "*.wpan.pcap.gz" -o -name "*.upstream.pcap.gz" | \
-    parallel -j"${PROCS}" extract_from_pcap
+    parallel --progress -j"${PROCS}" extract_from_pcap

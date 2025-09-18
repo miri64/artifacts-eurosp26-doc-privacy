@@ -5,4 +5,4 @@ https,76112.738,21.117,6.256,16,4
 oscore,227737.983,127.422,35.801,80,8
 oscore-base,249917.376,182.598,46.241,88,8
 extract_from_pcap,4159.149,88787.336,1122.209,,24
-generate_training_data,415.397,,,296,24
+generate_training_data,943.226,,,,12
