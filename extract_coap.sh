@@ -7,19 +7,23 @@
 #
 
 if [ $# -ne 1 ] && [ $# -ne 2 ]; then
-    echo "usage: $0 <pcap file|-> [oscore]" >&2
+    echo "usage: $0 <pcap file|-> [oscore|coaps]" >&2
     exit 1
 fi
 
 PCAP="$1"
 
 FIELDS="frame.number frame.time_epoch frame.protocols dtls.record.content_type"
-FIELDS="${FIELDS} coap.code coap.request_first_in coap.mid coap.token coap.opt.uri_host coap.opt.ctype coap.opt.block_number coap.opt.block_mflag coap.opt.block_size coap.block coap.block.reassembled.in"
 
-if echo "$PCAP" | grep -q "oscore" || [ "$2" = "oscore" ]; then
-    FIELDS="${FIELDS} oscore.code oscore.opt.ctype oscore.opt.block_number oscore.opt.block_mflag oscore.opt.block_size coap.opt.object_security_piv"
+if echo "$PCAP" | grep -q "coaps" || [ "$2" = "coaps" ]; then
+    FIELDS="${FIELDS} dtls.record.epoch dtls.record.sequence_number"
 fi
 
+FIELDS="${FIELDS} coap.code coap.request_first_in coap.mid coap.token coap.opt.uri_host coap.opt.ctype coap.opt.block_number coap.opt.block_mflag coap.opt.block_size coap.block coap.block_length coap.block.reassembled.in coap.payload_length"
+
+if echo "$PCAP" | grep -q "oscore" || [ "$2" = "oscore" ]; then
+    FIELDS="${FIELDS} oscore.code oscore.opt.ctype oscore.opt.block_number oscore.opt.block_mflag oscore.opt.block_size coap.opt.object_security_piv oscore.payload_length"
+fi
 
 echo "${FIELDS}" | \
     awk 'BEGIN {OFS="\t"} { for (i = 1; i <= NF; i++) { printf "%s%s", $i, (i < NF) ? OFS : ORS } }'

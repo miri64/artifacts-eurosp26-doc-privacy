@@ -26,12 +26,15 @@ extract_from_pcap() {
     if echo "${PCAP}" | grep -Eq "\<https-" && ! [ -f "${PCAP%.pcap.gz}".http.csv.gz ]; then
         "${SCRIPT_DIR}/extract_http.sh" "${PCAP}" | gzip > "${PCAP%.pcap.gz}".http.csv.gz
     elif echo "${PCAP}" | grep -Eq -e "-schc-" && ! echo "$PCAP" | grep -Eq ".*\.upstream.pcap.gz" && ! [ -f "${PCAP%.pcap.gz}".coap.csv.gz ]; then
+        if echo "$PCAP" | grep -q "coaps"; then
+            PROT="coaps"
+        fi
         if echo "$PCAP" | grep -q "oscore"; then
-            OSCORE="oscore"
+            PROT="oscore"
         fi
         "${SCRIPT_DIR}/extract_schc.py" "${PCAP%.pcap.gz}".eth.csv.gz | \
              text2pcap -l 101 -t "%s.%f" -q - - 2>/dev/null | \
-             "${SCRIPT_DIR}/extract_coap.sh" - "${OSCORE}" | gzip > "${PCAP%.pcap.gz}".coap.csv.gz
+             "${SCRIPT_DIR}/extract_coap.sh" - "${PROT}" | gzip > "${PCAP%.pcap.gz}".coap.csv.gz
     elif ! echo "${PCAP}" | grep -Eq "\<https-" && ! [ -f "${PCAP%.pcap.gz}".coap.csv.gz ]; then
         "${SCRIPT_DIR}/extract_coap.sh" "${PCAP}" | gzip > "${PCAP%.pcap.gz}".coap.csv.gz
     elif [ -f "${PCAP%.pcap.gz}".http.csv.gz ]; then
