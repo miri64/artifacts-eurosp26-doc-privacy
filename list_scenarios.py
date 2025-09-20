@@ -15,6 +15,7 @@ BLOCKWISE = ["", "_b64"]
 NETWORK_SETUPS = ["d1", "d2", "p1", "p2"]
 DATA_FORMATS = ["json", "cbor"]
 DNS_FORMATS = ["dns_message", "dns_cbor"]
+RANDIV_PAD = ["", "_randiv_pad"]
 
 
 def list_scenarios_full(
@@ -23,6 +24,7 @@ def list_scenarios_full(
     filter_dns=None,
     filter_link_layer=None,
     filter_network_setup=None,
+    filter_randiv_pad=False,
 ):
     for data in DATA_FORMATS:
         if filter_data is not None and data not in filter_data:
@@ -58,16 +60,22 @@ def list_scenarios_full(
                                         continue
                                 if l2_mode == "-peer-based" and stp != "d2":
                                     continue
-                                yield (
-                                    f"{prot}{l2}-{stp}{l2_mode}_{data}_{dns}{blk}",
-                                    prot,
-                                    l2,
-                                    stp,
-                                    l2_mode,
-                                    data,
-                                    dns,
-                                    blk,
-                                )
+                                for ri_pad in RANDIV_PAD:
+                                    if ri_pad and prot not in ["coaps", "oscore"]:
+                                        continue
+                                    if filter_randiv_pad and ri_pad:
+                                        continue
+                                    yield (
+                                        f"{prot}{l2}-{stp}{l2_mode}_{data}_{dns}{blk}{ri_pad}",
+                                        prot,
+                                        l2,
+                                        stp,
+                                        l2_mode,
+                                        data,
+                                        dns,
+                                        blk,
+                                        ri_pad,
+                                    )
 
 
 def list_scenarios(
@@ -76,13 +84,15 @@ def list_scenarios(
     filter_dns=None,
     filter_link_layer=None,
     filter_network_setup=None,
+    filter_randiv_pad=False,
 ):
-    for scenario, _, _, _, _, _, _, _ in list_scenarios_full(
+    for scenario, _, _, _, _, _, _, _, _ in list_scenarios_full(
         filter_protocol=filter_protocol,
         filter_data=filter_data,
         filter_dns=filter_dns,
         filter_link_layer=filter_link_layer,
         filter_network_setup=filter_network_setup,
+        filter_randiv_pad=filter_randiv_pad,
     ):
         yield scenario
 
