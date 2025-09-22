@@ -22,4 +22,5 @@ binvec() {
 
 export -f binvec
 export INPUT_PATH
+echo "Running on ${PROCS} workers"
 ./list_scenarios.py $* | parallel -j "${PROCS}" binvec
