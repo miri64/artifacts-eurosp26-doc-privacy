@@ -20,7 +20,14 @@ import numpy
 import polars
 import polars.exceptions
 
-from list_scenarios import (list_scenarios_full, PROTOCOLS)
+from list_scenarios import (
+    list_scenarios_full,
+    PROTOCOLS,
+    DATA_FORMATS,
+    DNS_FORMATS,
+    LINK_LAYERS,
+    NETWORK_SETUPS,
+)
 
 try:
     if int(os.environ.get("FORCE_SKLEARN", "0")):
@@ -141,7 +148,7 @@ CLASSIFIER_ARGS = {
 
 
 def cross_validate(model, x, y):
-    return sk_model_selection.cross_valiate(
+    return sk_model_selection.cross_validate(
         model,
         x,
         y,
@@ -304,6 +311,7 @@ def main():
         args.network_setups,
     ):
         print(f"# {scenario}")
+        sys.stdout.flush()
         file = INPUT_PATH / f"{scenario}.{args.vector_type}.parquet"
         results_file = INPUT_PATH / f"{scenario}.{args.vector_type}.cross_val.csv"
 
@@ -331,6 +339,7 @@ def main():
                         " - Skipping since results for all classifiers "
                         f"are in {results_file.relative_to(INPUT_PATH)}"
                     )
+                    sys.stdout.flush()
                     continue
             except polars.exceptions.NoDataError:
                 df = None
@@ -363,6 +372,7 @@ def main():
                     writer.writeheader()
                 for cls in CLASSIFIERS:
                     print(f"## {CLASSIFIER_READABLE[cls]}")
+                    sys.stdout.flush()
                     if (
                         df is not None
                         and not df.filter(
@@ -398,12 +408,14 @@ def main():
                             " - Skipping since it is already in",
                             results_file.relative_to(INPUT_PATH),
                         )
+                        sys.stdout.flush()
                         continue
                     try:
-                        score = CROSS_VALIDITE[cls](x_minmax, y):
+                        score = CROSS_VALIDITE[cls](x_minmax, y)
                     except (ValueError, MemoryError):
                         print(f"# {scenario}", file=sys.stderr)
                         traceback.print_exc(file=sys.stderr)
+                        sys.stderr.flush()
                         continue
                     writer.writerow(
                         {
@@ -433,10 +445,12 @@ def main():
                     csvfile.flush()
         else:
             print(f"Skipping since {file} does not exist.")
+            sys.stdout.flush()
     stop = time.time()
     print(f"# Duration {stop - start:.0f}\n")
     print(f"- start: {start:.03f}")
     print(f"- stop: {stop:.03f}")
+    sys.stdout.flush()
 
 
 if __name__ == "__main__":
