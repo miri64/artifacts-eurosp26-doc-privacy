@@ -1,0 +1,23 @@
+#! /bin/bash
+#
+# training.sh
+# Copyright (C) 2025 TU Dresden
+#
+# Distributed under terms of the MIT license.
+#
+
+while getopts ":p:D:d:l:n:r:v:" opt; do
+    case "${opt}" in
+    p)  prots="${prots}_${OPTARG}";;
+    D)  data="${data}_${OPTARG}";;
+    d)  dns="${dns}_${OPTARG}";;
+    l)  link_layer="${link_layer}_${OPTARG}";;
+    n)  network_setups="${network_setups}_${OPTARG}";;
+    v)  vec="${OPTARG}";;
+    *)  prots="${prots}_${OPTARG}";;
+    esac
+done
+
+
+"${PWD}"/.env/bin/python "${PWD}"/cross_validate.py $* \
+    &> "${INPUT_PATH}/ablation_${cls}_${step}${prots}${network_setups}${link_layer}${data}${dns}_${vec}_${SLURM_JOB_ID}.log"
