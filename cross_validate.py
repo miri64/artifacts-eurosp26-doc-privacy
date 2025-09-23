@@ -232,6 +232,7 @@ def configure_cuml():
 
 
 def main():
+    global CLASSIFIERS
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "-p",
@@ -279,6 +280,13 @@ def main():
         choices=NETWORK_SETUPS,
     )
     parser.add_argument(
+        "-c",
+        "--classifier",
+        help="Classifier to use for training (default: all)",
+        default=None,
+        choices=CLASSIFIERS,
+    )
+    parser.add_argument(
         "-v",
         "--vector-type",
         help="Vector type to train for (default: \"binvec\")",
@@ -303,6 +311,13 @@ def main():
         ]
 
     configure_cuml()
+    if args.classifier is not None:
+        if args.classifier not in CLASSIFIERS and args.classifier != "ab":
+            raise ValueError(
+                f"{args.classifier} not supported for your module configuration. "
+                "(It might work with cuML.)"
+            )
+        CLASSIFIERS = [args.classifier]
     start = time.time()
     for scenario, prot, l2, stp, l2_mode, data, dns, blk, _ in list_scenarios_full(
         args.protocol,
@@ -314,7 +329,10 @@ def main():
         print(f"# {scenario}")
         sys.stdout.flush()
         file = INPUT_PATH / f"{scenario}.{args.vector_type}.parquet"
-        results_file = INPUT_PATH / f"{scenario}.{args.vector_type}.cross_val.csv"
+        if args.classifier is None:
+            results_file = INPUT_PATH / f"{scenario}.{args.vector_type}.cross_val.csv"
+        else:
+            results_file = INPUT_PATH / f"{scenario}.{args.vector_type}.{args.classifier}.cross_val.csv"
 
         if results_file.exists():
             try:

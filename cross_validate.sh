@@ -8,6 +8,7 @@
 
 while getopts ":p:D:d:l:n:r:v:" opt; do
     case "${opt}" in
+    c)  cls="${OPTARG}";;
     p)  prots="${prots}_${OPTARG}";;
     D)  data="${data}_${OPTARG}";;
     d)  dns="${dns}_${OPTARG}";;
