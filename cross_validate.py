@@ -33,11 +33,11 @@ try:
     if int(os.environ.get("FORCE_SKLEARN", "0")):
         raise ImportError(f"FORCE_SKLEARN={os.environ['FORCE_SKLEARN']}")
     from cuml import ensemble as sk_ensemble
-    from cuml import model_selection as sk_model_selection
     from cuml import linear_model as sk_linear_model
     from cuml import neighbors as sk_neighbors
     from cuml import preprocessing as sk_pp
     from cuml import svm as sk_svm
+    import cuml
     using_cuml = True
 except ImportError as exc:
     print("Unable to import cuML falling back to sklearn", file=sys.stderr)
@@ -50,7 +50,6 @@ except ImportError as exc:
 
     from sklearn import ensemble as sk_ensemble
     from sklearn.exceptions import ConvergenceWarning
-    from sklearn import model_selection as sk_model_selection
     from sklearn import linear_model as sk_linear_model
     from sklearn import neighbors as sk_neighbors
     from sklearn import preprocessing as sk_pp
@@ -59,6 +58,7 @@ except ImportError as exc:
 
 
 from sklearn.ensemble import AdaBoostClassifier
+from sklearn import model_selection as sk_model_selection
 from sklearn import tree as sk_tree
 
 
@@ -225,6 +225,7 @@ def str_classifier_args(classifier):
 def configure_cuml():
     if using_cuml:
         CLASSIFIERS.insert(3, "svm")
+        cuml.set_global_output_type("numpy")
         CLASSIFIER_ARGS["lr"]["max_iter"] = 5000
         del CLASSIFIER_ARGS["knn"]["n_jobs"]
         print("Using cuML")
@@ -317,21 +318,21 @@ def main():
 
         if results_file.exists():
             try:
-                df = polars.read_csv(results_file).with_columns(
+                lf = polars.scan_csv(results_file, separator=";").with_columns(
                     (polars.col("link_layer_mode")).fill_null("")
                 )
                 if set(
                     tuple(d.values())
-                    for d in df.filter(
-                        (df["protocol"] == prot)
-                        & (df["link_layer"] == LINK_LAYER_READABLE[l2])
-                        & (df["link_layer_mode"] == LINK_LAYER_MODE_READABLE[l2_mode])
-                        & (df["blocksize"] == BLOCKWISE_READABLE[blk])
-                        & (df["network_setup"] == stp)
-                        & (df["data_format"] == data)
-                        & (df["dns_format"] == dns)
-                        & (df["vector_type"] == args.vector_type)
-                    )[["classifier", "classifier_args"]].to_dicts()
+                    for d in lf.filter(
+                        (lf["protocol"] == prot)
+                        & (lf["link_layer"] == LINK_LAYER_READABLE[l2])
+                        & (lf["link_layer_mode"] == LINK_LAYER_MODE_READABLE[l2_mode])
+                        & (lf["blocksize"] == BLOCKWISE_READABLE[blk])
+                        & (lf["network_setup"] == stp)
+                        & (lf["data_format"] == data)
+                        & (lf["dns_format"] == dns)
+                        & (lf["vector_type"] == args.vector_type)
+                    ).select(["classifier", "classifier_args"]).collect().to_dicts()
                 ) == set(
                     (c, str_classifier_args(c)) for c in CLASSIFIERS
                 ):
@@ -342,67 +343,73 @@ def main():
                     sys.stdout.flush()
                     continue
             except polars.exceptions.NoDataError:
-                df = None
+                lf = None
         else:
-            df = None
+            lf = None
 
         if file.exists():
-            df_vec = polars.read_parquet(file)
-            df_vec = df_vec.cast(
+            lf_vec = polars.scan_parquet(file)
+            max_length = lf_vec.select("vector").with_columns(
+                polars.col("vector").list.len()
+            ).max().collect().item()
+            df_vec = lf_vec.cast(
                 {
                     "vector": polars.Array(
-                        polars.Float32,
-                        df_vec["vector"].list.len().max(),
+                        polars.Int8
+                        if args.vector_type == "binvec"
+                        else polars.Float32,
+                        max_length,
                     )
                 }
-            )
+            ).select("vector", "label").collect()
             x = df_vec["vector"].to_numpy()
             y = df_vec["label"].to_numpy()
             del df_vec
+            del lf_vec
             scaler = sk_pp.MinMaxScaler()
             x_minmax = scaler.fit_transform(x)
             del x
             with open(
-                results_file, "w" if df is None else "a"
+                results_file, "w" if lf is None else "a"
             ) as csvfile:
                 writer = csv.DictWriter(
-                    csvfile, fieldnames=FIELD_NAMES
+                    csvfile, fieldnames=FIELD_NAMES, delimiter=";"
                 )
-                if df is None:
+                if lf is None:
                     writer.writeheader()
                 for cls in CLASSIFIERS:
                     print(f"## {CLASSIFIER_READABLE[cls]}")
                     sys.stdout.flush()
                     if (
-                        df is not None
-                        and not df.filter(
-                            (df["protocol"] == prot)
+                        lf is not None
+                        and not lf.filter(
+                            (lf["protocol"] == prot)
                             & (
-                                df["link_layer"]
+                                lf["link_layer"]
                                 == LINK_LAYER_READABLE[l2]
                             )
                             & (
-                                df["link_layer_mode"]
+                                lf["link_layer_mode"]
                                 == LINK_LAYER_MODE_READABLE[l2_mode]
                             )
                             & (
-                                df["blocksize"]
+                                lf["blocksize"]
                                 == BLOCKWISE_READABLE[blk]
                             )
-                            & (df["network_setup"] == stp)
-                            & (df["data_format"] == data)
-                            & (df["dns_format"] == dns)
-                            & (df["vector_type"] == args.vector_type)
-                            & (df["classifier"] == cls)
+                            & (lf["network_setup"] == stp)
+                            & (lf["data_format"] == data)
+                            & (lf["dns_format"] == dns)
+                            & (lf["vector_type"] == args.vector_type)
+                            & (lf["classifier"] == cls)
                             & (
                                 (
-                                    df["classifier_args"]
+                                    lf["classifier_args"]
                                     == str_classifier_args(cls)
                                 )
                                 if str_classifier_args(cls)
-                                else df["classifier_args"].is_null()
+                                else lf["classifier_args"].is_null()
                             )
-                        ).is_empty()
+                        ).collect().is_empty()
                     ):
                         print(
                             " - Skipping since it is already in",
@@ -412,6 +419,8 @@ def main():
                         continue
                     try:
                         score = CROSS_VALIDITE[cls](x_minmax, y)
+                        sys.stderr.flush()
+                        sys.stdout.flush()
                     except (ValueError, MemoryError):
                         print(f"# {scenario}", file=sys.stderr)
                         traceback.print_exc(file=sys.stderr)
@@ -432,14 +441,14 @@ def main():
                             "classifier_args": str_classifier_args(
                                 cls
                             ),
-                            "fit_time": score["fit_time"],
-                            "score_time": score["score_time"],
-                            "accuracy": score["test_accuracy"],
-                            "precision": score["test_precision"],
-                            "recall": score["test_recall"],
-                            "f1_score": score["test_f1"],
-                            "balanced_accuracy": score["test_balanced_accuracy"],
-                            "roc_auc": score["test_roc_auc"],
+                            "fit_time": score["fit_time"].tolist(),
+                            "score_time": score["score_time"].tolist(),
+                            "accuracy": score["test_accuracy"].tolist(),
+                            "precision": score["test_precision"].tolist(),
+                            "recall": score["test_recall"].tolist(),
+                            "f1_score": score["test_f1"].tolist(),
+                            "balanced_accuracy": score["test_balanced_accuracy"].tolist(),
+                            "roc_auc": score["test_roc_auc"].tolist(),
                         }
                     )
                     csvfile.flush()
