@@ -342,14 +342,14 @@ def main():
                 if set(
                     tuple(d.values())
                     for d in lf.filter(
-                        (lf.col("protocol") == prot)
-                        & (lf.col("link_layer") == LINK_LAYER_READABLE[l2])
-                        & (lf.col("link_layer_mode") == LINK_LAYER_MODE_READABLE[l2_mode])
-                        & (lf.col("blocksize") == BLOCKWISE_READABLE[blk])
-                        & (lf.col("network_setup") == stp)
-                        & (lf.col("data_format") == data)
-                        & (lf.col("dns_format") == dns)
-                        & (lf.col("vector_type") == args.vector_type)
+                        (polars.col("protocol") == prot)
+                        & (polars.col("link_layer") == LINK_LAYER_READABLE[l2])
+                        & (polars.col("link_layer_mode") == LINK_LAYER_MODE_READABLE[l2_mode])
+                        & (polars.col("blocksize") == BLOCKWISE_READABLE[blk])
+                        & (polars.col("network_setup") == stp)
+                        & (polars.col("data_format") == data)
+                        & (polars.col("dns_format") == dns)
+                        & (polars.col("vector_type") == args.vector_type)
                     ).select(["classifier", "classifier_args"]).collect().to_dicts()
                 ) == set(
                     (c, str_classifier_args(c)) for c in CLASSIFIERS
@@ -401,31 +401,31 @@ def main():
                     if (
                         lf is not None
                         and not lf.filter(
-                            (lf.col("protocol") == prot)
+                            (polars.col("protocol") == prot)
                             & (
-                                lf.col("link_layer")
+                                polars.col("link_layer")
                                 == LINK_LAYER_READABLE[l2]
                             )
                             & (
-                                lf.col("link_layer_mode")
+                                polars.col("link_layer_mode")
                                 == LINK_LAYER_MODE_READABLE[l2_mode]
                             )
                             & (
-                                lf.col("blocksize")
+                                polars.col("blocksize")
                                 == BLOCKWISE_READABLE[blk]
                             )
-                            & (lf.col("network_setup") == stp)
-                            & (lf.col("data_format") == data)
-                            & (lf.col("dns_format") == dns)
-                            & (lf.col("vector_type") == args.vector_type)
-                            & (lf.col("classifier") == cls)
+                            & (polars.col("network_setup") == stp)
+                            & (polars.col("data_format") == data)
+                            & (polars.col("dns_format") == dns)
+                            & (polars.col("vector_type") == args.vector_type)
+                            & (polars.col("classifier") == cls)
                             & (
                                 (
-                                    lf.col("classifier_args")
+                                    polars.col("classifier_args")
                                     == str_classifier_args(cls)
                                 )
                                 if str_classifier_args(cls)
-                                else lf.col("classifier_args").is_null()
+                                else polars.col("classifier_args").is_null()
                             )
                         ).collect().is_empty()
                     ):

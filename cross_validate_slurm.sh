@@ -65,11 +65,13 @@
 module purge
 module load release/24.10 GCCcore/13.3.0 CUDA/12.6.0 Python/3.12.3
 
-# . "${PWD}"/.env/bin/activate && \
-#  	pip install --upgrade uv &&
-#  	uv pip install --upgrade -r "${PWD}"/requirements.txt &&
-#  	uv pip install --upgrade --extra-index-url=https://pypi.nvidia.com "cuml-cu12==25.6.*"
 export INPUT_PATH=/data/horse/ws/male646f-pivot-eval/
+export VENV="${INPUT_PATH}"/.env-cuml
+
+. "${VENV}"/bin/activate && \
+  	pip install --upgrade uv &&
+  	uv pip install --upgrade -r "${PWD}"/requirements.txt &&
+  	uv pip install --upgrade --extra-index-url=https://pypi.nvidia.com "cuml-cu12==25.6.*"
 
 srun "${PWD}"/cross_validate.sh -p coaps          -D "json" -v binvec : \
      "${PWD}"/cross_validate.sh -p coap -p https  -D "json" -v binvec : \
