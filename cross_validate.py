@@ -98,10 +98,12 @@ FIELD_NAMES = [
     "network_setup",
     "data_format",
     "dns_format",
+    "randiv_pad",
     "vector_type",
     "k",
     "classifier",
     "classifier_args",
+    "job_id",
     "fit_time",
     "score_time",
     "accuracy",
@@ -318,8 +320,12 @@ def main():
                 "(It might work with cuML.)"
             )
         CLASSIFIERS = [args.classifier]
+    if "SLURM_JOB_ID" in os.environ:
+        job_id = os.environ["SLURM_JOB_ID"]
+    else:
+        job_id = None
     start = time.time()
-    for scenario, prot, l2, stp, l2_mode, data, dns, blk, _ in list_scenarios_full(
+    for scenario, prot, l2, stp, l2_mode, data, dns, blk, randiv_pad in list_scenarios_full(
         args.protocol,
         args.data_formats,
         args.dns_formats,
@@ -349,6 +355,7 @@ def main():
                         & (polars.col("network_setup") == stp)
                         & (polars.col("data_format") == data)
                         & (polars.col("dns_format") == dns)
+                        & (polars.col("randiv_pad") == int(randiv_pad != ""))
                         & (polars.col("vector_type") == args.vector_type)
                     ).select(["classifier", "classifier_args"]).collect().to_dicts()
                 ) == set(
@@ -395,6 +402,7 @@ def main():
                 )
                 if lf is None:
                     writer.writeheader()
+                    csvfile.flush()
                 for cls in CLASSIFIERS:
                     print(f"## {CLASSIFIER_READABLE[cls]}")
                     sys.stdout.flush()
@@ -417,6 +425,7 @@ def main():
                             & (polars.col("network_setup") == stp)
                             & (polars.col("data_format") == data)
                             & (polars.col("dns_format") == dns)
+                            & (polars.col("randiv_pad") == int(randiv_pad != ""))
                             & (polars.col("vector_type") == args.vector_type)
                             & (polars.col("classifier") == cls)
                             & (
@@ -453,12 +462,14 @@ def main():
                             "network_setup": stp,
                             "data_format": data,
                             "dns_format": dns,
+                            "randiv_pad": int(randiv_pad != ""),
                             "vector_type": args.vector_type,
                             "k": K,
                             "classifier": cls,
                             "classifier_args": str_classifier_args(
                                 cls
                             ),
+                            "job_id": job_id,
                             "fit_time": score["fit_time"].tolist(),
                             "score_time": score["score_time"].tolist(),
                             "accuracy": score["test_accuracy"].tolist(),
