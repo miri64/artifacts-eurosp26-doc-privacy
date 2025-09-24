@@ -71,7 +71,8 @@ export VENV="${INPUT_PATH}"/.env-cuml
 . "${VENV}"/bin/activate && \
   	pip install --upgrade uv &&
   	uv pip install --upgrade -r "${PWD}"/requirements.txt &&
-  	uv pip install --upgrade --extra-index-url=https://pypi.nvidia.com "cuml-cu12==25.6.*"
+  	pip install --upgrade --extra-index-url=https://pypi.nvidia.com "cuml-cu12==25.6.*"
+# installing from pypi.nvidia.com does not work with uv...
 
 srun "${PWD}"/cross_validate.sh -p coaps          -D "json" -v binvec : \
      "${PWD}"/cross_validate.sh -p coap -p https  -D "json" -v binvec : \

@@ -6,7 +6,7 @@
 # Distributed under terms of the MIT license.
 #
 
-while getopts ":p:D:d:l:n:r:v:" opt; do
+while getopts ":c:p:D:d:l:n:r:v:" opt; do
     case "${opt}" in
     c)  cls="${OPTARG}";;
     p)  prots="${prots}_${OPTARG}";;

@@ -345,7 +345,7 @@ def main():
                         (polars.col("protocol") == prot)
                         & (polars.col("link_layer") == LINK_LAYER_READABLE[l2])
                         & (polars.col("link_layer_mode") == LINK_LAYER_MODE_READABLE[l2_mode])
-                        & (polars.col("blocksize") == BLOCKWISE_READABLE[blk])
+                        & (polars.col("blocksize") == int(BLOCKWISE_READABLE[blk]))
                         & (polars.col("network_setup") == stp)
                         & (polars.col("data_format") == data)
                         & (polars.col("dns_format") == dns)
@@ -412,7 +412,7 @@ def main():
                             )
                             & (
                                 polars.col("blocksize")
-                                == BLOCKWISE_READABLE[blk]
+                                == int(BLOCKWISE_READABLE[blk])
                             )
                             & (polars.col("network_setup") == stp)
                             & (polars.col("data_format") == data)
@@ -449,7 +449,7 @@ def main():
                             "protocol": prot,
                             "link_layer": LINK_LAYER_READABLE[l2],
                             "link_layer_mode": LINK_LAYER_MODE_READABLE[l2_mode],
-                            "blocksize": BLOCKWISE_READABLE[blk],
+                            "blocksize": int(BLOCKWISE_READABLE[blk]),
                             "network_setup": stp,
                             "data_format": data,
                             "dns_format": dns,
