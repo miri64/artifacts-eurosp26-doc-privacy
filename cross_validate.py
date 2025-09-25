@@ -227,7 +227,6 @@ def str_classifier_args(classifier):
 def configure_cuml():
     if using_cuml:
         CLASSIFIERS.insert(3, "svm")
-        cuml.set_global_output_type("numpy")
         CLASSIFIER_ARGS["lr"]["max_iter"] = 5000
         del CLASSIFIER_ARGS["knn"]["n_jobs"]
         print("Using cuML")
