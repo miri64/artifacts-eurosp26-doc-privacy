@@ -10,6 +10,7 @@ import csv
 import functools
 import os
 import pathlib
+import psutil
 import multiprocessing
 import sys
 import time
@@ -207,7 +208,7 @@ def cross_validate_ab(x, y):
         del ab
 
 
-CROSS_VALIDITE = {
+CROSS_VALIDATE = {
     "lr": cross_validate_lr,
     "knn": cross_validate_knn,
     "svm": cross_validate_svm,
@@ -217,8 +218,19 @@ CROSS_VALIDITE = {
 }
 
 
+def process_memory():
+    process = psutil.Process(os.getpid())
+    mem_info = process.memory_info()
+    return mem_info.rss
+
+
 def str_classifier_args(classifier):
-    args = ",".join(f"{k}={v}" for k, v in CLASSIFIER_ARGS[classifier].items())
+    args = ",".join(
+        f"{k}={v}"
+        for k, v
+        in CLASSIFIER_ARGS[classifier].items()
+        if k != "output_type"
+    )
     if args:
         return args
     return None
@@ -227,6 +239,8 @@ def str_classifier_args(classifier):
 def configure_cuml():
     if using_cuml:
         CLASSIFIERS.insert(3, "svm")
+        # cuml.set_global_output_type("cupy")
+        CLASSIFIER_ARGS["svm"]["output_type"] = "numpy"
         CLASSIFIER_ARGS["lr"]["max_iter"] = 5000
         del CLASSIFIER_ARGS["knn"]["n_jobs"]
         print("Using cuML")
@@ -444,7 +458,10 @@ def main():
                         sys.stdout.flush()
                         continue
                     try:
-                        score = CROSS_VALIDITE[cls](x_minmax, y)
+                        mem_before = process_memory()
+                        score = CROSS_VALIDATE[cls](x_minmax, y)
+                        mem_after = process_memory()
+                        print(f" - Memory: {mem_before} => {mem_after}")
                         sys.stderr.flush()
                         sys.stdout.flush()
                     except (ValueError, MemoryError):
