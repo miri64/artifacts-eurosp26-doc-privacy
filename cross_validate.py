@@ -239,8 +239,8 @@ def str_classifier_args(classifier):
 def configure_cuml():
     if using_cuml:
         CLASSIFIERS.insert(3, "svm")
-        # cuml.set_global_output_type("cupy")
         CLASSIFIER_ARGS["svm"]["output_type"] = "numpy"
+        CLASSIFIER_ARGS["rf"]["output_type"] = "numpy"
         CLASSIFIER_ARGS["lr"]["max_iter"] = 5000
         del CLASSIFIER_ARGS["knn"]["n_jobs"]
         print("Using cuML")
@@ -355,7 +355,15 @@ def main():
 
         if results_file.exists():
             try:
-                lf = polars.scan_csv(results_file, separator=";").with_columns(
+                lf = polars.scan_csv(
+                    results_file,
+                    schema_overrides={
+                        "blocksize": polars.Int16,
+                        "network_setup": polars.String,
+                        "randiv_pad": polars.Int8,
+                    },
+                    separator=";",
+                ).with_columns(
                     (polars.col("link_layer_mode")).fill_null("")
                 )
                 if set(
@@ -371,7 +379,7 @@ def main():
                         & (polars.col("randiv_pad") == int(randiv_pad != ""))
                         & (polars.col("vector_type") == args.vector_type)
                     ).select(["classifier", "classifier_args"]).collect().to_dicts()
-                ) == set(
+                ) >= set(  # is superset
                     (c, str_classifier_args(c)) for c in CLASSIFIERS
                 ):
                     print(
@@ -462,9 +470,6 @@ def main():
                             try:
                                 mem_before = process_memory()
                                 score = CROSS_VALIDATE[cls](x_minmax, y)
-                            except MemoryError:
-                                del score
-                                raise
                             finally:
                                 mem_after = process_memory()
                                 print(f" - Memory: {mem_before} => {mem_after}")
