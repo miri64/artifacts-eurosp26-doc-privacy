@@ -458,17 +458,25 @@ def main():
                         sys.stdout.flush()
                         continue
                     try:
-                        mem_before = process_memory()
-                        score = CROSS_VALIDATE[cls](x_minmax, y)
-                        mem_after = process_memory()
-                        print(f" - Memory: {mem_before} => {mem_after}")
-                        sys.stderr.flush()
-                        sys.stdout.flush()
+                        try:
+                            mem_before = process_memory()
+                            score = CROSS_VALIDATE[cls](x_minmax, y)
+                        except MemoryError:
+                            del score
+                            raise
+                        finally:
+                            mem_after = process_memory()
+                            print(f" - Memory: {mem_before} => {mem_after}")
+                            sys.stderr.flush()
+                            sys.stdout.flush()
                     except (ValueError, MemoryError):
                         print(f"# {scenario}", file=sys.stderr)
                         traceback.print_exc(file=sys.stderr)
                         sys.stderr.flush()
                         continue
+                    finally:
+                        del x_minmax
+                        del y
                     writer.writerow(
                         {
                             "protocol": prot,
@@ -497,6 +505,7 @@ def main():
                         }
                     )
                     csvfile.flush()
+                    del score
         else:
             print(f"Skipping since {file} does not exist.")
             sys.stdout.flush()
