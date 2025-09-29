@@ -1,7 +1,12 @@
 aiocoap[all] @ git+https://github.com/miri64/aiocoap.git@oscore-patches
-psutil
-psycopg2
+cbor-diag==1.1.0
+cbor2==5.6.5
+cffi==1.17.1
+cryptography==45.0.4
+DTLSSocket==0.2.2
+psutil==7.0.0
+psycopg2==2.9.10
 
 # OpenSCHC dependencies
-kamene
-scapy
+kamene==0.32
+scapy==2.6.1
