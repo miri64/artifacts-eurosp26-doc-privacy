@@ -7,11 +7,9 @@
 
 import argparse
 import csv
-import functools
 import os
 import pathlib
 import psutil
-import multiprocessing
 import sys
 import time
 import traceback
@@ -22,12 +20,7 @@ import polars
 import polars.exceptions
 
 from list_scenarios import (
-    list_scenarios_full,
-    PROTOCOLS,
-    DATA_FORMATS,
-    DNS_FORMATS,
-    LINK_LAYERS,
-    NETWORK_SETUPS,
+    parse_scenario_name,
 )
 
 try:
@@ -250,271 +243,208 @@ def main():
     global CLASSIFIERS
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "-p",
-        "--protocol",
-        help="Protocol to train for (default: all)",
-        nargs="+",
-        action="append",
-        default=None,
-        choices=PROTOCOLS,
-    )
-    parser.add_argument(
-        "-D",
-        "--data-formats",
-        help="Data format to train for (default: all)",
-        nargs="+",
-        action="append",
-        default=None,
-        choices=DATA_FORMATS,
-    )
-    parser.add_argument(
-        "-d",
-        "--dns-formats",
-        help="DNS format to train for (default: all)",
-        nargs="+",
-        action="append",
-        default=None,
-        choices=DNS_FORMATS,
-    )
-    parser.add_argument(
-        "-l",
-        "--link-layer",
-        help="Link layer to train for (default: all)",
-        nargs="+",
-        action="append",
-        default=None,
-        choices=LINK_LAYER_READABLE.values(),
-    )
-    parser.add_argument(
-        "-n",
-        "--network-setups",
-        help="Network setup to train for (default: all)",
-        nargs="+",
-        action="append",
-        default=None,
-        choices=NETWORK_SETUPS,
-    )
-    parser.add_argument(
-        "-c",
-        "--classifier",
-        help="Classifier to use for training (default: all)",
-        default=None,
-        choices=CLASSIFIERS,
-    )
-    parser.add_argument(
         "-v",
         "--vector-type",
         help="Vector type to train for (default: \"binvec\")",
         default="binvec",
         choices=["binvec", "word2vec"],
     )
+    parser.add_argument(
+        "scenario",
+        help="Scenario name for scenario to evaluate",
+    )
+    parser.add_argument(
+        "classifier",
+        help="Classifier to use for evaluation",
+        choices=CLASSIFIERS,
+    )
     args = parser.parse_args()
 
-    if args.network_setups is not None:
-        args.network_setups = list(functools.reduce(lambda x, y: x + y, args.network_setups, []))
-    if args.protocol is not None:
-        args.protocol = list(functools.reduce(lambda x, y: x + y, args.protocol, []))
-    if args.data_formats is not None:
-        args.data_formats = list(functools.reduce(lambda x, y: x + y, args.data_formats, []))
-    if args.dns_formats is not None:
-        args.dns_formats = list(functools.reduce(lambda x, y: x + y, args.dns_formats, []))
-    if args.link_layer is not None:
-        args.link_layer = list(functools.reduce(lambda x, y: x + y, args.link_layer, []))
-        args.link_layer = [
-            {v: k for k, v in LINK_LAYER_READABLE.items()}[l]
-            for l in args.link_layer
-        ]
 
     configure_cuml()
-    if args.classifier is not None:
-        if args.classifier not in CLASSIFIERS and args.classifier != "ab":
-            raise ValueError(
-                f"{args.classifier} not supported for your module configuration. "
-                "(It might work with cuML.)"
-            )
-        CLASSIFIERS = [args.classifier]
     if "SLURM_JOB_ID" in os.environ:
         job_id = os.environ["SLURM_JOB_ID"]
     else:
         job_id = None
     start = time.time()
-    for scenario, prot, l2, stp, l2_mode, data, dns, blk, randiv_pad in list_scenarios_full(
-        args.protocol,
-        args.data_formats,
-        args.dns_formats,
-        args.link_layer,
-        args.network_setups,
-    ):
-        print(f"# {scenario}")
-        sys.stdout.flush()
-        file = INPUT_PATH / f"{scenario}.{args.vector_type}.parquet"
-        if args.classifier is None:
-            results_file = INPUT_PATH / f"{scenario}.{args.vector_type}.cross_val.csv"
-        else:
-            results_file = INPUT_PATH / f"{scenario}.{args.vector_type}.{args.classifier}.cross_val.csv"
 
-        if results_file.exists():
-            try:
-                lf = polars.scan_csv(
-                    results_file,
-                    schema_overrides={
-                        "blocksize": polars.Int16,
-                        "network_setup": polars.String,
-                        "randiv_pad": polars.Int8,
-                    },
-                    separator=";",
-                ).with_columns(
-                    (polars.col("link_layer_mode")).fill_null("")
+    (
+        prot,
+        l2,
+        stp,
+        l2_mode,
+        data,
+        dns,
+        blk,
+        randiv_pad,
+    ) = parse_scenario_name(args.scenario)
+
+    print(f"# {args.scenario}")
+    sys.stdout.flush()
+    file = INPUT_PATH / f"{args.scenario}.{args.vector_type}.parquet"
+    results_file = INPUT_PATH / f"{args.scenario}.{args.vector_type}.{args.classifier}.cross_val.csv"
+
+    if results_file.exists():
+        try:
+            lf = polars.scan_csv(
+                results_file,
+                schema_overrides={
+                    "blocksize": polars.Int16,
+                    "network_setup": polars.String,
+                    "randiv_pad": polars.Int8,
+                },
+                separator=";",
+            ).with_columns(
+                (polars.col("link_layer_mode")).fill_null("")
+            )
+            if set(
+                tuple(d.values())
+                for d in lf.filter(
+                    (polars.col("protocol") == prot)
+                    & (polars.col("link_layer") == LINK_LAYER_READABLE[l2])
+                    & (polars.col("link_layer_mode") == LINK_LAYER_MODE_READABLE[l2_mode])
+                    & (polars.col("blocksize") == int(BLOCKWISE_READABLE[blk]))
+                    & (polars.col("network_setup") == stp)
+                    & (polars.col("data_format") == data)
+                    & (polars.col("dns_format") == dns)
+                    & (polars.col("randiv_pad") == int(randiv_pad != ""))
+                    & (polars.col("vector_type") == args.vector_type)
+                ).select(["classifier", "classifier_args"]).collect().to_dicts()
+            ) >= set(  # is superset
+                (c, str_classifier_args(c)) for c in CLASSIFIERS
+            ):
+                print(
+                    " - Skipping since results for all classifiers "
+                    f"are in {results_file.relative_to(INPUT_PATH)}"
                 )
-                if set(
-                    tuple(d.values())
-                    for d in lf.filter(
+                sys.stdout.flush()
+                return 128
+        except polars.exceptions.NoDataError:
+            lf = None
+    else:
+        lf = None
+
+    if file.exists():
+        lf_vec = polars.scan_parquet(file)
+        max_length = lf_vec.select("vector").with_columns(
+            polars.col("vector").list.len()
+        ).max().collect().item()
+        df_vec = lf_vec.cast(
+            {
+                "vector": polars.Array(
+                    polars.Int8
+                    if args.vector_type == "binvec"
+                    else polars.Float32,
+                    max_length,
+                )
+            }
+        ).select("vector", "label").collect()
+        x = df_vec["vector"].to_numpy()
+        y = df_vec["label"].to_numpy()
+        del df_vec
+        del lf_vec
+        scaler = sk_pp.MinMaxScaler()
+        x_minmax = scaler.fit_transform(x)
+        del x
+        try:
+            with open(
+                results_file, "w" if lf is None else "a"
+            ) as csvfile:
+                writer = csv.DictWriter(
+                    csvfile, fieldnames=FIELD_NAMES, delimiter=";"
+                )
+                if lf is None:
+                    writer.writeheader()
+                    csvfile.flush()
+                print(f"## {CLASSIFIER_READABLE[args.classifier]}")
+                sys.stdout.flush()
+                if (
+                    lf is not None
+                    and not lf.filter(
                         (polars.col("protocol") == prot)
-                        & (polars.col("link_layer") == LINK_LAYER_READABLE[l2])
-                        & (polars.col("link_layer_mode") == LINK_LAYER_MODE_READABLE[l2_mode])
-                        & (polars.col("blocksize") == int(BLOCKWISE_READABLE[blk]))
+                        & (
+                            polars.col("link_layer")
+                            == LINK_LAYER_READABLE[l2]
+                        )
+                        & (
+                            polars.col("link_layer_mode")
+                            == LINK_LAYER_MODE_READABLE[l2_mode]
+                        )
+                        & (
+                            polars.col("blocksize")
+                            == int(BLOCKWISE_READABLE[blk])
+                        )
                         & (polars.col("network_setup") == stp)
                         & (polars.col("data_format") == data)
                         & (polars.col("dns_format") == dns)
                         & (polars.col("randiv_pad") == int(randiv_pad != ""))
                         & (polars.col("vector_type") == args.vector_type)
-                    ).select(["classifier", "classifier_args"]).collect().to_dicts()
-                ) >= set(  # is superset
-                    (c, str_classifier_args(c)) for c in CLASSIFIERS
+                        & (polars.col("classifier") == args.classifier)
+                        & (
+                            (
+                                polars.col("classifier_args")
+                                == str_classifier_args(args.classifier)
+                            )
+                            if str_classifier_args(args.classifier)
+                            else polars.col("classifier_args").is_null()
+                        )
+                    ).collect().is_empty()
                 ):
                     print(
-                        " - Skipping since results for all classifiers "
-                        f"are in {results_file.relative_to(INPUT_PATH)}"
+                        " - Skipping since it is already in",
+                        results_file.relative_to(INPUT_PATH),
                     )
                     sys.stdout.flush()
-                    continue
-            except polars.exceptions.NoDataError:
-                lf = None
-        else:
-            lf = None
-
-        if file.exists():
-            lf_vec = polars.scan_parquet(file)
-            max_length = lf_vec.select("vector").with_columns(
-                polars.col("vector").list.len()
-            ).max().collect().item()
-            df_vec = lf_vec.cast(
-                {
-                    "vector": polars.Array(
-                        polars.Int8
-                        if args.vector_type == "binvec"
-                        else polars.Float32,
-                        max_length,
-                    )
-                }
-            ).select("vector", "label").collect()
-            x = df_vec["vector"].to_numpy()
-            y = df_vec["label"].to_numpy()
-            del df_vec
-            del lf_vec
-            scaler = sk_pp.MinMaxScaler()
-            x_minmax = scaler.fit_transform(x)
-            del x
-            try:
-                with open(
-                    results_file, "w" if lf is None else "a"
-                ) as csvfile:
-                    writer = csv.DictWriter(
-                        csvfile, fieldnames=FIELD_NAMES, delimiter=";"
-                    )
-                    if lf is None:
-                        writer.writeheader()
-                        csvfile.flush()
-                    for cls in CLASSIFIERS:
-                        print(f"## {CLASSIFIER_READABLE[cls]}")
+                    return 0
+                try:
+                    try:
+                        mem_before = process_memory()
+                        score = CROSS_VALIDATE[args.classifier](x_minmax, y)
+                    finally:
+                        mem_after = process_memory()
+                        print(f" - Memory: {mem_before} => {mem_after}")
+                        sys.stderr.flush()
                         sys.stdout.flush()
-                        if (
-                            lf is not None
-                            and not lf.filter(
-                                (polars.col("protocol") == prot)
-                                & (
-                                    polars.col("link_layer")
-                                    == LINK_LAYER_READABLE[l2]
-                                )
-                                & (
-                                    polars.col("link_layer_mode")
-                                    == LINK_LAYER_MODE_READABLE[l2_mode]
-                                )
-                                & (
-                                    polars.col("blocksize")
-                                    == int(BLOCKWISE_READABLE[blk])
-                                )
-                                & (polars.col("network_setup") == stp)
-                                & (polars.col("data_format") == data)
-                                & (polars.col("dns_format") == dns)
-                                & (polars.col("randiv_pad") == int(randiv_pad != ""))
-                                & (polars.col("vector_type") == args.vector_type)
-                                & (polars.col("classifier") == cls)
-                                & (
-                                    (
-                                        polars.col("classifier_args")
-                                        == str_classifier_args(cls)
-                                    )
-                                    if str_classifier_args(cls)
-                                    else polars.col("classifier_args").is_null()
-                                )
-                            ).collect().is_empty()
-                        ):
-                            print(
-                                " - Skipping since it is already in",
-                                results_file.relative_to(INPUT_PATH),
-                            )
-                            sys.stdout.flush()
-                            continue
-                        try:
-                            try:
-                                mem_before = process_memory()
-                                score = CROSS_VALIDATE[cls](x_minmax, y)
-                            finally:
-                                mem_after = process_memory()
-                                print(f" - Memory: {mem_before} => {mem_after}")
-                                sys.stderr.flush()
-                                sys.stdout.flush()
-                        except (ValueError, MemoryError):
-                            print(f"# {scenario}", file=sys.stderr)
-                            traceback.print_exc(file=sys.stderr)
-                            sys.stderr.flush()
-                            continue
-                        writer.writerow(
-                            {
-                                "protocol": prot,
-                                "link_layer": LINK_LAYER_READABLE[l2],
-                                "link_layer_mode": LINK_LAYER_MODE_READABLE[l2_mode],
-                                "blocksize": int(BLOCKWISE_READABLE[blk]),
-                                "network_setup": stp,
-                                "data_format": data,
-                                "dns_format": dns,
-                                "randiv_pad": int(randiv_pad != ""),
-                                "vector_type": args.vector_type,
-                                "k": K,
-                                "classifier": cls,
-                                "classifier_args": str_classifier_args(
-                                    cls
-                                ),
-                                "job_id": job_id,
-                                "fit_time": score["fit_time"].tolist(),
-                                "score_time": score["score_time"].tolist(),
-                                "accuracy": score["test_accuracy"].tolist(),
-                                "precision": score["test_precision"].tolist(),
-                                "recall": score["test_recall"].tolist(),
-                                "f1_score": score["test_f1"].tolist(),
-                                "balanced_accuracy": score["test_balanced_accuracy"].tolist(),
-                                "roc_auc": score["test_roc_auc"].tolist(),
-                            }
-                        )
-                        csvfile.flush()
-                        del score
-            finally:
-                del x_minmax
-                del y
-        else:
-            print(f"Skipping since {file} does not exist.")
-            sys.stdout.flush()
+                except (ValueError, MemoryError):
+                    print(f"# {args.scenario}", file=sys.stderr)
+                    traceback.print_exc(file=sys.stderr)
+                    sys.stderr.flush()
+                    return 0
+                writer.writerow(
+                    {
+                        "protocol": prot,
+                        "link_layer": LINK_LAYER_READABLE[l2],
+                        "link_layer_mode": LINK_LAYER_MODE_READABLE[l2_mode],
+                        "blocksize": int(BLOCKWISE_READABLE[blk]),
+                        "network_setup": stp,
+                        "data_format": data,
+                        "dns_format": dns,
+                        "randiv_pad": int(randiv_pad != ""),
+                        "vector_type": args.vector_type,
+                        "k": K,
+                        "classifier": args.classifier,
+                        "classifier_args": str_classifier_args(
+                            args.classifier
+                        ),
+                        "job_id": job_id,
+                        "fit_time": score["fit_time"].tolist(),
+                        "score_time": score["score_time"].tolist(),
+                        "accuracy": score["test_accuracy"].tolist(),
+                        "precision": score["test_precision"].tolist(),
+                        "recall": score["test_recall"].tolist(),
+                        "f1_score": score["test_f1"].tolist(),
+                        "balanced_accuracy": score["test_balanced_accuracy"].tolist(),
+                        "roc_auc": score["test_roc_auc"].tolist(),
+                    }
+                )
+                csvfile.flush()
+                del score
+        finally:
+            del x_minmax
+            del y
+    else:
+        print(f"Skipping since {file} does not exist.")
+        sys.stdout.flush()
     stop = time.time()
     print(f"# Duration {stop - start:.0f}\n")
     print(f"- start: {start:.03f}")
@@ -523,4 +453,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
