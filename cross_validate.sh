@@ -12,6 +12,11 @@ INPUT_PATH="${INPUT_PATH:-${SCRIPT_DIR}/output_dataset}"
 CLASSIFIERS=(
     "lr"
     "knn"
+    # Our datasets have >4.7 billion (> 2 * 120699 * 1219 * 16) samples for which SVM
+    # does not scale (not recommended for >1 million, 10-100k samples are best, see
+    # https://github.com/scikit-learn/scikit-learn/issues/18027#issuecomment-800873636
+    # ).For our particular datasets it crashes due to Int32 overflow error.
+    # We keep the code for smaller samples and CUDA though.
     "svm"
     "dt"
     "rf"

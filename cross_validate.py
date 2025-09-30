@@ -74,12 +74,7 @@ SCORINGS = [
 CLASSIFIERS = [
     "lr",
     "knn",
-    # # Our datasets have >4.7 billion (> 2 * 120699 * 1219 * 16) samples for which SVM
-    # # does not scale (not recommended for >1 million, 10-100k samples are best, see
-    # # https://github.com/scikit-learn/scikit-learn/issues/18027#issuecomment-800873636
-    # # ).For our particular datasets it crashes due to Int32 overflow error.
-    # # We keep the code for smaller samples though.
-    # "svm",
+    "svm",
     "dt",
     "rf",
     "ab",
@@ -231,7 +226,6 @@ def str_classifier_args(classifier):
 
 def configure_cuml():
     if using_cuml:
-        CLASSIFIERS.insert(3, "svm")
         CLASSIFIER_ARGS["svm"]["output_type"] = "numpy"
         CLASSIFIER_ARGS["rf"]["output_type"] = "numpy"
         CLASSIFIER_ARGS["lr"]["max_iter"] = 5000
