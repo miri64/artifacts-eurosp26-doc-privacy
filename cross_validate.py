@@ -23,38 +23,6 @@ from list_scenarios import (
     parse_scenario_name,
 )
 
-try:
-    if int(os.environ.get("FORCE_SKLEARN", "0")):
-        raise ImportError(f"FORCE_SKLEARN={os.environ['FORCE_SKLEARN']}")
-    from cuml import ensemble as sk_ensemble
-    from cuml import linear_model as sk_linear_model
-    from cuml import neighbors as sk_neighbors
-    from cuml import preprocessing as sk_pp
-    from cuml import svm as sk_svm
-    import cuml
-    using_cuml = True
-except ImportError as exc:
-    print("Unable to import cuML falling back to sklearn", file=sys.stderr)
-    traceback.print_exc()
-
-    # prevent OpenBLAS to crash when using sklearn's KNN
-    os.environ['OPENBLAS_NUM_THREADS'] = "64"
-    os.environ['MKL_NUM_THREADS'] = "64"
-    os.environ['OMP_NUM_THREADS'] = "64"
-
-    from sklearn import ensemble as sk_ensemble
-    from sklearn.exceptions import ConvergenceWarning
-    from sklearn import linear_model as sk_linear_model
-    from sklearn import neighbors as sk_neighbors
-    from sklearn import preprocessing as sk_pp
-    from sklearn import svm as sk_svm
-    using_cuml = False
-
-
-from sklearn.ensemble import AdaBoostClassifier
-from sklearn import model_selection as sk_model_selection
-from sklearn import tree as sk_tree
-
 
 EVALUATION_DIR = pathlib.Path.cwd()
 INPUT_PATH = pathlib.Path(
@@ -225,6 +193,41 @@ def str_classifier_args(classifier):
 
 
 def configure_cuml():
+    sklearn = __import__("sklearn")
+    globals()["AdaBoostClassifier"] = sklearn.ensemble.AdaBoostClassifier
+
+    try:
+        if int(os.environ.get("FORCE_SKLEARN", "0")):
+            raise ImportError(f"FORCE_SKLEARN={os.environ['FORCE_SKLEARN']}")
+
+        cuml = __import__("cuml")
+        globals()["cuml"] = cuml
+        globals()["sk_ensemble"] = cuml.ensemble
+        globals()["sk_linear_model"] = cuml.linear_model
+        globals()["sk_neighbors"] = cuml.neighbors
+        globals()["sk_pp"] = cuml.preprocessing
+        globals()["sk_svm"] = cuml.svm
+        using_cuml = True
+    except ImportError as exc:
+        print("Unable to import cuML falling back to sklearn", file=sys.stderr)
+        traceback.print_exc()
+
+        # prevent OpenBLAS to crash when using sklearn's KNN
+        os.environ['OPENBLAS_NUM_THREADS'] = "64"
+        os.environ['MKL_NUM_THREADS'] = "64"
+        os.environ['OMP_NUM_THREADS'] = "64"
+
+        globals()["sk_ensemble"] = sklearn.ensemble
+        globals()["ConvergenceWarning"] = sklearn.exceptions.ConvergenceWarning
+        globals()["sk_linear_model"] = sklearn.linear_model
+        globals()["sk_neighbors"] = sklearn.neighbors
+        globals()["sk_pp"] = sklearn.preprocessing
+        globals()["sk_svm"] = sklearn.svm
+        using_cuml = False
+
+    globals()["sk_model_selection"] = sklearn.model_selection
+    globals()["sk_tree"] = sklearn.tree
+
     if using_cuml:
         CLASSIFIER_ARGS["svm"]["output_type"] = "numpy"
         CLASSIFIER_ARGS["rf"]["output_type"] = "numpy"
@@ -254,6 +257,8 @@ def main():
     )
     args = parser.parse_args()
 
+    print(f"# {args.scenario}")
+    sys.stdout.flush()
 
     configure_cuml()
     if "SLURM_JOB_ID" in os.environ:
@@ -261,7 +266,6 @@ def main():
     else:
         job_id = None
     start = time.time()
-
     (
         prot,
         l2,
@@ -273,8 +277,6 @@ def main():
         randiv_pad,
     ) = parse_scenario_name(args.scenario)
 
-    print(f"# {args.scenario}")
-    sys.stdout.flush()
     file = INPUT_PATH / f"{args.scenario}.{args.vector_type}.parquet"
     results_file = INPUT_PATH / f"{args.scenario}.{args.vector_type}.{args.classifier}.cross_val.csv"
 
