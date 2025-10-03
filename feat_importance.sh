@@ -8,9 +8,9 @@
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "$(realpath "$0")" )" &> /dev/null && pwd )
 PROCS=$(grep -c '^processor' /proc/cpuinfo)
-if [ $PROCS -gt 8 ]; then
+if [ $PROCS -gt 4 ]; then
     # Cap to keep in memory limits
-    PROCS=8
+    PROCS=4
 fi
 INPUT_PATH="${INPUT_PATH:-${SCRIPT_DIR}/output_dataset}"
 
