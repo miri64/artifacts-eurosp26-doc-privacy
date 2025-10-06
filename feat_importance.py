@@ -42,8 +42,6 @@ INPUT_PATH = pathlib.Path(
     os.environ.get("INPUT_PATH", EVALUATION_DIR / "output_dataset")
 )
 
-TEST_SIZE = 0.2
-
 CLASSIFIERS = [
     "dt",
     "rf",
@@ -61,7 +59,6 @@ FIELD_NAMES = [
     "vector_type",
     "classifier",
     "classifier_args",
-    "test_size",
     "job_id",
     "start",
     "stop",
@@ -214,7 +211,6 @@ def main():
                     "blocksize": polars.Int16,
                     "network_setup": polars.String,
                     "randiv_pad": polars.Int8,
-                    "test_size": polars.Float32,
                 },
                 separator=";",
             ).with_columns(
@@ -232,7 +228,6 @@ def main():
                     & (polars.col("dns_format") == dns)
                     & (polars.col("randiv_pad") == int(randiv_pad != ""))
                     & (polars.col("vector_type") == args.vector_type)
-                    & (polars.col("test_size") == TEST_SIZE)
                 ).select(["classifier", "classifier_args"]).collect().to_dicts()
             ) >= set(  # is superset
                 (c, str_classifier_args(c)) for c in CLASSIFIERS
@@ -312,7 +307,6 @@ def main():
                             if str_classifier_args(args.classifier)
                             else polars.col("classifier_args").is_null()
                         )
-                        & (polars.col("test_size") == TEST_SIZE)
                     ).collect().is_empty()
                 ):
                     print(
