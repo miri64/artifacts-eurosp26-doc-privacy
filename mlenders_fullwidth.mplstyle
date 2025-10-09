@@ -4,12 +4,12 @@ axes.labelpad : 0.25
 axes.labelsize : x-small
 figure.facecolor : none
 # @ textwidth, textwidth / phi / 2
-figure.figsize : 7.00697, 2.165272809075425
+figure.figsize : 6.76904, 2.091748395603794
 figure.subplot.hspace : 0.005
 figure.subplot.wspace : 0.005
 font.family : serif
-font.serif : "Linux Libertine O"
-font.size : 9.0
+# font.serif : "Linux Libertine O"
+font.size : 10.0
 grid.linestyle : solid
 grid.linewidth : 0.5
 grid.alpha : 0.6

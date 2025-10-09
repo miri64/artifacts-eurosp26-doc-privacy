@@ -4,7 +4,7 @@ axes.labelpad : 0.25
 axes.labelsize : x-small
 figure.facecolor : none
 # @ columnwidth, columnwidth / phi / 2
-figure.figsize :  3.3374, 1.0313133170269495
+figure.figsize :  3.25949, 1.0072378029951974
 figure.subplot.hspace : 0.005
 figure.subplot.wspace : 0.005
 font.family : serif
