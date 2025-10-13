@@ -34,7 +34,7 @@ INPUT_PATH = pathlib.Path(
 )
 
 TEST_SIZE = 0.2
-REPEATS = 3
+REPEATS = 1
 SCORINGS = [
     "accuracy",
     "precision",
@@ -73,8 +73,8 @@ FIELD_NAMES = [
     "precision_std",
     "recall_mean",
     "recall_std",
-    "f1_score_mean",
-    "f1_score_std",
+    "f1_mean",
+    "f1_std",
     "balanced_accuracy_mean",
     "balanced_accuracy_std",
     "roc_auc_mean",
@@ -479,7 +479,7 @@ def main():
                                 ("dns_format", dns),
                                 ("randiv_pad", int(randiv_pad != "")),
                                 ("vector_type", args.vector_type),
-                                "classifier", args.classifier,
+                                ("classifier", args.classifier),
                                 (
                                     "classifier_args",
                                     str_classifier_args(
