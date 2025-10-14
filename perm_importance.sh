@@ -7,20 +7,29 @@
 #
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "$(realpath "$0")" )" &> /dev/null && pwd )
-PROCS=$(grep -c '^processor' /proc/cpuinfo)
-if [ $PROCS -gt 6 ]; then
-    # Cap to keep in memory limits
-    PROCS=6
-fi
+VENV=${VENV:-"${SCRIPT_DIR}"/.env}
 INPUT_PATH="${INPUT_PATH:-${SCRIPT_DIR}/output_dataset}"
+vec="binvec"
+cls="rf"
+args=""
 
-perm_importance() {
-    export POLARS_FORCE_NEW_STREAMING=1
-    export INPUT_PATH
-    ./perm_importance.py "$1"
-}
 
-export -f perm_importance
-export INPUT_PATH
-echo "Running on ${PROCS} workers"
-./list_scenarios.py -r $* | parallel -j "${PROCS}" perm_importance
+while getopts ":c:D:d:l:n:p:rv:" opt; do
+    case "${opt}" in
+    c)  cls="${OPTARG}";;
+    p)  prots="${prots}_${OPTARG}"; args="${args} -p ${OPTARG}";;
+    D)  data="${data}_${OPTARG}"; args="${args} -D ${OPTARG}";;
+    d)  dns="${dns}_${OPTARG}"; args="${args} -d ${OPTARG}";;
+    l)  link_layer="${link_layer}_${OPTARG}"; args="${args} -l ${OPTARG}";;
+    n)  network_setups="${network_setups}_${OPTARG}"; args="${args} -n ${OPTARG}";;
+    r)  args="${args} -r";;
+    v)  vec="${OPTARG}";;
+    *)  prots="${prots}_${OPTARG}"; args="${args} -p ${OPTARG}";;
+    esac
+done
+
+export POLARS_FORCE_NEW_STREAMING=1
+
+"${VENV}"/bin/python "${SCRIPT_DIR}"/list_scenarios.py $args | while read scenario; do
+    "${VENV}"/bin/python "${SCRIPT_DIR}"/perm_importance.py -c "${cls}" -v "${vec}" "${scenario}"
+done &> "${INPUT_PATH}/perm_importance_${cls}_${step}${prots}${network_setups}${link_layer}${data}${dns}_${vec}_${SLURM_JOB_ID}.log"
