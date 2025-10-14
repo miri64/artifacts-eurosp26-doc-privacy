@@ -185,6 +185,12 @@ def main():
         default=None,
         choices=NETWORK_SETUPS,
     )
+    parser.add_argument(
+        "-r",
+        "--filter-randiv-pad",
+        help="Filter out synthetic runs with random IV and padding",
+        action="store_true",
+    )
     args = parser.parse_args()
 
     if args.network_setups is not None:
@@ -208,6 +214,7 @@ def main():
         args.dns_formats,
         args.link_layer,
         args.network_setups,
+        args.filter_randiv_pad,
     ):
         print(scenario)
 

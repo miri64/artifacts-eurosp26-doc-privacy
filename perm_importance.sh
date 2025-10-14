@@ -8,9 +8,9 @@
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "$(realpath "$0")" )" &> /dev/null && pwd )
 PROCS=$(grep -c '^processor' /proc/cpuinfo)
-if [ $PROCS -gt 4 ]; then
+if [ $PROCS -gt 6 ]; then
     # Cap to keep in memory limits
-    PROCS=4
+    PROCS=6
 fi
 INPUT_PATH="${INPUT_PATH:-${SCRIPT_DIR}/output_dataset}"
 
@@ -23,4 +23,4 @@ perm_importance() {
 export -f perm_importance
 export INPUT_PATH
 echo "Running on ${PROCS} workers"
-./list_scenarios.py $* | parallel -j "${PROCS}" perm_importance
+./list_scenarios.py -r $* | parallel -j "${PROCS}" perm_importance

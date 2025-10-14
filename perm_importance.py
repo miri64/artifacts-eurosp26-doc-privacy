@@ -9,7 +9,9 @@ import argparse
 import contextlib
 import csv
 import functools
+import itertools
 import os
+import numbers
 import pathlib
 import psutil
 import multiprocessing
@@ -27,6 +29,8 @@ from list_scenarios import (
     parse_scenario_name,
 )
 
+import sklearn.inspection._permutation_importance as sk_perm_imp
+
 
 EVALUATION_DIR = pathlib.Path.cwd()
 INPUT_PATH = pathlib.Path(
@@ -34,14 +38,14 @@ INPUT_PATH = pathlib.Path(
 )
 
 TEST_SIZE = 0.2
-REPEATS = 1
+REPEATS = 2
 SCORINGS = [
     "accuracy",
-    "precision",
-    "recall",
+    # "precision",
+    # "recall",
     "f1",
-    "balanced_accuracy",
-    "roc_auc",
+    # "balanced_accuracy",
+    # "roc_auc",
 ]
 CLASSIFIERS = [
     "lr",
@@ -247,7 +251,6 @@ def configure_cuml():
         globals()["sk_svm"] = sklearn.svm
         using_cuml = False
 
-    globals()["sk_inspection"] = sklearn.inspection
     globals()["sk_model_selection"] = sklearn.model_selection
     globals()["sk_tree"] = sklearn.tree
 
@@ -259,6 +262,109 @@ def configure_cuml():
         print("Using cuML")
 
 
+@sk_perm_imp.validate_params(
+    {
+        "estimator": [sk_perm_imp.HasMethods(["fit"])],
+        "X": ["array-like"],
+        "y": ["array-like", None],
+        "scoring": [
+            sk_perm_imp.StrOptions(set(sk_perm_imp.get_scorer_names())),
+            callable,
+            list,
+            tuple,
+            dict,
+            None,
+        ],
+        "n_repeats": [
+            sk_perm_imp.Interval(sk_perm_imp.Integral, 1, None, closed="left")
+        ],
+        "random_state": ["random_state"],
+        "sample_weight": ["array-like", None],
+        "max_samples": [
+            sk_perm_imp.Interval(sk_perm_imp.Integral, 1, None, closed="left"),
+            sk_perm_imp.Interval(sk_perm_imp.RealNotInt, 0, 1, closed="right"),
+        ],
+    },
+    prefer_skip_nested_validation=True,
+)
+def permutation_importance(
+    estimator,
+    X,
+    y,
+    *,
+    scoring=None,
+    n_repeats=1,
+    random_state=None,
+    sample_weight=None,
+    max_samples=1.0,
+    slice_bytes=True,
+):
+    """
+    Except for using slice for col_idx to permute over whole bytes for eth scenarios
+    and not using Parallel + delayed due to memory constraints,
+    this is a 1:1 copy of
+    https://github.com/scikit-learn/scikit-learn/blob/bde39c1afc8/sklearn/inspection/_permutation_importance.py#L114C1-L313
+    """
+    random_state = sk_perm_imp.check_random_state(random_state)
+    random_seed = random_state.randint(numpy.iinfo(numpy.int32).max + 1)
+
+    if not isinstance(max_samples, numbers.Integral):
+        max_samples = int(max_samples * X.shape[0])
+    elif max_samples > X.shape[0]:
+        raise ValueError("max_samples must be <= n_samples")
+
+    scorer = sk_perm_imp.check_scoring(estimator, scoring=scoring)
+    baseline_score = sk_perm_imp._weights_scorer(scorer, estimator, X, y, sample_weight)
+
+    if slice_bytes:
+        scores = [
+            sk_perm_imp._calculate_permutation_scores(
+                estimator,
+                X,
+                y,
+                sample_weight,
+                slice(col_idx, col_idx + 8),
+                random_seed,
+                n_repeats,
+                scorer,
+                max_samples,
+            )
+            for col_idx in range(0, X.shape[1], 8)
+        ]
+        # fill to original size of X.shape[1]
+        scores = list(itertools.chain.from_iterable([[s] * 8 for s in scores]))
+    else:
+        scores = [
+            sk_perm_imp._calculate_permutation_scores(
+                estimator,
+                X,
+                y,
+                sample_weight,
+                col_idx,
+                random_seed,
+                n_repeats,
+                scorer,
+                max_samples,
+            )
+            for col_idx in range(X.shape[1])
+        ]
+
+    if isinstance(baseline_score, dict):
+        return {
+            name: sk_perm_imp._create_importances_bunch(
+                baseline_score[name],
+                # unpack the permuted scores
+                numpy.array([scores[col_idx][name] for col_idx in range(X.shape[1])]),
+            )
+            for name in baseline_score
+        }
+    else:
+        return sk_perm_imp._create_importances_bunch(
+            baseline_score,
+            numpy.array(scores)
+        )
+
+
 def main():
     global CLASSIFIERS
     parser = argparse.ArgumentParser()
@@ -268,17 +374,6 @@ def main():
         help="Classifier to use",
         default="rf",
         choices=CLASSIFIERS,
-    )
-    parser.add_argument(
-        "-j",
-        "--jobs",
-        help="n_jobs for pemutation_importance(). See "
-        "https://scikit-learn.org/stable/modules/generated/sklearn."
-        "inspection.permutation_importance.html"
-        "#sklearn.inspection.permutation_importance "
-        f"(default: {REPEATS})",
-        default=REPEATS,
-        type=int,
     )
     parser.add_argument(
         "-v",
@@ -296,7 +391,6 @@ def main():
     print(f"# {args.scenario}")
     sys.stdout.flush()
 
-    configure_cuml()
     if "SLURM_JOB_ID" in os.environ:
         job_id = os.environ["SLURM_JOB_ID"]
     else:
@@ -376,6 +470,7 @@ def main():
         y = df_vec["label"].to_numpy()
         del df_vec
         del lf_vec
+        configure_cuml()
         scaler = sk_pp.MinMaxScaler()
         x_minmax = scaler.fit_transform(x)
         del x
@@ -446,14 +541,14 @@ def main():
                     start = int(time.time())
                     try:
                         with FIT[args.classifier](x_train, y_train) as model:
-                            result = sk_inspection.permutation_importance(
+                            result = permutation_importance(
                                 model,
                                 x_test,
                                 y_test,
                                 n_repeats=REPEATS,
                                 random_state=RANDOM_SEED,
-                                n_jobs=args.jobs,
                                 scoring=SCORINGS,
+                                slice_bytes=not l2,
                             )
                     finally:
                         stop = int(time.time())
@@ -510,7 +605,7 @@ def main():
                     ]
                 )
                 csvfile.flush()
-                del results
+                del result
         finally:
             del x_train
             del x_test
