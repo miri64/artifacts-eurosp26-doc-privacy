@@ -130,20 +130,20 @@ export VENV="${INPUT_PATH}"/.env-cuml
   	pip install --upgrade --extra-index-url=https://pypi.nvidia.com "cuml-cu12==25.6.*"
 # installing from pypi.nvidia.com does not work with uv...
 
-srun "${PWD}"/cross_validate.sh -r -c rf -p coaps          -D "json" -d "dns_message" -v binvec : \
-     "${PWD}"/cross_validate.sh -r -c rf -p coap -p https  -D "json" -d "dns_message" -v binvec : \
-     "${PWD}"/cross_validate.sh -r -c rf -p oscore         -D "json" -d "dns_message" -v binvec : \
-     "${PWD}"/cross_validate.sh -r -c rf -p oscore-base    -D "json" -d "dns_message" -v binvec : \
-     "${PWD}"/cross_validate.sh -r -c rf -p coaps          -D "cbor" -d "dns_message" -v binvec : \
-     "${PWD}"/cross_validate.sh -r -c rf -p coap -p https  -D "cbor" -d "dns_message" -v binvec : \
-     "${PWD}"/cross_validate.sh -r -c rf -p oscore         -D "cbor" -d "dns_message" -v binvec : \
-     "${PWD}"/cross_validate.sh -r -c rf -p oscore-base    -D "cbor" -d "dns_message" -v binvec : \
-     "${PWD}"/cross_validate.sh -r -c rf -p coaps          -D "json" -d "dns_core"    -v binvec : \
-     "${PWD}"/cross_validate.sh -r -c rf -p coap -p https  -D "json" -d "dns_core"    -v binvec : \
-     "${PWD}"/cross_validate.sh -r -c rf -p oscore         -D "json" -d "dns_core"    -v binvec : \
-     "${PWD}"/cross_validate.sh -r -c rf -p oscore-base    -D "json" -d "dns_core"    -v binvec : \
-     "${PWD}"/cross_validate.sh -r -c rf -p coaps          -D "cbor" -d "dns_core"    -v binvec : \
-     "${PWD}"/cross_validate.sh -r -c rf -p coap -p https  -D "cbor" -d "dns_core"    -v binvec : \
-     "${PWD}"/cross_validate.sh -r -c rf -p oscore         -D "cbor" -d "dns_core"    -v binvec : \
-     "${PWD}"/cross_validate.sh -r -c rf -p oscore-base    -D "cbor" -d "dns_core"    -v binvec
+srun "${PWD}"/perm_importance.sh -r -c rf -p coaps          -D "json" -d "dns_message" -v binvec : \
+     "${PWD}"/perm_importance.sh -r -c rf -p coap -p https  -D "json" -d "dns_message" -v binvec : \
+     "${PWD}"/perm_importance.sh -r -c rf -p oscore         -D "json" -d "dns_message" -v binvec : \
+     "${PWD}"/perm_importance.sh -r -c rf -p oscore-base    -D "json" -d "dns_message" -v binvec : \
+     "${PWD}"/perm_importance.sh -r -c rf -p coaps          -D "cbor" -d "dns_message" -v binvec : \
+     "${PWD}"/perm_importance.sh -r -c rf -p coap -p https  -D "cbor" -d "dns_message" -v binvec : \
+     "${PWD}"/perm_importance.sh -r -c rf -p oscore         -D "cbor" -d "dns_message" -v binvec : \
+     "${PWD}"/perm_importance.sh -r -c rf -p oscore-base    -D "cbor" -d "dns_message" -v binvec : \
+     "${PWD}"/perm_importance.sh -r -c rf -p coaps          -D "json" -d "dns_cbor"    -v binvec : \
+     "${PWD}"/perm_importance.sh -r -c rf -p coap -p https  -D "json" -d "dns_cbor"    -v binvec : \
+     "${PWD}"/perm_importance.sh -r -c rf -p oscore         -D "json" -d "dns_cbor"    -v binvec : \
+     "${PWD}"/perm_importance.sh -r -c rf -p oscore-base    -D "json" -d "dns_cbor"    -v binvec : \
+     "${PWD}"/perm_importance.sh -r -c rf -p coaps          -D "cbor" -d "dns_cbor"    -v binvec : \
+     "${PWD}"/perm_importance.sh -r -c rf -p coap -p https  -D "cbor" -d "dns_cbor"    -v binvec : \
+     "${PWD}"/perm_importance.sh -r -c rf -p oscore         -D "cbor" -d "dns_cbor"    -v binvec : \
+     "${PWD}"/perm_importance.sh -r -c rf -p oscore-base    -D "cbor" -d "dns_cbor"    -v binvec
 wait
