@@ -14,7 +14,7 @@ cls="rf"
 args=""
 
 
-while getopts ":c:D:d:l:n:p:rv:" opt; do
+while getopts ":c:D:d:l:n:p:rR:v:" opt; do
     case "${opt}" in
     c)  cls="${OPTARG}";;
     p)  prots="${prots}_${OPTARG}"; args="${args} -p ${OPTARG}";;
@@ -23,6 +23,7 @@ while getopts ":c:D:d:l:n:p:rv:" opt; do
     l)  link_layer="${link_layer}_${OPTARG}"; args="${args} -l ${OPTARG}";;
     n)  network_setups="${network_setups}_${OPTARG}"; args="${args} -n ${OPTARG}";;
     r)  args="${args} -r";;
+    R)  args="${args} -R ${OPTARG}";;
     v)  vec="${OPTARG}";;
     *)  prots="${prots}_${OPTARG}"; args="${args} -p ${OPTARG}";;
     esac

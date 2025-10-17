@@ -67,6 +67,7 @@ FIELD_NAMES = [
     "vector_type",
     "classifier",
     "classifier_args",
+    "repeats",
     "job_id",
     "start",
     "stop",
@@ -376,6 +377,13 @@ def main():
         choices=CLASSIFIERS,
     )
     parser.add_argument(
+        "-R",
+        "--repeats",
+        help=f"Repeats of permutation (default: {REPEATS})",
+        default=REPEATS,
+        type=int,
+    )
+    parser.add_argument(
         "-v",
         "--vector-type",
         help="Vector type to train for (default: \"binvec\")",
@@ -528,6 +536,7 @@ def main():
                             if str_classifier_args(args.classifier)
                             else polars.col("classifier_args").is_null()
                         )
+                        & (polars.col("repeats") == REPEATS)
                     ).collect().is_empty()
                 ):
                     print(
@@ -581,6 +590,7 @@ def main():
                                         args.classifier
                                     )
                                 ),
+                                ("repeats", REPEATS),
                                 ("job_id", job_id),
                                 ("start", start),
                                 ("stop", stop),
