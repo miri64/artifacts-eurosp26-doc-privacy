@@ -350,20 +350,24 @@ def permutation_importance(
             for col_idx in range(X.shape[1])
         ]
 
-    if isinstance(baseline_score, dict):
-        return {
-            name: sk_perm_imp._create_importances_bunch(
-                baseline_score[name],
-                # unpack the permuted scores
-                numpy.array([scores[col_idx][name] for col_idx in range(X.shape[1])]),
+    try:
+        if isinstance(baseline_score, dict):
+            return {
+                name: sk_perm_imp._create_importances_bunch(
+                    baseline_score[name],
+                    # unpack the permuted scores
+                    numpy.array([scores[col_idx][name] for col_idx in range(X.shape[1])]),
+                )
+                for name in baseline_score
+            }
+        else:
+            return sk_perm_imp._create_importances_bunch(
+                baseline_score,
+                numpy.array(scores)
             )
-            for name in baseline_score
-        }
-    else:
-        return sk_perm_imp._create_importances_bunch(
-            baseline_score,
-            numpy.array(scores)
-        )
+    finally:
+        del baseline_score
+        del scores
 
 
 def main():
