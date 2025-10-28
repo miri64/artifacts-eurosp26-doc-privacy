@@ -1,0 +1,18 @@
+# coaps-p2_json_dns_cbor_b64
+## Random Forest (Ensemble Learning III)
+ - Memory: 59047608320 => 59149725696
+Unable to import cuML falling back to sklearn
+Traceback (most recent call last):
+  File "/home/service/pivot-eval-tbd/perm_importance.py", line 230, in configure_cuml
+    cuml = __import__("cuml")
+           ^^^^^^^^^^^^^^^^^^
+ModuleNotFoundError: No module named 'cuml'
+# coaps-p2_json_dns_message_b64
+## Random Forest (Ensemble Learning III)
+ - Memory: 69903724544 => 70006665216
+Unable to import cuML falling back to sklearn
+Traceback (most recent call last):
+  File "/home/service/pivot-eval-tbd/perm_importance.py", line 230, in configure_cuml
+    cuml = __import__("cuml")
+           ^^^^^^^^^^^^^^^^^^
+ModuleNotFoundError: No module named 'cuml'
