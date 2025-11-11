@@ -1,3 +1,4 @@
+*.err
 main.pdf
 .jupyter_ystore.db
 
