@@ -27,9 +27,9 @@ patch.linewidth : 0.5
 # pgf.texsystem : xelatex
 text.usetex : True
 text.latex.preamble : "\usepackage[T1]{fontenc}\usepackage[utf8]{inputenc}\usepackage{pslatex}\usepackage[kerning,spacing]{microtype}" 
-xtick.labelsize : x-small
+xtick.labelsize : xx-small
 xtick.major.pad : 1
 xtick.minor.pad : 1
-ytick.labelsize : x-small
+ytick.labelsize : xx-small
 ytick.major.pad : 1
 ytick.minor.pad : 1
