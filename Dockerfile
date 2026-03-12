@@ -2,7 +2,7 @@
 #
 # Distributed under terms of the MIT license.
 
-FROM python:3.12.11-bookworm
+FROM python:3.12-trixie
 
 WORKDIR /app
 
