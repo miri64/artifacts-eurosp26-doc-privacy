@@ -2,21 +2,30 @@
 #
 # Distributed under terms of the MIT license.
 
+name: artifacts-eurosp26-doc
+
 services:
   jupyter:
     build:
       args:
-        HOST_GID: "${HOST_GID}"
-        HOST_UID: "${HOST_UID}"
+        HOST_GID: "${HOST_GID:-1000}"
+        HOST_UID: "${HOST_UID:-1000}"
       context: .
       dockerfile: Dockerfile
     image: miri64/eurosp26-main
     volumes:
       - .:/app
+      # Allow running docker within docker
+      - /var/run/docker.sock:/var/run/docker.sock
     environment:
       JUPYTER_PORT: ${JUPYTER_PORT:-8888}"
     network_mode: host
+    cap_add:
+      - NET_RAW
+      - NET_ADMIN
     command: |
       bash -c "usermod -u '${HOST_UID:-1000}' -g '${HOST_GID:-1000}' user;
       chown 'user:' /home/user /home/user/.bash* /home/user/.profile; chown -R 'user:' /home/user/.config;
+      groupmod -g $(ls -l /var/run/docker.sock | awk '{print $4}') docker;
+      su - user -c \"cd /app; jupyter lab workspace import /app/start-with-readme.jupyterlab-workspace --name=default\";
       su - user -c \"cd /app; jupyter lab --port ${JUPYTER_PORT:-8888}\""
