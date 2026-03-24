@@ -13,8 +13,7 @@ services:
       target: http-base
     sysctls:
       net.ipv6.auto_flowlabels: 0
-    image:
-      pivot-eval/http
+    image: miri64/eurosp26-http
     tmpfs:
       - /creds
     volumes:

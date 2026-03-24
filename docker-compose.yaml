@@ -10,7 +10,7 @@ services:
         HOST_UID: "${HOST_UID}"
       context: .
       dockerfile: Dockerfile
-    image: pivot-eval/jupyter
+    image: miri64/eurosp26-main
     volumes:
       - .:/app
     environment:

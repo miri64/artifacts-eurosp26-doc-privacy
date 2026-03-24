@@ -1,0 +1,156 @@
+# Artifacts: Secrets Best Not Shared: DNS Privacy Enhancements for the Constrained IoT
+
+[![DOI][software-badge]][software-doi]
+[![Paper on ACM DL][paper-badge]][paper-doi]
+
+This repository contains all artifacts, i.e. code, tools, data, and vizualizations for the paper “[Secrets Best Not Shared: DNS Privacy Enhancements for the Constrained IoT][paper-doi]” presented at the 11th IEEE European Symposium on Security and Privacy (EuroS&P 2026).
+
+- M. Lenders, T. C. Schmidt, and M. Wählisch, “**Secrets Best Not Shared: DNS Privacy Enhancements for the Constrained IoT**,” in *IEEE EuroS&P 2026*, 2026, pp. TBD–TBD. https://doi.org/10.1109/TBD
+
+##### Abstract
+
+> Several attacks aim at identifying DNS traffic for disrupting or compromising Internet services.
+> Prior defense focused on merely encrypting queries using DNS over TLS, HTTPS, or QUIC to counter such attacks.
+> In this paper, we target IETF protocols tailored for the constrained hardware resources of mass IoT devices and empirically analyze the potentials of obfuscating DNS traffic beyond using encryption.
+> To this end, we create a dataset of machine-to-machine-compatible data objects and their preceding DNS resolution process.
+> For each object, we consider 296 different deployment scenarios of resolving host names, including DNS over the Constrained Application Layer Protocol (CoAP) and an onion routing flavor of CoAP as well as different link-layer conditions.
+> Also, we compare to DNS over HTTPS.
+> Applying a header field analysis based on permutation importances, we identify header fields that leak the most information to Random Forest, which performed best in cross-validation.
+> We find that DNS over CoAP with equalized packet lengths with block-wise transfer and by eliding leaking header fields with header compression can reduce the accuracy of identifying DNS frames to 86%.
+> Compressing the DNS payload format to fit the constrained use case, reduces accuracy even further to 77%.
+> When eliding header fields this way, our proposal outperforms DNS over HTTPS, for which the classifier identifies DNS frames with 100% accuracy based on destination information in the header.
+> We make our dataset publicly available.
+
+## Repository Structure & Suage
+
+To use, first clone this repository including submodules.
+
+```sh
+git clone --recurse-submodules https://github.com/netd-tud/artifacts-euroSP26-DoC.git
+cd artifacts-euroSP26-DoC
+```
+
+Or download the ZIP archive from [Zenodo][software-doi], unzip it, and change into the directory.
+
+For most sections there are one or more Jupyter notebooks containing documentation and the code to create the output we describe in that section. The first number `XX` indicates which section it belongs to, for `XX_Y` the `Y` notates a subsection. Some of these notebooks have a corresponding directory which contain further code.
+
+- **1. Introduction** does not have any code.
+- **2. Background** does not have any code.
+- **3. Creating a Dataset for Privacy Analysis of DNS on the Internet of Things**
+  + **3.1. Thread Model** does not have any code.
+  + **3.2. Data Collection**, see [`03_2_data_collection.ipynb`](./03_2_data_collection.ipynb).
+  + **3.3. Traffic Generation**, see [`03_3_traffic_generation.ipynb`](./03_3_traffic_generarion.ipynb)
+- **4. Overview of Data Corpus**
+  + ...
+- **5. Machine Learning to Identify DNS Traffic**
+  + ...
+- **6. Evaluation**
+  + ...
+- **7. Related Work** does not have any code.
+- **8. Discussion**
+- **9. Conclusion** does not have any code.
+
+To run the Jupyter notebooks, you can easer run them in a [Docker container](#dockerized-usage) (recommended usage) or natively on your host system [using UV](#using-uv).
+
+### Dockerized Usage
+
+This repository can be used using `docker compose`. You can find [installation instructions for your OS on the Docker website](https://docs.docker.com/compose/install/). Since the experiments in each chapter can run for several weeks, we recommend running this on a dedicated machine, so you can keep running them in the background. If you do the appropriate permissions on your machine, consider running in a virtual machine. Otherwise, see ["Using UV"](#using-uv) below. Once `docker compose` is installed, run `docker compose up` from a command-line in the same directory you find this README in.
+
+``` bash
+docker compose up
+```
+
+Once it is done fetching or building the image, Jupyter Lab will start and a URL to open in your browser will be shown, e.g.,
+
+```
+jupyter-1  |     To access the server, open this file in a browser:
+jupyter-1  |         file:/home/user/.local/share/jupyter/runtime/jpserver-12-open.html
+jupyter-1  |     Or copy and paste one of these URLs:
+jupyter-1  |         http://localhost:8888/lab?token=f63eeb3d8158079dfea465051cbb4598fbe5575f96a7ffdb
+jupyter-1  |         http://127.0.0.1:8888/lab?token=f63eeb3d8158079dfea465051cbb4598fbe5575f96a7ffdb
+```
+
+_In the Jupyter Lab_, following the link provided by the command above, start with the notebook of your choice.
+
+#### Download From Other Container Registry
+
+_TBD:_ We provide the docker images needed for the artifacts at several container registries. you can find the image names for each repository in the following table.
+
+| Image           | Docker Hub      |GitHub Packages  |Codeberg Packages|
+|-----------------|-----------------|-----------------|-----------------|
+|[Main](./Dockerfile)|`docker.io/miri64/eurosp26-main`|`ghcr.io/miri64/eurosp26-main`|`codeberg.org/miri64/eurosp26-main`|
+|[CoAP Base](./03_3_traffic_generation/coap/Dockerfile)|`docker.io/miri64/eurosp26-coap`|`ghcr.io/miri64/eurosp26-coap`|`codeberg.org/miri64/eurosp26-coap`|
+|[HTTP Base](./03_3_traffic_generation/http/Dockerfile)|`docker.io/miri64/eurosp26-http`|`ghcr.io/miri64/eurosp26-http`|`codeberg.org/miri64/eurosp26-http`|
+|[Sniffer](./03_3_traffic_generation/sniffer/Dockerfile)|`docker.io/miri64/eurosp26-sniffer`|`ghcr.io/miri64/eurosp26-sniffer`|`codeberg.org/miri64/eurosp26-sniffer`|
+|[Database](./03_3_traffic_generation/database/Dockerfile)|`docker.io/miri64/eurosp26-database`|`ghcr.io/miri64/eurosp26-database`|`codeberg.org/miri64/eurosp26-database`|
+
+Sadly, support to configure these easily is not provided when running `docker compose`. As such, the easiest way to use the repositories is to search and replace the `image:` key within the docker compose files. E.g., to use the Codeberg Packages registry, use the following 
+
+```sh
+find . -name *.yaml | xargs grep -l 'image: *docker\.io/miri64' | xargs sed -i 's#image: *docker\.io/miri64#image: codeberg.org/miri64'
+```
+
+
+
+#### Use Different Port
+
+If port `8888` is already in use on your system, you can also pick another using the `JUPYTER_PORT` environment variable:
+
+```bash
+JUPYTER_PORT=8889 docker compose up
+```
+
+#### Different User Ids.
+
+If your host user has a different UID or GID than 1000, this also can be configured:
+
+```bash
+HOST_UID="$(id -u)" HOST_GID="$(id -g)" docker compose up
+```
+
+### Using UV
+
+**We do not recommend this method**, since updates during the years since we published this repository might lead to incompatibilities.
+However, you might need to use it, if you do not have access to Docker or a virtual machine where you can run Docker on your machine.
+
+First, install the package and project manager for Python [UV](https://docs.astral.sh/uv/) (you might need to use flags like `--user` or `--system` to install this on your specific system, see [`pip` documentation](https://pip.pypa.io/en/stable/cli/pip_install/)):
+
+```bash
+pip install uv
+```
+
+UV has some advantages over the classic `pip` package manager: First, it is much faster. Second, it allows for a hassle-free deployment of python versions that are not pre-installed on your system.
+
+We tested the code of our repository for Python 3.12 so we recommend installing that if available.
+
+```bash
+uv python install cpython-3.12
+```
+
+Additional dependencies from the system might be needed. Please have a look at the `apt-get install` (the Debian package manager command used to install dependencies there) line from our [Dockerfile](./Dockerfile) for a (Debian-13-based) listing of the dependencies.
+
+Now create and step into a virtual environment for this repository.
+
+```bash
+uv venv --python python3.12 .env
+. .env/bin/activate
+```
+
+Last, install the dependencies:
+
+```bash
+uv pip install -r requirements.txt
+```
+
+You now can start Jupyter Lab by running the following command (you might want to use the `--port` argument to change the port).
+
+```bash
+jupyter lab
+```
+
+_In the Jupyter Lab_, following the link automatically opened in your browser, start with the notebook of your choice.
+
+[paper-badge]: https://img.shields.io/badge/Paper-IEEE%20Xplore-green
+[paper-doi]: https://doi.org/10.1109/TBD
+[software-badge]: https://zenodo.org/badge/DOI/10.5281/zenodo.TBD.svg
+[software-doi]: https://doi.org/10.5281/zenodo.TBD
