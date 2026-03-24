@@ -54,6 +54,7 @@ Additionally, there are two directories that will contain data if you run the no
 
 - [`input_dataset/`](./input_dataset/) will contain the data collected in section **3.2 Data Collection**.
 - [`output_dataset/`](./input_dataset/) contains all data generated from section **3.3. Traffic Generation** onwards.
+- [`plots/`](./plots) contains all plots we generated from the data as PDF, ready for import into LaTex, as well as treated base data as CSV to directly generate the plots.
 
 To run the Jupyter notebooks, you can easer run them in a [Docker container](#dockerized-usage) (recommended usage) or natively on your host system [using UV](#using-uv).
 
