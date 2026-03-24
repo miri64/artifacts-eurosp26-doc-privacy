@@ -8,6 +8,7 @@
 import argparse
 import csv
 import io
+import ipaddress
 import json
 import os
 import re
@@ -23,7 +24,10 @@ import dns.rdatatype
 import pprint
 
 
+CURL_PATH = os.environ.get("CURL_PATH")
+DIG_PATH = os.environ.get("DIG_PATH")
 TSHARK_PATH = os.environ.get("TSHARK_PATH")
+DUMPCAP_PATH = os.environ.get("DUMPCAP_PATH")
 FIELDS = [
     "frame.protocols",
     "dns.flags.response",
@@ -49,7 +53,7 @@ def canonize_name(name):
 
 
 def remove_tid(data_hex):
-    return f"0000{data_hex[4:]}" 
+    return f"0000{data_hex[4:]}"
 
 
 FIELDS_CAST = {
@@ -69,7 +73,7 @@ OUTPUT_FIELDS = [
     "obj_len",
     "obj",
     "a_q_dns_msg",
-    "a_q_protocols", 
+    "a_q_protocols",
     "a_q_query_name",
     "a_q_query_type",
     "a_q_response_names",
@@ -81,7 +85,7 @@ OUTPUT_FIELDS = [
     "a_r_response_names",
     "a_r_response_types",
     "aaaa_q_dns_msg",
-    "aaaa_q_protocols", 
+    "aaaa_q_protocols",
     "aaaa_q_query_name",
     "aaaa_q_query_type",
     "aaaa_q_response_names",
@@ -93,7 +97,7 @@ OUTPUT_FIELDS = [
     "aaaa_r_response_names",
     "aaaa_r_response_types",
     "https_q_dns_msg",
-    "https_q_protocols", 
+    "https_q_protocols",
     "https_q_query_name",
     "https_q_query_type",
     "https_q_response_names",
@@ -105,7 +109,6 @@ OUTPUT_FIELDS = [
     "https_r_response_names",
     "https_r_response_types",
 ]
-
 
 
 class UnableToGetError(Exception):
@@ -120,7 +123,7 @@ def curl(url, user_agent):
     try:
         response = subprocess.check_output(
             [
-                "curl",
+                CURL_PATH,
                 "-w",
                 "\n\t\n\t\n\tcanary\t%{response_code}",
                 "-o",
@@ -144,7 +147,9 @@ def curl(url, user_agent):
     return http_status, obj
 
 
-def dig(url, sniff_interface=None):
+def dig(url, sniff_interface=None, nameserver=None):
+    if nameserver is None:
+        nameserver = ipaddress.ip_address("9.9.9.9")
     extra_args = []
     if sniff_interface is not None:
         extra_args = ["-i", sniff_interface]
@@ -152,20 +157,17 @@ def dig(url, sniff_interface=None):
     with tempfile.NamedTemporaryFile() as fp:
         proc = subprocess.Popen(
             [
-                TSHARK_PATH,
-                "-E",
-                "aggregator=|",
+                DUMPCAP_PATH,
                 "-w",
                 fp.name
             ] + extra_args,
-            stderr=subprocess.DEVNULL,
         )
         time.sleep(1)
         responded_records = set()
         for record in ["A", "AAAA", "HTTPS"]:
             try:
                 response = subprocess.check_output(
-                    ["dig", "@9.9.9.9", url_parse.hostname, record],
+                    [DIG_PATH, f"@{nameserver:s}", url_parse.hostname, record],
                     text=True,
                 )
                 if re.search(fr"\s+\d+\s+IN\s+{record}", response):
@@ -174,8 +176,7 @@ def dig(url, sniff_interface=None):
                 raise UnableToResolveError(
                     f"Unable to resolve {record} for {url}: {exc}"
                 ) from exc
-            # print(response)
-        time.sleep(1)
+        time.sleep(2)
         proc.terminate()
 
         out = subprocess.check_output(
@@ -193,13 +194,14 @@ def dig(url, sniff_interface=None):
             ] + [
                 a for pair in [("-e", f) for f in FIELDS] for a in pair
             ],
-            stderr=subprocess.DEVNULL,
             text=True,
         )
-        
+
         res = {}
         with io.StringIO(out) as pcap:
             reader = csv.DictReader(pcap, fieldnames=FIELDS, delimiter="\t")
+            req_cols = 0
+            resp_cols = 0
             for row in reader:
                 assert row["udp.payload"], f"Ooops, no payload for {url}: {row}"
                 query_type = dns.rdatatype.RdataType(
@@ -210,15 +212,40 @@ def dig(url, sniff_interface=None):
                         continue
                     if row["dns.flags.response"] in ["1", "True"]:
                         msg_type = "r"
+                        req_cols += 1
                     else:
                         msg_type = "q"
+                        resp_cols += 1
                     res[
                         f"{query_type}_{msg_type}_{FIELDS_SIMPLIFIED[col]}"
                     ] = FIELDS_CAST[col](row[col])
+            assert req_cols > 0 and resp_cols > 0, (
+                f"No DNS request/response pairs were sniffed for {url}"
+            )
     return res
 
 
 if __name__ == "__main__":
+    if CURL_PATH is None:
+        CURL_PATH = subprocess.check_output(
+            "command -v curl",
+            text=True,
+            shell=True,
+        ).strip()
+        if not CURL_PATH:
+            print("Script requires cURL to be installed", file=sys.stderr)
+            sys.exit(1)
+
+    if DIG_PATH is None:
+        DIG_PATH = subprocess.check_output(
+            "command -v dig",
+            text=True,
+            shell=True,
+        ).strip()
+        if not DIG_PATH:
+            print("Script requires dig to be installed", file=sys.stderr)
+            sys.exit(1)
+
     if TSHARK_PATH is None:
         TSHARK_PATH = subprocess.check_output(
             "command -v tshark",
@@ -228,6 +255,17 @@ if __name__ == "__main__":
         if not TSHARK_PATH:
             print("Script requires TShark to be installed", file=sys.stderr)
             sys.exit(1)
+
+    if DUMPCAP_PATH is None:
+        DUMPCAP_PATH = subprocess.check_output(
+            "command -v dumpcap",
+            text=True,
+            shell=True,
+        ).strip()
+        if not DUMPCAP_PATH:
+            print("Script requires dumpcap to be installed", file=sys.stderr)
+            sys.exit(1)
+
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "-i",
@@ -240,6 +278,13 @@ if __name__ == "__main__":
         "--header",
         help="Print header for CSV",
         action="store_true"
+    )
+    parser.add_argument(
+        "-s",
+        "--nameserver",
+        help="The name server to use",
+        default=ipaddress.ip_address("9.9.9.9"),
+        type=ipaddress.ip_address,
     )
     args = parser.parse_args()
     reader = csv.DictReader(
@@ -268,7 +313,7 @@ if __name__ == "__main__":
         if not obj or len(obj_str) > 1000:
             continue
         try:
-            res = dig(row["url"], args.sniff_interface)
+            res = dig(row["url"], args.sniff_interface, args.nameserver)
         except UnableToResolveError as exc:
             print(f"Unable to resolve:", exc, file=sys.stderr)
             continue
