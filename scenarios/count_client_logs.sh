@@ -9,7 +9,7 @@
 SCRIPT_DIR=$( cd -- "$( dirname -- "$(realpath "$0")" )" &> /dev/null && pwd )
 OUTPUT_DATASETS="$(readlink -f "${OUTPUT_DATASETS:-${SCRIPT_DIR}/../output_dataset}")"
 
-for log in "${OUTPUT_DATASETS}"/*.client.log "${OUTPUT_DATASETS}"/*.client.log.gz; do
+for log in "${OUTPUT_DATASETS}"/coaps-*.client.log "${OUTPUT_DATASETS}"/coaps-*.client.log.gz; do
     if [[ "${log}" == *".gz" ]]; then
         CAT="zcat"
     else
@@ -30,4 +30,5 @@ for log in "${OUTPUT_DATASETS}"/*.client.log "${OUTPUT_DATASETS}"/*.client.log.g
             }
         }'
 done | \
-    sort -n | awk 'BEGIN {print "Requests", "Messages", "Log"} {print $3, $4, $2}'
+    sort -n | awk 'BEGIN {print "Requests", "Messages", "Log"} {print $3, $4, $2} END {print "#Logs:", NR, "(exp=48)"}' | \
+    column -t

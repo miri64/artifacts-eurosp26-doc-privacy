@@ -318,8 +318,8 @@ def permutation_importance(
     baseline_score = sk_perm_imp._weights_scorer(scorer, estimator, X, y, sample_weight)
 
     if slice_bytes:
-        scores = [
-            sk_perm_imp._calculate_permutation_scores(
+        scores = sk_perm_imp.Parallel(n_jobs=REPEATS)(
+            sk_perm_imp.delayed(sk_perm_imp._calculate_permutation_scores)(
                 estimator,
                 X,
                 y,
@@ -331,12 +331,12 @@ def permutation_importance(
                 max_samples,
             )
             for col_idx in range(0, X.shape[1], 8)
-        ]
+        )
         # fill to original size of X.shape[1]
         scores = list(itertools.chain.from_iterable([[s] * 8 for s in scores]))
     else:
-        scores = [
-            sk_perm_imp._calculate_permutation_scores(
+        scores = sk_perm_imp.Parallel(n_jobs=REPEATS)(
+            sk_perm_imp.delayed(sk_perm_imp._calculate_permutation_scores)(
                 estimator,
                 X,
                 y,
@@ -348,7 +348,7 @@ def permutation_importance(
                 max_samples,
             )
             for col_idx in range(X.shape[1])
-        ]
+        )
 
     try:
         if isinstance(baseline_score, dict):
@@ -500,7 +500,7 @@ def main():
         del y
         try:
             with open(
-                results_file, "w" if lf is None else "a"
+                results_file, "w" if lf is None else "a", newline="",
             ) as csvfile:
                 writer = csv.DictWriter(
                     csvfile, fieldnames=FIELD_NAMES, delimiter=";"
@@ -625,6 +625,7 @@ def main():
             del x_test
             del y_train
             del y_test
+            results_file.chmod(0o755)
     else:
         print(f"Skipping since {file} does not exist.")
         sys.stdout.flush()

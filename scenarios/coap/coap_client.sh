@@ -87,6 +87,7 @@ chown_logs() {
     if [ -n "${TSHARK_PID}" ]; then
         kill "${TSHARK_PID}"
     fi
+    rm /dumps/*.schc.log /dumps/*.schc.stderr.log
     chown user: "${LOGFILE}" "${LOGFILE%.log}.stderr.log"
 }
 
