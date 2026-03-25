@@ -19,6 +19,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
       JUPYTER_PORT: ${JUPYTER_PORT:-8888}"
+      EVAL_BASE_DIR: "${PWD}"
     network_mode: host
     cap_add:
       - NET_RAW
@@ -28,4 +29,7 @@ services:
       chown 'user:' /home/user /home/user/.bash* /home/user/.profile; chown -R 'user:' /home/user/.config;
       groupmod -g $(ls -l /var/run/docker.sock | awk '{print $4}') docker;
       su - user -c \"cd /app; jupyter lab workspace import /app/start-with-readme.jupyterlab-workspace --name=default\";
-      su - user -c \"cd /app; jupyter lab --port ${JUPYTER_PORT:-8888}\""
+      su - user -c \"export EVAL_BASE_DIR=${PWD}; cd /app; jupyter lab --port ${JUPYTER_PORT:-8888}\""
+
+volumes:
+  app:

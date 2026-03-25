@@ -12,8 +12,9 @@ services:
       dockerfile: Dockerfile
     image: miri64/eurosp26-sniffer
     volumes:
-      - ../../output_dataset:/dumps/
-      - ./:/app
+      # use absolute path for docker-in-docker
+      - "${EVAL_BASE_DIR:-../..}/output_dataset:/dumps/"
+      - "${EVAL_BASE_DIR:-../..}/03_3_traffic_generation:/app"
     network_mode: host
     cap_add:
       - NET_RAW

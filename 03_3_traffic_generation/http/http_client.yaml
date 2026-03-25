@@ -15,8 +15,9 @@ services:
       - database_backend
       - wpan_simulation
     volumes:
-      - ../../input_dataset:/jsons
-      - ../../output_dataset:/dumps
+      # use absolute path for docker-in-docker
+      - "${EVAL_BASE_DIR:-../..}/input_dataset:/jsons"
+      - "${EVAL_BASE_DIR:-../..}/output_dataset:/dumps"
     environment:
       SECURITY: "${SECURITY:-}"
       CLIENT_CREDENTIALS: "${CLIENT_CREDENTIALS}"

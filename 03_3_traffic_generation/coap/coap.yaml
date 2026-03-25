@@ -17,4 +17,5 @@ services:
     tmpfs:
       - /creds
     volumes:
-      - ../:/app
+      # use absolute path for docker-in-docker
+      - "${EVAL_BASE_DIR:-../..}/03_3_traffic_generation:/app"
