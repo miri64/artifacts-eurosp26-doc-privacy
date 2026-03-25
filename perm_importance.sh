@@ -7,7 +7,7 @@
 #
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "$(realpath "$0")" )" &> /dev/null && pwd )
-VENV=${VENV:-"${SCRIPT_DIR}"/.venv}
+VENV=${VENV:-"${SCRIPT_DIR}"/.env}
 INPUT_PATH="${INPUT_PATH:-${SCRIPT_DIR}/output_dataset}"
 vec="binvec"
 cls="rf"
@@ -31,6 +31,6 @@ done
 
 export POLARS_FORCE_NEW_STREAMING=1
 
-# "${VENV}"/bin/python "${SCRIPT_DIR}"/list_scenarios.py $args | while read scenario; do
-cat "${SCRIPT_DIR}"/missing-perm-imp.txt | parallel -j2 "${VENV}"/bin/python "${SCRIPT_DIR}"/perm_importance.py -c "${cls}" -v "${vec}" \
-    &> "${INPUT_PATH}/perm_importance_${cls}_${step}${prots}${network_setups}${link_layer}${data}${dns}_${vec}_${SLURM_JOB_ID}.log"
+"${VENV}"/bin/python "${SCRIPT_DIR}"/list_scenarios.py $args | while read scenario; do
+    "${VENV}"/bin/python "${SCRIPT_DIR}"/perm_importance.py -c "${cls}" -v "${vec}" "${scenario}"
+done &> "${INPUT_PATH}/perm_importance_${cls}_${step}${prots}${network_setups}${link_layer}${data}${dns}_${vec}_${SLURM_JOB_ID}.log"
