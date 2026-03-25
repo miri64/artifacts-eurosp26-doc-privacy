@@ -8,7 +8,7 @@ WORKDIR /app
 
 ARG HOST_UID
 ARG HOST_GID
-RUN addgroup -S wireshark && adduser -Ds /bin/sh user -G wireshark -u "$HOST_UID" -g "$HOST_GID"
+RUN addgroup -S wireshark && adduser -Ds /bin/sh user -G wireshark -u "${HOST_UID:-1000}" -g "${HOST_GID:-1000}"
 
 FROM base AS coap-base
 RUN apk --update --no-cache add \
