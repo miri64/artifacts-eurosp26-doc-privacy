@@ -13,7 +13,7 @@ services:
     networks:
       - database_backend
     volumes:
-      - ../../jsons:/jsons
+      - ../../input_dataset:/jsons
       - ../../output_dataset:/dumps
     environment:
       BIND_PREFIX: "${WPAN_SIMULATION_PREFIX}"

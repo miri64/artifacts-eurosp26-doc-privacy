@@ -15,7 +15,7 @@ services:
       - database_backend
       - wpan_simulation
     volumes:
-      - ../../jsons:/jsons
+      - ../../input_dataset:/jsons
       - ../../output_dataset:/dumps
     environment:
       SECURITY: "${SECURITY:-}"

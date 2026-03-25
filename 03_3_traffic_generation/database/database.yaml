@@ -19,7 +19,7 @@ services:
       - database_backend
     volumes:
       - .:/docker-entrypoint-initdb.d/
-      - ../../jsons:/sqlite/
+      - ../../input_dataset:/sqlite/
     healthcheck:
       test: ["CMD", "psql", "-v", "ON_ERROR_STOP=1", "--username", 'postgres', "--dbname", 'postgres', "-c", "SELECT COUNT(*) FROM synced_dns;"]
       interval: 10m

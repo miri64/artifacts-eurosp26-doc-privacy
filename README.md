@@ -39,7 +39,7 @@ For most sections there are one or more Jupyter notebooks containing documentati
 - **3. Creating a Dataset for Privacy Analysis of DNS on the Internet of Things**
   + **3.1. Thread Model** does not have any code.
   + **3.2. Data Collection**, see [`03_2_data_collection.ipynb`](./03_2_data_collection.ipynb).
-  + **3.3. Traffic Generation**, see [`03_3_traffic_generation.ipynb`](./03_3_traffic_generarion.ipynb)
+  + **3.3. Traffic Generation**, see [`03_3_traffic_generation.ipynb`](./03_3_traffic_generation.ipynb)
 - **4. Overview of Data Corpus**
   + ...
 - **5. Machine Learning to Identify DNS Traffic**
@@ -60,7 +60,11 @@ To run the Jupyter notebooks, you can easer run them in a [Docker container](#do
 
 ### Dockerized Usage
 
-This repository can be used using `docker compose`. You can find [installation instructions for your OS on the Docker website](https://docs.docker.com/compose/install/). Since the experiments in each chapter can run for several weeks, we recommend running this on a dedicated machine, so you can keep running them in the background. If you do the appropriate permissions on your machine, consider running in a virtual machine. Otherwise, see ["Using UV"](#using-uv) below. Once `docker compose` is installed, run `docker compose up` from a command-line in the same directory you find this README in.
+_This setup was only tested in Linux (Ubuntu 24.04) but it should work on any platform that supports Docker. Installation steps might differ and you might need to adapt some paths in the `docker compose` files though._
+
+This repository can be used using `docker compose`. You can find [installation instructions for your OS on the Docker website](https://docs.docker.com/compose/install/). Also be sure to make sure [make docker commands available for non-users](https://docs.docker.com/engine/install/linux-postinstall/), our traffic generation step will make use of that. To that end, **we also expose the Docker Daemon socket of the host to the main Docker container**. This gives the main Docker container a certain degree of control to the containers running on your host. Make sure, this is okay for you.
+
+Since the experiments in each chapter can run for several weeks, we recommend running this on a dedicated machine, so you can keep running them in the background. If you do the appropriate permissions on your machine, consider running in a virtual machine. Otherwise, see ["Using UV"](#using-uv) below. Once `docker compose` is installed, run `docker compose up` from a command-line in the same directory you find this README in.
 
 ``` bash
 docker compose up

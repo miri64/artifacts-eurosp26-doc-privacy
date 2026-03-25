@@ -15,7 +15,7 @@ RUN adduser --disabled-password --home /home/user/ --shell /bin/bash user --uid 
     usermod -a -G wireshark user && usermod -a -G docker user && chown -R user: /home/user
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    ca-certificates curl dnsutils gcc g++ gfortran hyperfine \
+    ca-certificates curl dnsutils gawk gcc g++ gfortran hyperfine \
     libopenblas-dev liblapack-dev parallel pigz pkg-config \
     texlive-full tmux tshark
 

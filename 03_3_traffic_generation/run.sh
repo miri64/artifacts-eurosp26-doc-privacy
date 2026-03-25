@@ -6,12 +6,6 @@
 # Distributed under terms of the MIT license.
 #
 
-if [ -f /.dockerenv ]; then
-    echo "This script MUST not be run in a docker container." \
-         "Run this on your host system instead!" >&2
-    exit 1
-fi
-
 SCRIPT_DIR=$( cd -- "$( dirname -- "$(realpath "$0")" )" &> /dev/null && pwd )
 
 if [ $# -eq 1 ]; then
@@ -26,10 +20,10 @@ export HOST_GID=$(id -g)
 export HOST_UID=$(id -u)
 
 git -C "${SCRIPT_DIR}/../" submodule update --init --recursive
-chmod -R o+r ${SCRIPT_DIR}/database/ ${SCRIPT_DIR}/../jsons/
-chmod o+x ${SCRIPT_DIR}/database/ ${SCRIPT_DIR}/../jsons/
+chmod -R o+r ${SCRIPT_DIR}/database/ ${SCRIPT_DIR}/../input_dataset/
+chmod o+x ${SCRIPT_DIR}/database/ ${SCRIPT_DIR}/../input_dataset/
 
-if ! ls ${SCRIPT_DIR}/../jsons/*.sqlite3 &> /dev/null; then
+if ! ls ${SCRIPT_DIR}/../input_dataset/*.sqlite3 &> /dev/null; then
     echo "No base database found!" >&2
     exit 1
 fi

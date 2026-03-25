@@ -144,7 +144,7 @@ async def send_requests(context, args, parser):
             f"SELECT id, url, {query_column}, url_wo_query FROM objects "
             # exclude queries that are larger than 1000 as they cause
             # requests outside of our initial specs (len(obj_str) <= 1000,
-            # see ../jsons/collect_jsons_and_dns.py)
+            # see ../03_2_data_collection/collect_jsons_and_dns.py)
             "WHERE LENGTH(json_query) <= 1000 OR json_query IS NULL "
             "ORDER BY id ASC;"
         )
