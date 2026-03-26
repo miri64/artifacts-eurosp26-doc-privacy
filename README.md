@@ -39,9 +39,8 @@ For most sections there are one or more Jupyter notebooks containing documentati
 - **3. Creating a Dataset for Privacy Analysis of DNS on the Internet of Things**
   + **3.1. Thread Model** does not have any code.
   + **3.2. Data Collection**, see [`03_2_data_collection.ipynb`](./03_2_data_collection.ipynb).
-  + **3.3. Traffic Generation**, see [`03_3_traffic_generation.ipynb`](./03_3_traffic_generation.ipynb)
-- **4. Overview of Data Corpus**
-  + ...
+  + **3.3. Traffic Generation**, see [`03_3_traffic_generation.ipynb`](./03_3_traffic_generation.ipynb).
+- **4. Overview of Data Corpus**, see [`04_data_corpus_overview.ipynb`](04_data_corpus_overview.ipynb).
 - **5. Machine Learning to Identify DNS Traffic**
   + ...
 - **6. Evaluation**
