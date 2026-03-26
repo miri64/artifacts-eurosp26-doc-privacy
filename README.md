@@ -21,7 +21,7 @@ This repository contains all artifacts, i.e. code, tools, data, and vizualizatio
 > When eliding header fields this way, our proposal outperforms DNS over HTTPS, for which the classifier identifies DNS frames with 100% accuracy based on destination information in the header.
 > We make our dataset publicly available.
 
-## Repository Structure & Suage
+## Repository Structure & Usage
 
 To use, first clone this repository including submodules.
 
@@ -40,11 +40,9 @@ For most sections there are one or more Jupyter notebooks containing documentati
   + **3.1. Thread Model** does not have any code.
   + **3.2. Data Collection**, see [`03_2_data_collection.ipynb`](./03_2_data_collection.ipynb).
   + **3.3. Traffic Generation**, see [`03_3_traffic_generation.ipynb`](./03_3_traffic_generation.ipynb).
-- **4. Overview of Data Corpus**, see [`04_data_corpus_overview.ipynb`](04_data_corpus_overview.ipynb).
-- **5. Machine Learning to Identify DNS Traffic**
-  + ...
-- **6. Evaluation**
-  + ...
+- **4. Overview of Data Corpus**, see [`04_data_corpus_overview.ipynb`](./04_data_corpus_overview.ipynb).
+- **5. Machine Learning to Identify DNS Traffic**, see [`05_ml_to_identify_dns_traffic.ipynb`](./05_ml_to_identify_dns_traffic.ipynb).
+- **6. Evaluation**, see [`06_evaluation.ipynb`](./06_evaluation.ipynb).
 - **7. Related Work** does not have any code.
 - **8. Discussion**
 - **9. Conclusion** does not have any code.
