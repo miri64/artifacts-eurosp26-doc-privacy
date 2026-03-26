@@ -80,6 +80,14 @@ jupyter-1  |         http://localhost:8888/lab?token=f63eeb3d8158079dfea465051cb
 jupyter-1  |         http://127.0.0.1:8888/lab?token=f63eeb3d8158079dfea465051cbb4598fbe5575f96a7ffdb
 ```
 
+Alternatively you can get the URL using the following command
+
+```console
+$ docker compose exec jupyter su - user -c "jupyter server list"
+Currently running servers:
+http://localhost:8888/?token=f63eeb3d8158079dfea465051cbb4598fbe5575f96a7ffdb :: /app
+```
+
 _In the Jupyter Lab_, following the link provided by the command above, start with the notebook of your choice.
 
 #### Download From Other Container Registry
