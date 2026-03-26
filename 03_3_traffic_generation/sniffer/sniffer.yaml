@@ -14,7 +14,7 @@ services:
     volumes:
       # use absolute path for docker-in-docker
       - "${EVAL_BASE_DIR:-../..}/output_dataset:/dumps/"
-      - "${EVAL_BASE_DIR:-../..}/03_3_traffic_generation:/app"
+      - "${EVAL_BASE_DIR:-../..}/03_3_traffic_generation/sniffer/:/app"
     network_mode: host
     cap_add:
       - NET_RAW
