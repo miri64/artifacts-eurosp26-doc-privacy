@@ -18,11 +18,11 @@ import unittest.mock
 import warnings
 
 
-from scenarios.schc.schc import OpenSCHCLoader
+from schc.schc import OpenSCHCLoader
 
 
 SCRIPT_PATH = pathlib.Path(__file__).resolve().parent
-OPENSCHC_PATH = SCRIPT_PATH / "scenarios" / "schc" / "openschc" / "src"
+OPENSCHC_PATH = SCRIPT_PATH / "schc" / "openschc" / "src"
 ETH_COL_TYPES = {
     "frame.number": int,
     "eth.src": lambda x: bytes.fromhex(x.replace(":", "")),
@@ -56,7 +56,7 @@ def get_device_table(csvpath):
 
 
 def get_rules(csvpath, device_table):
-    schc_path = csvpath.parent / ".." / "scenarios" / "schc"
+    schc_path = csvpath.parent / ".." / "03_3_traffic_generation" / "schc"
     rule_name = re.sub(r"^(.+-schc-[dp][12]).*", r"\1", csvpath.name)
     rule_mode = re.sub(r"^.+-schc-[dp][12](-([^_]+))?_.*", r"\2", csvpath.name)
 
@@ -86,7 +86,6 @@ def get_rules(csvpath, device_table):
     for rules in rules_paths.values():
         assert rules.exists(), f"{rules} does not exist"
     return rules_paths
-
 
 
 class DevNull:
