@@ -56,7 +56,7 @@ def get_device_table(csvpath):
 
 
 def get_rules(csvpath, device_table):
-    schc_path = csvpath.parent / ".." / "03_3_traffic_generation" / "schc"
+    schc_path = SCRIPT_PATH / "schc"
     rule_name = re.sub(r"^(.+-schc-[dp][12]).*", r"\1", csvpath.name)
     rule_mode = re.sub(r"^.+-schc-[dp][12](-([^_]+))?_.*", r"\2", csvpath.name)
 
