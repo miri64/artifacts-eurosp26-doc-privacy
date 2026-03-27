@@ -645,7 +645,6 @@ async def main():
     openschc_loader = OpenSCHCLoader(OPENSCHC_PATH)
     system = IoTSCHCSystem(debug=args.verbose)
     async with (
-        # TBD: addrs for NorthInterface?
         NorthInterface(name=args.north_iface) as north,
         SCHCEncInterface(
             name=args.south_iface,
