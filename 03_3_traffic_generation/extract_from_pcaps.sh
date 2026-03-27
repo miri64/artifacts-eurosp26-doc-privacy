@@ -12,7 +12,7 @@ if [ $PROCS -gt 64 ]; then
     # leave some resources to collegues ;-)
     PROCS=$(( (PROCS * 3) / 4))
 fi
-OUTPUT_DATASET="${OUTPUT_DATASET:-${SCRIPT_DIR}/output_dataset}"
+OUTPUT_DATASET="${OUTPUT_DATASET:-${SCRIPT_DIR}/../output_dataset}"
 
 
 extract_from_pcap() {
