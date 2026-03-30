@@ -19,7 +19,6 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
       JUPYTER_PORT: ${JUPYTER_PORT:-8888}"
-      EVAL_BASE_DIR: "${PWD}"
     network_mode: host
     cap_add:
       - NET_RAW

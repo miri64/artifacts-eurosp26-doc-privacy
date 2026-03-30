@@ -22,10 +22,6 @@ EVALUATION_DIR = pathlib.Path.cwd()
 INPUT_PATH = pathlib.Path(
     os.environ.get("INPUT_PATH", EVALUATION_DIR / "output_dataset")
 )
-WORKERS = multiprocessing.cpu_count()
-
-if WORKERS > 8:
-    WORKERS = 8
 
 
 def scenario2vec(scenario):

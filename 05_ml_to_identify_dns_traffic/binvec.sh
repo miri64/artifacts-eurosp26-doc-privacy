@@ -17,10 +17,11 @@ INPUT_PATH="${INPUT_PATH:-${SCRIPT_DIR}/output_dataset}"
 binvec() {
     export POLARS_FORCE_NEW_STREAMING=1
     export INPUT_PATH
-    ./binvec.py "$1"
+    ${SCRIPT_DIR}/binvec.py "$1"
 }
 
 export -f binvec
 export INPUT_PATH
+export SCRIPT_DIR
 echo "Running on ${PROCS} workers"
-./list_scenarios.py $* | parallel -j "${PROCS}" binvec
+${SCRIPT_DIR}/../list_scenarios.py $* | parallel -j "${PROCS}" binvec
