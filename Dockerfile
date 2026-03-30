@@ -17,7 +17,7 @@ RUN adduser --disabled-password --home /home/user/ --shell /bin/bash user --uid 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates curl dnsutils gawk gcc g++ gfortran hyperfine \
     libopenblas-dev liblapack-dev parallel pigz pkg-config \
-    texlive-full tmux tshark
+    poppler-utils texlive-full tmux tshark
 
 RUN install -m 0755 -d /etc/apt/keyrings && \
     curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc && \
