@@ -24,7 +24,7 @@ INPUT_PATH = pathlib.Path(
 )
 WORKERS = multiprocessing.cpu_count()
 
-if WORKERS > 96:
+if WORKERS > 8:
     WORKERS = 8
 
 
