@@ -99,7 +99,7 @@ kill_docker() {
 
 trap kill_docker HUP TERM INT QUIT ABRT
 
-if [ "$1" = "--build" ] || ! docker image ls | grep -q "pivot-eval/"; then
+if [ "$1" = "--build" ] || ! docker image ls | grep -q "/eurosp26-"; then
     docker system prune -f
 
     PREFIX_HINT_1="${PREFIX_HINT_1_START[${PROTOCOLS[0]}]}"
