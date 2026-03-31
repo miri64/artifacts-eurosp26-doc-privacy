@@ -19,15 +19,19 @@ import numpy
 import polars
 import polars.exceptions
 
+EVALUATION_PATH = pathlib.Path(__file__).resolve().parent
+INPUT_PATH = pathlib.Path(
+    os.environ.get("INPUT_PATH", EVALUATION_PATH / ".." / "output_dataset")
+)
+BASE_DIR = (EVALUATION_PATH / "..").absolute()
+
+if str(BASE_DIR) not in sys.path:
+    sys.path.append(str(BASE_DIR))
+
 from list_scenarios import (
     parse_scenario_name,
 )
 
-
-EVALUATION_DIR = pathlib.Path.cwd()
-INPUT_PATH = pathlib.Path(
-    os.environ.get("INPUT_PATH", EVALUATION_DIR / ".." / "output_dataset")
-)
 
 K = 5
 SCORINGS = [

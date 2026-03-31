@@ -38,7 +38,8 @@ while getopts ":c:D:d:l:n:p:r:v:" opt; do
     esac
 done
 
-"${SCRIPT_DIR}"/list_scenarios.py $args | while read scenario; do
+# due to the massive memory usage we can not parallelize this approach on one machine
+for scenario in $("${SCRIPT_DIR}"/../list_scenarios.py $args); do
     for cls in "${CLASSIFIERS[@]}"; do
         if [[ -n "${classifier}" && "$cls" != "${classifier}" ]]; then
             continue
@@ -54,4 +55,4 @@ done
     if [[ "${RESULT}" -eq 2 ]]; then
         break
     fi
-done &> "${INPUT_PATH}/cross_validation_${classifier}_${step}${prots}${network_setups}${link_layer}${data}${dns}_${vec}_${SLURM_JOB_ID}.log"
+done
