@@ -26,7 +26,7 @@ from list_scenarios import (
 
 EVALUATION_DIR = pathlib.Path.cwd()
 INPUT_PATH = pathlib.Path(
-    os.environ.get("INPUT_PATH", EVALUATION_DIR / "output_dataset")
+    os.environ.get("INPUT_PATH", EVALUATION_DIR / ".." / "output_dataset")
 )
 
 K = 5
