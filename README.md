@@ -41,7 +41,7 @@ For most sections there are one or more Jupyter notebooks containing documentati
   + **3.2. Data Collection**, see [`03_2_data_collection.ipynb`](./03_2_data_collection.ipynb).
   + **3.3. Traffic Generation**, see [`03_3_traffic_generation.ipynb`](./03_3_traffic_generation.ipynb).
 - **4. Overview of Data Corpus**, see [`04_data_corpus_overview.ipynb`](./04_data_corpus_overview.ipynb).
-- **5. Machine Learning to Identify DNS Traffic**, see [`05_ml_to_identify_dns_traffic.ipynb`](./05_ml_to_identify_dns_traffic.ipynb).
+- **5. Machine Learning to Identify DNS Traffic**, see [`05_ml_to_identify_dns_traffic.ipynb`](./05_ml_to_identify_dns_traffic.ipynb). Since these are also based in cross validation Figures 13 and 14 of Section 6 are also generated in this notebook.
 - **6. Evaluation**, see [`06_evaluation.ipynb`](./06_evaluation.ipynb).
 - **7. Related Work** does not have any code.
 - **8. Discussion**
