@@ -38,6 +38,8 @@ while getopts ":c:D:d:l:n:p:r:v:" opt; do
     esac
 done
 
+export POLARS_FORCE_NEW_STREAMING=1
+
 # due to the massive memory usage we can not parallelize this approach on one machine
 for scenario in $("${SCRIPT_DIR}"/../list_scenarios.py $args); do
     for cls in "${CLASSIFIERS[@]}"; do

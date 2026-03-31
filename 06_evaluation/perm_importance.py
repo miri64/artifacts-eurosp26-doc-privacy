@@ -23,37 +23,31 @@ import warnings
 import numpy
 import polars
 import polars.exceptions
+import sklearn.inspection._permutation_importance as sk_perm_imp
+
+
+EVALUATION_PATH = pathlib.Path(__file__).resolve().parent
+INPUT_PATH = pathlib.Path(
+    os.environ.get("INPUT_PATH", EVALUATION_PATH /  ".." / "output_dataset")
+)
+
+BASE_DIR = (EVALUATION_PATH / "..").absolute()
+
+if str(BASE_DIR) not in sys.path:
+    sys.path.append(str(BASE_DIR))
 
 from list_scenarios import (
     list_scenarios_full,
     parse_scenario_name,
 )
 
-import sklearn.inspection._permutation_importance as sk_perm_imp
-
-
-EVALUATION_DIR = pathlib.Path.cwd()
-INPUT_PATH = pathlib.Path(
-    os.environ.get("INPUT_PATH", EVALUATION_DIR / "output_dataset")
-)
-
 TEST_SIZE = 0.2
 REPEATS = 2
 SCORINGS = [
     "accuracy",
-    # "precision",
-    # "recall",
-    "f1",
-    # "balanced_accuracy",
-    # "roc_auc",
 ]
 CLASSIFIERS = [
-    "lr",
-    "knn",
-    "svm",
-    "dt",
     "rf",
-    "ab",
 ]
 FIELD_NAMES = [
     "protocol",
