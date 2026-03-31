@@ -8,6 +8,7 @@
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "$(realpath "$0")" )" &> /dev/null && pwd )
 INPUT_PATH="${INPUT_PATH:-${SCRIPT_DIR}/../output_dataset}"
+PYTHON_EXEC=${PYTHON_EXEC:-$(which python3)}
 CLASSIFIERS=(
     "lr"
     "knn"
@@ -41,12 +42,12 @@ done
 export POLARS_FORCE_NEW_STREAMING=1
 
 # due to the massive memory usage we can not parallelize this approach on one machine
-for scenario in $("${SCRIPT_DIR}"/../list_scenarios.py $args); do
+for scenario in $("${PYTHON_EXEC}" "${SCRIPT_DIR}"/../list_scenarios.py $args); do
     for cls in "${CLASSIFIERS[@]}"; do
         if [[ -n "${classifier}" && "$cls" != "${classifier}" ]]; then
             continue
         fi
-        "${SCRIPT_DIR}"/cross_validate.py -v "${vec}" "${scenario}" "${cls}"
+        "${PYTHON_EXEC}" "${SCRIPT_DIR}"/cross_validate.py -v "${vec}" "${scenario}" "${cls}"
         RESULT="$?"
         if [[ "${RESULT}" -eq 128 || "${RESULT}" -eq 2 ]]; then
             # error code indicates that all classifiers where already evaluated or arguments were

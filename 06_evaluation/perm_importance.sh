@@ -8,6 +8,7 @@
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "$(realpath "$0")" )" &> /dev/null && pwd )
 INPUT_PATH="${INPUT_PATH:-${SCRIPT_DIR}/../output_dataset}"
+PYTHON_EXEC=${PYTHON_EXEC:-$(which python3)}
 
 vec="binvec"
 cls="rf"
@@ -31,6 +32,6 @@ done
 
 export POLARS_FORCE_NEW_STREAMING=1
 
-for scenario in $("${SCRIPT_DIR}"/../list_scenarios.py $args); do
-    "${SCRIPT_DIR}"/perm_importance.py -c "${cls}" -v "${vec}" "${scenario}"
+for scenario in $("${PYTHON_EXEC}" "${SCRIPT_DIR}"/../list_scenarios.py $args); do
+    "${PYTHON_EXEC}" "${SCRIPT_DIR}"/perm_importance.py -c "${cls}" -v "${vec}" "${scenario}"
 done
