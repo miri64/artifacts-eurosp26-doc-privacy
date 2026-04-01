@@ -18,3 +18,4 @@ length_cdfs.parquet
 *.pcap.gz
 *.pcapng
 *.pcapng.gz
+!binvec.log
