@@ -3,23 +3,21 @@
 [![DOI][software-badge]][software-doi]
 [![Paper on ACM DL][paper-badge]][paper-doi]
 
-This repository contains all artifacts, i.e. code, tools, data, and vizualizations for the paper “[Secrets Best Not Shared: DNS Privacy Enhancements for the Constrained IoT][paper-doi]” presented at the 11th IEEE European Symposium on Security and Privacy (EuroS&P 2026).
+This repository contains all artifacts, i.e. code, tools, data, and visualizations for the paper “[Secrets Best Not Shared: DNS Privacy Enhancements for the Constrained IoT][paper-doi]” presented at the 11th IEEE European Symposium on Security and Privacy (EuroS&P 2026).
 
 - M. Lenders, T. C. Schmidt, and M. Wählisch, “**Secrets Best Not Shared: DNS Privacy Enhancements for the Constrained IoT**,” in *IEEE EuroS&P 2026*, 2026, pp. TBD–TBD. https://doi.org/10.1109/TBD
 
 ##### Abstract
 
-> Several attacks aim at identifying DNS traffic for disrupting or compromising Internet services.
-> Prior defense focused on merely encrypting queries using DNS over TLS, HTTPS, or QUIC to counter such attacks.
-> In this paper, we target IETF protocols tailored for the constrained hardware resources of mass IoT devices and empirically analyze the potentials of obfuscating DNS traffic beyond using encryption.
-> To this end, we create a dataset of machine-to-machine-compatible data objects and their preceding DNS resolution process.
-> For each object, we consider 296 different deployment scenarios of resolving host names, including DNS over the Constrained Application Layer Protocol (CoAP) and an onion routing flavor of CoAP as well as different link-layer conditions.
-> Also, we compare to DNS over HTTPS.
-> Applying a header field analysis based on permutation importances, we identify header fields that leak the most information to Random Forest, which performed best in cross-validation.
-> We find that DNS over CoAP with equalized packet lengths with block-wise transfer and by eliding leaking header fields with header compression can reduce the accuracy of identifying DNS frames to 86%.
-> Compressing the DNS payload format to fit the constrained use case, reduces accuracy even further to 77%.
-> When eliding header fields this way, our proposal outperforms DNS over HTTPS, for which the classifier identifies DNS frames with 100% accuracy based on destination information in the header.
-> We make our dataset publicly available.
+> Attackers often identify DNS traffic to disrupt or compromise Internet services.
+> While prior work has focused on encrypting queries using DNS over TLS, HTTPS, or QUIC to counter such attacks, we consider IETF protocols designed for resource-constrained IoT devices and empirically analyze the potential of obfuscating DNS traffic in addition to encryption.
+> We create a dataset of machine-to-machine-compatible data objects along with the corresponding DNS resolution processes, evaluating 296 deployment scenarios of resolving host names, including DNS over the Constrained Application Layer Protocol (CoAP) and an onion routing flavor of CoAP under varying link-layer conditions.
+> We compare them to DNS over HTTPS.
+> Using Random Forest and a header field analysis, we identify fields that leak most information.
+> Our findings show that DNS over CoAP with equalized packet lengths, block-wise transfer, and header compression reduces the accuracy of identifying DNS frames to 86% and further to 77% with payload compression.
+> Our approach outperforms DNS over HTTPS, where classifiers always identify DNS frames based on IP addresses.
+> The dataset is publicly available.
+
 
 ## Repository Structure & Usage
 
@@ -77,7 +75,7 @@ jupyter-1  |         http://localhost:8888/lab?token=f63eeb3d8158079dfea465051cb
 jupyter-1  |         http://127.0.0.1:8888/lab?token=f63eeb3d8158079dfea465051cbb4598fbe5575f96a7ffdb
 ```
 
-Alternatively you can get the URL using the following command
+Alternatively, you can get the URL using the following command
 
 ```console
 $ docker compose exec jupyter su - user -c "jupyter server list"
@@ -87,9 +85,9 @@ http://localhost:8888/?token=f63eeb3d8158079dfea465051cbb4598fbe5575f96a7ffdb ::
 
 _In the Jupyter Lab_, following the link provided by the command above, start with the notebook of your choice.
 
-#### Download From Other Container Registry
+#### Download from Other Container Registry
 
-_TBD:_ We provide the docker images needed for the artifacts at several container registries. you can find the image names for each repository in the following table.
+_TBD:_ We provide the docker images needed for the artifacts at several container registries. You can find the image names for each repository in the following table.
 
 | Image           | Docker Hub      |GitHub Packages  |Codeberg Packages|
 |-----------------|-----------------|-----------------|-----------------|
@@ -109,13 +107,13 @@ find . -name *.yaml | xargs grep -l 'image: *docker\.io/miri64' | xargs sed -i '
 
 #### Use Different Port
 
-If port `8888` is already in use on your system, you can also pick another using the `JUPYTER_PORT` environment variable:
+If port `8888` is already in use on your system, you can also pick another by setting the `JUPYTER_PORT` environment variable:
 
 ```bash
 JUPYTER_PORT=8889 docker compose up
 ```
 
-#### Different User Ids.
+#### Different User IDs.
 
 If your host user has a different UID or GID than 1000, this also can be configured:
 
@@ -142,7 +140,7 @@ We tested the code of our repository for Python 3.12 so we recommend installing 
 uv python install cpython-3.12
 ```
 
-Additional dependencies from the system might be needed. Please have a look at the `apt-get install` (the Debian package manager command used to install dependencies there) line from our [Dockerfile](./Dockerfile) for a (Debian-13-based) listing of the dependencies.
+Additional dependencies from the system might be needed. Please take a look at the `apt-get install` (the Debian package manager command used to install dependencies there) line from our [Dockerfile](./Dockerfile) for a (Debian-13-based) listing of the dependencies.
 
 Now create and step into a virtual environment for this repository.
 
