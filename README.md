@@ -91,11 +91,11 @@ _TBD:_ We provide the docker images needed for the artifacts at several containe
 
 | Image           | Docker Hub      |GitHub Packages  |Codeberg Packages|
 |-----------------|-----------------|-----------------|-----------------|
-|[Main](./Dockerfile)|`docker.io/miri64/eurosp26-main`|`ghcr.io/miri64/eurosp26-main`|`codeberg.org/miri64/eurosp26-main`|
-|[CoAP Base](./03_3_traffic_generation/coap/Dockerfile)|`docker.io/miri64/eurosp26-coap`|`ghcr.io/miri64/eurosp26-coap`|`codeberg.org/miri64/eurosp26-coap`|
-|[HTTP Base](./03_3_traffic_generation/http/Dockerfile)|`docker.io/miri64/eurosp26-http`|`ghcr.io/miri64/eurosp26-http`|`codeberg.org/miri64/eurosp26-http`|
-|[Sniffer](./03_3_traffic_generation/sniffer/Dockerfile)|`docker.io/miri64/eurosp26-sniffer`|`ghcr.io/miri64/eurosp26-sniffer`|`codeberg.org/miri64/eurosp26-sniffer`|
-|[Database](./03_3_traffic_generation/database/Dockerfile)|`docker.io/miri64/eurosp26-database`|`ghcr.io/miri64/eurosp26-database`|`codeberg.org/miri64/eurosp26-database`|
+|[Main](./Dockerfile)|[`docker.io/miri64/eurosp26-main`](https://hub.docker.com/r/miri64/eurosp26-main)|[`ghcr.io/miri64/eurosp26-main`](https://github.com/users/miri64/packages/container/package/eurosp26-main)|[`codeberg.org/miri64/eurosp26-main`](https://codeberg.org/miri64/-/packages/container/eurosp26-main)|
+|[CoAP Base](./03_3_traffic_generation/coap/Dockerfile)|[`docker.io/miri64/eurosp26-coap`](https://hub.docker.com/r/miri64/eurosp26-coap)|[`ghcr.io/miri64/eurosp26-coap`](https://github.com/users/miri64/packages/container/package/eurosp26-coap)|[`codeberg.org/miri64/eurosp26-coap`](https://codeberg.org/miri64/-/packages/container/eurosp26-coap)|
+|[HTTP Base](./03_3_traffic_generation/http/Dockerfile)|[`docker.io/miri64/eurosp26-http`](https://hub.docker.com/r/miri64/eurosp26-http)|[`ghcr.io/miri64/eurosp26-http`](https://github.com/users/miri64/packages/container/package/eurosp26-http)|[`codeberg.org/miri64/eurosp26-http`](https://codeberg.org/miri64/-/packages/container/eurosp26-http)|
+|[Sniffer](./03_3_traffic_generation/sniffer/Dockerfile)|[`docker.io/miri64/eurosp26-sniffer`](https://hub.docker.com/r/miri64/eurosp26-sniffer)|[`ghcr.io/miri64/eurosp26-sniffer`](https://github.com/users/miri64/packages/container/package/eurosp26-sniffer)|[`codeberg.org/miri64/eurosp26-sniffer`](https://codeberg.org/miri64/-/packages/container/eurosp26-sniffer)|
+|[Database](./03_3_traffic_generation/database/Dockerfile)|[`docker.io/miri64/eurosp26-db`](https://hub.docker.com/r/miri64/eurosp26-db)|[`ghcr.io/miri64/eurosp26-db`](https://github.com/users/miri64/packages/container/package/eurosp26-db)|[`codeberg.org/miri64/eurosp26-db`](https://codeberg.org/miri64/-/packages/container/eurosp26-db)|
 
 Sadly, support to configure these easily is not provided when running `docker compose`. As such, the easiest way to use the repositories is to search and replace the `image:` key within the docker compose files. E.g., to use the Codeberg Packages registry, use the following 
 
