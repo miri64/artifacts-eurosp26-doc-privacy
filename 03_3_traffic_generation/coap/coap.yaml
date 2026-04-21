@@ -13,7 +13,7 @@ services:
       target: coap-base
     sysctls:
       net.ipv6.auto_flowlabels: 0
-    image: miri64/eurosp26-coap
+    image: docker.io/miri64/eurosp26-coap
     tmpfs:
       - /creds
     volumes:

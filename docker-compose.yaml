@@ -12,7 +12,7 @@ services:
         HOST_UID: "${HOST_UID:-1000}"
       context: .
       dockerfile: Dockerfile
-    image: miri64/eurosp26-main
+    image: docker.io/miri64/eurosp26-main
     volumes:
       - .:/app
       # Allow running docker within docker

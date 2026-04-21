@@ -13,7 +13,7 @@ services:
       target: http-base
     sysctls:
       net.ipv6.auto_flowlabels: 0
-    image: miri64/eurosp26-http
+    image: docker.io/miri64/eurosp26-http
     tmpfs:
       - /creds
     volumes:

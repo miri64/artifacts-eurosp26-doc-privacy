@@ -7,7 +7,7 @@ include:
 
 services:
   db-base:
-    image: miri64/eurosp26-db
+    image: docker.io/miri64/eurosp26-db
     build:
       context: .
       dockerfile: Dockerfile

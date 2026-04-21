@@ -5,7 +5,7 @@
 
 This repository contains all artifacts, i.e. code, tools, data, and visualizations for the paper “[Secrets Best Not Shared: DNS Privacy Enhancements for the Constrained IoT][paper-doi]” presented at the 11th IEEE European Symposium on Security and Privacy (EuroS&P 2026).
 
-- M. Lenders, T. C. Schmidt, and M. Wählisch, “**Secrets Best Not Shared: DNS Privacy Enhancements for the Constrained IoT**,” in *IEEE EuroS&P 2026*, 2026, pp. TBD–TBD. https://doi.org/10.1109/TBD
+- M. S. Lenders, T. C. Schmidt, and M. Wählisch, “**Secrets Best Not Shared: DNS Privacy Enhancements for the Constrained IoT**,” in *IEEE EuroS&P 2026*, 2026, pp. TBD–TBD. https://doi.org/10.1109/TBD
 
 ##### Abstract
 

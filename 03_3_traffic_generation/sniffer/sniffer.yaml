@@ -10,7 +10,7 @@ services:
         HOST_UID: "${HOST_UID}"
       context: .
       dockerfile: Dockerfile
-    image: miri64/eurosp26-sniffer
+    image: docker.io/miri64/eurosp26-sniffer
     volumes:
       # use absolute path for docker-in-docker
       - "${EVAL_BASE_DIR:-../..}/output_dataset:/dumps/"
