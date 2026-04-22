@@ -31,3 +31,40 @@ keywords:
   - ML-based Classification
   - OSCORE
   - SCHC
+preferred-citation:
+  type: conference-paper
+  title: "Secrets Best Not Shared: DNS Privacy Enhancements for the Constrained IoT"
+  authors:
+    - given-names: Martine S.
+      family-names: Lenders
+      email: martine.lenders@tu-dresden.de
+      affiliation: TU Dresden
+      orcid: 'https://orcid.org/0000-0001-7378-1045'
+    - given-names: Thomas C.
+      family-names: Schmidt
+      email: t.schmidt@haw-hamburg.de
+      affiliation: HAW Hamburg
+      orcid: 'https://orcid.org/0000-0002-0956-7885'
+    - given-names: Matthias
+      family-names: Wählisch
+      affiliation: TU Dresden & Barkhausen Institut
+      orcid: 'https://orcid.org/0000-0002-3825-2807'
+      email: m.waehlisch@tu-dresden.de
+  conference:
+    name: "11th IEEE European Symposium on Security and Privacy"
+    alias: "EuroS&P '26"
+    date-start: "2026-07-06"
+    date-end: "2026-07-10"
+    city: Lisbon
+    country: Portugal
+  location:
+    name: "Lisbon, Portugal"
+  publisher:
+    name: IEEE
+    address: Piscataway, NJ, USA
+  start: TBD
+  end: TBD
+  year: 2026
+  month: TBD
+  doi: TBD
+  scope: "If you use this software, we prefer that you cite our paper as below."
