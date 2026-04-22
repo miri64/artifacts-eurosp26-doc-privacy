@@ -1,0 +1,33 @@
+cff-version: 1.2.0
+title: "Artifacts: Secrets Best Not Shared: DNS Privacy Enhancements for the Constrained IoT"
+version: 1.0.0
+license: "MIT"
+type: software
+abstract: |
+  This provides the code, tools, data, and visualizations for our paper “Secrets Best Not Shared:
+  DNS Privacy Enhancements for the Constrained IoT” presented at the 11th IEEE European Symposium on
+  Security and Privacy (EuroS&P 2026).
+message: "If you use this software, please cite it as below."
+authors:
+  - given-names: Martine S.
+    family-names: Lenders
+    email: martine.lenders@tu-dresden.de
+    affiliation: TU Dresden
+    orcid: 'https://orcid.org/0000-0001-7378-1045'
+  - given-names: Thomas C.
+    family-names: Schmidt
+    email: t.schmidt@haw-hamburg.de
+    affiliation: HAW Hamburg
+    orcid: 'https://orcid.org/0000-0002-0956-7885'
+  - given-names: Matthias
+    family-names: Wählisch
+    affiliation: TU Dresden & Barkhausen Institut
+    orcid: 'https://orcid.org/0000-0002-3825-2807'
+    email: m.waehlisch@tu-dresden.de
+keywords:
+  - DNS over CoAP
+  - DTLS
+  - IoT
+  - ML-based Classification
+  - OSCORE
+  - SCHC
