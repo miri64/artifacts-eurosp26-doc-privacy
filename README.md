@@ -87,7 +87,7 @@ _In the Jupyter Lab_, following the link provided by the command above, start wi
 
 #### Download from Other Container Registry
 
-_TBD:_ We provide the docker images needed for the artifacts at several container registries. You can find the image names for each repository in the following table.
+We provide the docker images needed for the artifacts at several container registries. You can find the image names for each repository in the following table.
 
 | Image           | Docker Hub      |GitHub Packages  |Codeberg Packages|
 |-----------------|-----------------|-----------------|-----------------|
@@ -165,5 +165,5 @@ _In the Jupyter Lab_, following the link automatically opened in your browser, s
 
 [paper-badge]: https://img.shields.io/badge/Paper-IEEE%20Xplore-green
 [paper-doi]: https://doi.org/10.1109/TBD
-[software-badge]: https://zenodo.org/badge/DOI/10.5281/zenodo.TBD.svg
-[software-doi]: https://doi.org/10.5281/zenodo.TBD
+[software-badge]: https://zenodo.org/badge/DOI/10.5281/zenodo.19697848.svg
+[software-doi]: https://doi.org/10.5281/zenodo.19697848
