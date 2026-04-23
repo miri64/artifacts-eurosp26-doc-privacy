@@ -1,3 +1,4 @@
 [submodule "scenarios/coap/openschc"]
 	path = 03_3_traffic_generation/schc/openschc
-	url = https://github.com/miri64/openschc.git
+	url = https://github.com/netd-tud/openschc.git
+	branch = eurosp26-doc-privacy

@@ -1,4 +1,4 @@
-aiocoap[all] @ git+https://github.com/miri64/aiocoap.git@oscore-patches
+aiocoap[all] @ git+https://github.com/netd-tud/aiocoap.git@eurosp26-doc-privacy
 cbor-diag==1.1.0
 cbor2==5.6.5
 cffi==1.17.1

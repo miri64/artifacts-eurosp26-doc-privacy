@@ -1,5 +1,5 @@
 cbor2==5.6.5
-git+https://github.com/netd-tud/cbor4dns@0e5d81b5581e3ade09624177befbf1ea327a8c34
+git+https://github.com/netd-tud/cbor4dns@eurosp26-doc-privacy
 dnspython[idna]==2.7.0
 gensim==4.3.3
 ipywidgets==8.1.7
