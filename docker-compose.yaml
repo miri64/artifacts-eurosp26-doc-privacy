@@ -26,7 +26,8 @@ services:
     devices:
       - /dev/net/tun
     command: |
-      bash -c "usermod -u '${HOST_UID:-1000}' -g '${HOST_GID:-1000}' user;
+      bash -c "groupmod -g '${HOST_GID:-1000}' user;
+      usermod -u '${HOST_UID:-1000}' -g '${HOST_GID:-1000}' user;
       chown 'user:' /home/user /home/user/.bash* /home/user/.profile; chown -R 'user:' /home/user/.config;
       groupmod -g $(ls -l /var/run/docker.sock | awk '{print $4}') docker;
       su - user -c \"cd /app; jupyter lab workspace import /app/start-with-readme.jupyterlab-workspace --name=default\";
