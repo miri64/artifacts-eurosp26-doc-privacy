@@ -4,12 +4,10 @@ axes.labelpad : 0.25
 axes.labelsize : x-small
 figure.facecolor : none
 # @ textwidth, textheight
-figure.figsize : 5.40788, 1.39282
+figure.figsize : 6.61548, 2.044295745947577
 figure.subplot.hspace : 0.005
 figure.subplot.wspace : 0.005
-# font.family : sans-serif
-# font.sans-serif : "OpenSans"
-font.size : 9.0
+font.size : 8.0
 grid.linestyle : solid
 grid.linewidth : 0.5
 grid.alpha : 0.6
@@ -25,11 +23,11 @@ lines.markersize : 3
 patch.linewidth : 0.5
 pgf.rcfonts : False
 pgf.texsystem : xelatex
-pgf.preamble : \usepackage{mathspec}\setallmainfonts(Digits,Latin){Open Sans}
+pgf.preamble : \usepackage[sfdefault,lining]{FiraSans}\usepackage{unicode-math}\setmathfont{Fira Math}
 text.usetex : True
-xtick.labelsize : xx-small
+xtick.labelsize : x-small
 xtick.major.pad : 1
 xtick.minor.pad : 1
-ytick.labelsize : xx-small
+ytick.labelsize : x-small
 ytick.major.pad : 1
 ytick.minor.pad : 1

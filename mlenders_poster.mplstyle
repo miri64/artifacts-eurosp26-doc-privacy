@@ -1,0 +1,36 @@
+axes.titlepad : 3
+axes.titlesize : medium
+axes.labelpad : 0.25
+axes.labelsize : xx-small
+figure.facecolor : none
+# @ textwidth, textwidth / phi / 2
+figure.figsize : 14.98325, 4.630078880968431
+figure.subplot.hspace : 0.005
+figure.subplot.wspace : 0.005
+font.family : cmu serif
+# font.serif : "Computer Modern Roman"
+font.size : 21.0
+grid.linestyle : solid
+grid.linewidth : 0.5
+grid.alpha : 0.5
+hatch.linewidth : 0.25
+legend.columnspacing : 0.6
+legend.fontsize : x-small
+legend.framealpha : 0.6
+legend.handlelength : 1.0
+legend.handletextpad : 0.4
+legend.title_fontsize : small
+lines.linewidth : 1
+lines.markeredgewidth : 0.5
+lines.markersize : 3
+patch.linewidth : 0.5
+# pgf.rcfonts : True
+# pgf.texsystem : xelatex
+text.usetex : True
+# text.latex.preamble : "\usepackage[T1]{fontenc}\usepackage[utf8]{inputenc}\usepackage{pslatex}\usepackage[kerning,spacing]{microtype}" 
+xtick.labelsize : xx-small
+xtick.major.pad : 1
+xtick.minor.pad : 1
+ytick.labelsize : xx-small
+ytick.major.pad : 1
+ytick.minor.pad : 1
