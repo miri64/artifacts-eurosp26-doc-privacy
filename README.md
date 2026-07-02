@@ -28,7 +28,7 @@ git clone --recurse-submodules https://github.com/netd-tud/artifacts-eurosp26-do
 cd artifacts-eurosp26-doc-privacy
 ```
 
-Or download the `artifacts-eurosp26-doc-privacy-data.zip` ZIP archive from [Zenodo][software-doi] and unzip it in the git repository.
+Or download the `artifacts-eurosp26-doc-privacy-v1.1.0.zip` ZIP archive from [Zenodo][software-doi] and unzip it in the git repository.
 
 For most sections there are one or more Jupyter notebooks containing documentation and the code to create the output we describe in that section. The first number `XX` indicates which section it belongs to, for `XX_Y` the `Y` notates a subsection. Some of these notebooks have a corresponding directory which contain further code.
 
