@@ -62,9 +62,9 @@ preferred-citation:
   publisher:
     name: IEEE
     address: Piscataway, NJ, USA
-  start: TBD
-  end: TBD
+  start: 1476
+  end: 1495
   year: 2026
-  month: TBD
-  doi: TBD
+  month: 7
+  doi: 10.1109/EuroSP68448.2026.00094
   scope: "If you use this software, we prefer that you cite our paper as below."
