@@ -7,6 +7,7 @@ abstract: |
   This provides the code, tools, data, and visualizations for our paper “Secrets Best Not Shared:
   DNS Privacy Enhancements for the Constrained IoT” presented at the 11th IEEE European Symposium on
   Security and Privacy (EuroS&P 2026).
+doi: 10.5281/zenodo.19697848
 message: "If you use this software, please cite it as below."
 authors:
   - given-names: Martine S.
